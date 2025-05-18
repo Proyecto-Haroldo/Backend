@@ -1,4 +1,4 @@
-package itm.proyectoharoldo.backend;
+package itm.proyectoharoldo.backend.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
