@@ -1,4 +1,4 @@
-package itm.proyectoharoldo.backend.Models.Web;
+package itm.proyectoharoldo.backend.Models;
 
 /*
 Model:

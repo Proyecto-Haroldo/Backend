@@ -24,6 +24,10 @@ public class Question {
     @Column(name = "question", nullable = false, columnDefinition = "TEXT")
     private String question;
 
+    @Column(name="type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private QuestionType questionType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "category", referencedColumnName = "categoryid", nullable = false)
