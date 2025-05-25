@@ -26,14 +26,15 @@ public class WordsController {
     }
 
     @GetMapping("/{word}")
-    public ResponseEntity<GlossaryWord> GetClientById(@PathVariable String word){
+    public ResponseEntity<GlossaryWord> GetWord(@PathVariable String word){
         GlossaryWord glossaryWord = glossaryWordService.getGlossaryWord(word);
         return ResponseEntity.ok(glossaryWord);
     }
 
-    @GetMapping("/qs/{id}")
-    public List<MultipleOptionQuestionAnswer> getoptions(@PathVariable Long id){
-        return multipleOptionAnswersService.getAnswersByQuestionId(id);
+    @GetMapping
+    public ResponseEntity<List<String>> GetAllKeywords(@PathVariable Long id){
+        List<String> keyWords = glossaryWordService.getAllGlossaryWords();
+        return ResponseEntity.ok(keyWords);
     }
 
 }

@@ -11,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "questions")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Question {
@@ -37,4 +36,43 @@ public class Question {
     @JsonManagedReference
     private List<MultipleOptionQuestionAnswer> options;
 
+    public Long getQuestionid() {
+        return questionid;
+    }
+
+    public void setQuestionid(Long questionid) {
+        this.questionid = questionid;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public QuestionType getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(QuestionType questionType) {
+        this.questionType = questionType;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public List<MultipleOptionQuestionAnswer> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<MultipleOptionQuestionAnswer> options) {
+        this.options = options;
+    }
 }

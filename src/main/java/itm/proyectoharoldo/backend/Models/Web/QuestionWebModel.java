@@ -8,11 +8,15 @@ import java.util.List;
 
 public class QuestionWebModel {
     private Long id;
-    private String title;
-    private String description;
+    private String title; //Category of the question
+    private String description; //Text of the question
     private QuestionType type;
     private List<AnswersOptionWebModel> options;
     private List<GlossaryWord> keywords;
+
+    public QuestionWebModel(){
+
+    }
 
     // Constructor privado para forzar el uso del builder
     private QuestionWebModel(Builder builder) {

@@ -6,10 +6,7 @@ import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
 import itm.proyectoharoldo.backend.Repositories.QuestionRepository;
 import itm.proyectoharoldo.backend.Services.MultipleOptionAnswersService;
 import itm.proyectoharoldo.backend.Services.WebQuestionService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +61,12 @@ public class WebQuestionController {
                 multipleOptionAnswersService.getAnswersAsWebModel(question),
                 List.of()
         );
+    }
+
+    @PostMapping
+    public Question createQuestion(@RequestBody QuestionWebModel webModel) {
+        Question savedQuestion = webQuestionService.createQuestionOnDatabase(webModel);
+        return savedQuestion;
     }
 
 }

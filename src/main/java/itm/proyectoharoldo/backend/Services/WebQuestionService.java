@@ -7,12 +7,23 @@ import itm.proyectoharoldo.backend.Models.Question;
 import itm.proyectoharoldo.backend.Models.QuestionType;
 import itm.proyectoharoldo.backend.Models.Web.AnswersOptionWebModel;
 import itm.proyectoharoldo.backend.Models.Web.QuestionWebModel;
+import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
+import itm.proyectoharoldo.backend.Repositories.QuestionRepository;
+import itm.proyectoharoldo.backend.Utility.QuestionConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class WebQuestionService {
+
+    private final CategoryRepository categoryRepository;
+    private final QuestionRepository questionRepository;
+
+    public WebQuestionService(CategoryRepository categoryRepository, QuestionRepository questionRepository) {
+        this.categoryRepository = categoryRepository;
+        this.questionRepository = questionRepository;
+    }
 
     public QuestionWebModel CreateQuestionWebModel (Category category, Question question, QuestionType questionType, List<AnswersOptionWebModel> possibleOptions, List<GlossaryWord> glossaryWords)
     {
@@ -24,6 +35,15 @@ public class WebQuestionService {
                 .options(possibleOptions)
                 .keywords(glossaryWords)
                 .build();
+    }
+
+    public Question createQuestionOnDatabase(QuestionWebModel webModel) {
+        String categoryName = webModel.getTitle();
+        Category category = categoryRepository.findByCategory(categoryName)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
+        Question question = QuestionConverter.convertWebModelToEntity(webModel, category);
+        return questionRepository.save(question);
     }
 
 }

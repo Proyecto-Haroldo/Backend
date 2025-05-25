@@ -23,13 +23,24 @@ Trae una lista de todas las preguntas.
 Trae una pregunta según su ID en la BD según este formato:
 
 {
+
   id: number;
+
   title: string;
+
   description: string;
+
   type: QuestionType;
+
   options?: QuestionOption[];
+
   keywords: Keyword[];
+
 }
+
+### POST
+
+Agrega una pregunta a la base de datos y sus opciones (se debe envíar bajo el mismo modelo en que se recibe)
 
 ## WordsController 📖
 
