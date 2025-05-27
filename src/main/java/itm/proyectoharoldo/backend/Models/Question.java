@@ -27,6 +27,10 @@ public class Question {
     @Enumerated(EnumType.STRING)
     private QuestionType questionType;
 
+    @Column(name="clienttype", nullable = true)
+    @Enumerated(EnumType.STRING)
+    private ClientType clientType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "category", referencedColumnName = "categoryid", nullable = false)
@@ -75,4 +79,13 @@ public class Question {
     public void setOptions(List<MultipleOptionQuestionAnswer> options) {
         this.options = options;
     }
+
+    public ClientType getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType;
+    }
+
 }

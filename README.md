@@ -12,7 +12,7 @@ Por ejemplo, http://localhost:8080/api/{controlador}/{endpoint}
 
 ## WebQuestionController ❔(/preguntas)
 
-Este devuelve las preguntas que hay en la base de datos como el modelo que pidió Johann pa que encajara con el front.
+Pa las preguntas de la web
 
 ### GET
 
@@ -38,23 +38,23 @@ Trae una pregunta según su ID en la BD según este formato:
 
 }
 
+### GET /categoriaycliente
+    http://localhost:8080/api/preguntas/categoriaycliente
+
+Tiene dos parámetros de query:
+
+category | Nombre de la categoría
+
+clienttype | Tipo del cliente
+
+Un ejemplo de request pa acá:
+
+    http://localhost:8080/api/preguntas/categoriaycliente?category=estrategia&clienttype=empresa
+
 ### POST
 
 Agrega una pregunta a la base de datos y sus opciones (se debe envíar bajo el mismo modelo en que se recibe)
 
-## WordsController 📖
+## PD
 
-Este devuelve las palabras clave con su significado (no implementado aún con las preguntas)
-
-### GET
-
-Devuelve una lista de String que son todas las claves que hay en el Redis.
-
-### GET /{word}
-
-Trae la palabra y el significado de dicha palabra como:
-
-{
-  title: string,
-  description: string
-}
+![Nosotros](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ40u6SyPgW-mxI1yzXj6beZQ0DGFGj2Oi4dA&s)

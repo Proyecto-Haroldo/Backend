@@ -13,13 +13,16 @@ public class QuestionConverter {
 
     public static Question convertWebModelToEntity(QuestionWebModel webModel, Category category) {
         Question question = new Question();
-        question.setQuestion(webModel.getDescription());
+        question.setQuestion(webModel.getTitle());
         question.setQuestionType(webModel.getType());
         question.setCategory(category);
-        List<MultipleOptionQuestionAnswer> options = webModel.getOptions().stream()
-                .map(optionWeb -> convertOptionWebModel(optionWeb, question))
-                .collect(Collectors.toList());
-        question.setOptions(options);
+        
+        if (webModel.getOptions() != null) {
+            List<MultipleOptionQuestionAnswer> options = webModel.getOptions().stream()
+                    .map(optionWeb -> convertOptionWebModel(optionWeb, question))
+                    .collect(Collectors.toList());
+            question.setOptions(options);
+        }
 
         return question;
     }
@@ -27,7 +30,7 @@ public class QuestionConverter {
     private static MultipleOptionQuestionAnswer convertOptionWebModel(AnswersOptionWebModel optionWeb, Question question) {
         MultipleOptionQuestionAnswer option = new MultipleOptionQuestionAnswer();
         option.setAnswertext(optionWeb.getText());
-        option.setQuestion(question);  // Asociar la pregunta
+        option.setQuestion(question);
         return option;
     }
 }

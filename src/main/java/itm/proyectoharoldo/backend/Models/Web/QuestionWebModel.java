@@ -9,7 +9,6 @@ import java.util.List;
 public class QuestionWebModel {
     private Long id;
     private String title; //Category of the question
-    private String description; //Text of the question
     private QuestionType type;
     private List<AnswersOptionWebModel> options;
     private List<GlossaryWord> keywords;
@@ -22,7 +21,6 @@ public class QuestionWebModel {
     private QuestionWebModel(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
-        this.description = builder.description;
         this.type = builder.type;
         this.options = builder.options;
         this.keywords = builder.keywords;
@@ -31,7 +29,6 @@ public class QuestionWebModel {
     // Getters
     public Long getId() { return id; }
     public String getTitle() { return title; }
-    public String getDescription() { return description; }
     public QuestionType getType() { return type; }
     public List<AnswersOptionWebModel> getOptions() { return options; }
     public List<GlossaryWord> getKeywords() { return keywords; }
@@ -40,7 +37,6 @@ public class QuestionWebModel {
     public static class Builder {
         private Long id;
         private String title;
-        private String description;
         private QuestionType type;
         private List<AnswersOptionWebModel> options;
         private List<GlossaryWord> keywords;
@@ -52,11 +48,6 @@ public class QuestionWebModel {
 
         public Builder title(String title) {
             this.title = title;
-            return this;
-        }
-
-        public Builder description(String description) {
-            this.description = description;
             return this;
         }
 

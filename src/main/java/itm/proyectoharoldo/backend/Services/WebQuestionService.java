@@ -25,12 +25,11 @@ public class WebQuestionService {
         this.questionRepository = questionRepository;
     }
 
-    public QuestionWebModel CreateQuestionWebModel (Category category, Question question, QuestionType questionType, List<AnswersOptionWebModel> possibleOptions, List<GlossaryWord> glossaryWords)
+    public QuestionWebModel CreateQuestionWebModel (Question question, QuestionType questionType, List<AnswersOptionWebModel> possibleOptions, List<GlossaryWord> glossaryWords)
     {
         return new QuestionWebModel.Builder()
                 .id(question.getQuestionid())
-                .title(category.getCategory())
-                .description(question.getQuestion())
+                .title(question.getQuestion())
                 .type(questionType)
                 .options(possibleOptions)
                 .keywords(glossaryWords)
