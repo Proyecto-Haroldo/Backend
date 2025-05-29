@@ -4,6 +4,7 @@ import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.Web.QuestionWebModel;
 import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
 import itm.proyectoharoldo.backend.Repositories.QuestionRepository;
+import itm.proyectoharoldo.backend.Services.KeywordsService;
 import itm.proyectoharoldo.backend.Services.MultipleOptionAnswersService;
 import itm.proyectoharoldo.backend.Services.WebQuestionService;
 import org.springframework.web.bind.annotation.*;
@@ -20,17 +21,18 @@ public class WebQuestionController {
     private final QuestionRepository questionRepository;
     private final MultipleOptionAnswersService multipleOptionAnswersService;
     private final CategoryRepository categoryRepository;
+    private final KeywordsService keywordsService;
 
-    public WebQuestionController(
-        WebQuestionService webQuestionService, 
-        QuestionRepository questionRepository, 
-        MultipleOptionAnswersService multipleOptionAnswersService,
-        CategoryRepository categoryRepository
-    ) {
+    public WebQuestionController(WebQuestionService webQuestionService,
+                                 QuestionRepository questionRepository,
+                                 MultipleOptionAnswersService multipleOptionAnswersService,
+                                 CategoryRepository categoryRepository,
+                                 KeywordsService keywordsService) {
         this.webQuestionService = webQuestionService;
         this.questionRepository = questionRepository;
         this.multipleOptionAnswersService = multipleOptionAnswersService;
         this.categoryRepository = categoryRepository;
+        this.keywordsService = keywordsService;
     }
 
     @GetMapping
@@ -39,17 +41,19 @@ public class WebQuestionController {
         List<Question> questions = questionRepository.findAll();
 
         for(Question question : questions){
-            Category category = question.getCategory();
             QuestionType questionType = question.getQuestionType();
 
-            questionWebModels.add(
-                    webQuestionService.CreateQuestionWebModel(
-                            question,
-                            questionType,
-                            multipleOptionAnswersService.getAnswersAsWebModel(question),
-                            List.of()
-                    )
+            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
+                    question,
+                    question.getQuestionType(),
+                    multipleOptionAnswersService.getAnswersAsWebModel(question),
+                    List.of()
             );
+
+            keywordsService.enrichQuestionWithKeywords(model);
+
+            questionWebModels.add(model);
+
         }
 
         return questionWebModels;
@@ -66,15 +70,17 @@ public class WebQuestionController {
         
         for(Question question : questions) {
             QuestionType questionType = question.getQuestionType();
-            
-            questionWebModels.add(
-                webQuestionService.CreateQuestionWebModel(
+
+            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                     question,
-                    questionType,
+                    question.getQuestionType(),
                     multipleOptionAnswersService.getAnswersAsWebModel(question),
                     List.of()
-                )
             );
+
+            keywordsService.enrichQuestionWithKeywords(model);
+
+            questionWebModels.add(model);
         }
         
         return questionWebModels;
@@ -91,14 +97,16 @@ public class WebQuestionController {
         for (Question question : questions) {
             QuestionType questionType = question.getQuestionType();
 
-            questionWebModels.add(
-                    webQuestionService.CreateQuestionWebModel(
-                            question,
-                            questionType,
-                            multipleOptionAnswersService.getAnswersAsWebModel(question),
-                            List.of()
-                    )
+            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
+                    question,
+                    question.getQuestionType(),
+                    multipleOptionAnswersService.getAnswersAsWebModel(question),
+                    List.of()
             );
+
+            keywordsService.enrichQuestionWithKeywords(model);
+
+            questionWebModels.add(model);
         }
 
         return questionWebModels;
@@ -108,12 +116,17 @@ public class WebQuestionController {
     public QuestionWebModel getquestionbyid(@PathVariable Long id){
         Question question = questionRepository.findById(id).get();
         QuestionType questionType = question.getQuestionType();
-        return webQuestionService.CreateQuestionWebModel(
+
+        QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                 question,
-                questionType,
+                question.getQuestionType(),
                 multipleOptionAnswersService.getAnswersAsWebModel(question),
                 List.of()
         );
+
+        keywordsService.enrichQuestionWithKeywords(model);
+
+        return model;
     }
 
     @PostMapping
