@@ -1,10 +1,6 @@
 package itm.proyectoharoldo.backend.Models.Web;
 
 import itm.proyectoharoldo.backend.Models.GlossaryWord;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
