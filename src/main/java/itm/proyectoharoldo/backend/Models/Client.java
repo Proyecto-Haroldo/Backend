@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "clients")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Client {
@@ -27,4 +26,35 @@ public class Client {
     @Enumerated(EnumType.STRING)
     private ClientType clientType;
 
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getCedulaOrNIT() {
+        return cedulaOrNIT;
+    }
+
+    public void setCedulaOrNIT(String cedulaOrNIT) {
+        this.cedulaOrNIT = cedulaOrNIT;
+    }
+
+    public String getLegalName() {
+        return legalName;
+    }
+
+    public void setLegalName(String legalName) {
+        this.legalName = legalName;
+    }
+
+    public ClientType getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType;
+    }
 }
