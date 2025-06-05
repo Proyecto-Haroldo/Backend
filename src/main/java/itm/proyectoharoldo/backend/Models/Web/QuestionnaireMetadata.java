@@ -8,6 +8,11 @@ export interface QuestionnaireMetadata {
 }
  */
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class QuestionnaireMetadata {
 
     String category;
@@ -21,30 +26,6 @@ public class QuestionnaireMetadata {
     }
 
     public QuestionnaireMetadata() {
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getClientType() {
-        return clientType;
-    }
-
-    public void setClientType(String clientType) {
-        this.clientType = clientType;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
     }
 
 }

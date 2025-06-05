@@ -6,7 +6,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +15,6 @@ public class GlossaryWordsService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String redisBaseUrl = "https://handy-lemming-28224.upstash.io";
     private final String bearerToken = "AW5AAAIjcDE4ZTk3MWJiNTg3MjI0NjE0ODIyMmNjNTY5OGI0ZTE2ZHAxMA";
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public List<String> getAllKeys(){
         String url = redisBaseUrl + "/keys/*";
