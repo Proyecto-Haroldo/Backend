@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   app:
     build: .
@@ -8,3 +10,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://aws-0-us-east-2.pooler.supabase.com:6543/postgres?prepareThreshold=0
       SPRING_DATASOURCE_USERNAME: postgres.umtlidnqgmsutxwmljyx
       SPRING_DATASOURCE_PASSWORD: PRgqC0yJZMkIwkgQ
+    networks:
+      - red-microservicios
+
+networks:
+  red-microservicios:
+    external: true

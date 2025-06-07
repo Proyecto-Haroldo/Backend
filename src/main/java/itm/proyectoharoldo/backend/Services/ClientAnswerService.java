@@ -36,7 +36,7 @@ public class ClientAnswerService {
     }
 
     @Transactional
-    public void saveQuestionnaireResult(QuestionnaireResult result) {
+    public String saveQuestionnaireResult(QuestionnaireResult result) {
         Client client = clientRepository.findById(1L).get();
 
         LocalDateTime timestamp = LocalDateTime.parse(result.getMetadata().getTimestamp());
@@ -45,6 +45,7 @@ public class ClientAnswerService {
         Category category = categoryRepository.findByCategory(categoryName).get();
 
         StringBuilder promptBuilder = new StringBuilder();
+        promptBuilder.append("Tipo: ").append(result.getMetadata().getClientType()).append("\n\n");
         promptBuilder.append("Categoría: ").append(categoryName).append("\n\n");
 
         for (QuestionnaireAnswer qa : result.getAnswers()) {
@@ -66,13 +67,14 @@ public class ClientAnswerService {
         String prompt = promptBuilder.toString();
         String recomendacion = aiService.getRecommendationAsText(prompt);
 
-        // Guardar análisis en BD
         AiClientAnalysis analysis = new AiClientAnalysis();
         analysis.setClient(client);
         analysis.setCategory(category);
         analysis.setRecommendation(recomendacion);
         analysis.setTimestamp(LocalDateTime.now());
         aiClientAnalysisRepository.save(analysis);
+
+        return recomendacion;
     }
 
 }

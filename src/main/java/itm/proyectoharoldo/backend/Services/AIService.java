@@ -1,6 +1,7 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.DTO.AIRecommendationRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,7 +14,8 @@ import java.util.Map;
 @Service
 public class AIService {
 
-    private final String iaUrl = "http://localhost:8081/ia/recomendacion";
+    @Value("${microservice.ia.url}")
+    private String iaUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();
 

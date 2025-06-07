@@ -17,8 +17,8 @@ public class WebAnswersController {
 
     @PostMapping
     public ResponseEntity<String> saveAnswers(@RequestBody QuestionnaireResult result) {
-        clientAnswerService.saveQuestionnaireResult(result);
-        return ResponseEntity.ok("Listo calisto");
+        String iaRecommendation = clientAnswerService.saveQuestionnaireResult(result);
+        return ResponseEntity.ok(iaRecommendation);
     }
 }
 
