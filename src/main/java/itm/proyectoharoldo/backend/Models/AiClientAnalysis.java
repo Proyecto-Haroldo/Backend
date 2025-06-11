@@ -18,8 +18,8 @@ public class AiClientAnalysis {
     private Long analysisId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client", referencedColumnName = "clientid", nullable = false)
-    private Client client;
+    @JoinColumn(name = "questionnaire", referencedColumnName = "clientquestionnaireid")
+    private ClientQuestionnaire questionnaire;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category", referencedColumnName = "categoryid")
@@ -31,6 +31,8 @@ public class AiClientAnalysis {
     @Column(name = "timestamp")
     private LocalDateTime timestamp;
 
+    // Getters y Setters (puedes usar Lombok si lo prefieres)
+
     public Long getAnalysisId() {
         return analysisId;
     }
@@ -39,12 +41,12 @@ public class AiClientAnalysis {
         this.analysisId = analysisId;
     }
 
-    public Client getClient() {
-        return client;
+    public ClientQuestionnaire getQuestionnaire() {
+        return questionnaire;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setQuestionnaire(ClientQuestionnaire questionnaire) {
+        this.questionnaire = questionnaire;
     }
 
     public Category getCategory() {

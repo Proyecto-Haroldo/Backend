@@ -39,6 +39,9 @@ public class Question {
     @JsonManagedReference
     private List<MultipleOptionQuestionAnswer> options;
 
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<AnswersOfQuestionnaire> answersInQuestionnaires;
+
     public Long getQuestionid() {
         return questionid;
     }

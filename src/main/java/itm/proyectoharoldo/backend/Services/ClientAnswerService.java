@@ -1,11 +1,10 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
-import itm.proyectoharoldo.backend.Models.Web.QuestionnaireAnswer;
-import itm.proyectoharoldo.backend.Models.Web.QuestionnaireResult;
+import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +13,8 @@ public class ClientAnswerService {
 
     private final ClientRepository clientRepository;
     private final QuestionRepository questionRepository;
-    private final ClientAnswerRepository clientAnswerRepository;
+    private final ClientQuestionnaireRepository clientQuestionnaireRepository;
+    private final AnswersOfQuestionnaireRepository answersOfQuestionnaireRepository;
     private final AiClientAnalysisRepository aiClientAnalysisRepository;
     private final CategoryRepository categoryRepository;
     private final AIService aiService;
@@ -22,14 +22,16 @@ public class ClientAnswerService {
     public ClientAnswerService(
             ClientRepository clientRepository,
             QuestionRepository questionRepository,
-            ClientAnswerRepository clientAnswerRepository,
+            ClientQuestionnaireRepository clientQuestionnaireRepository,
+            AnswersOfQuestionnaireRepository answersOfQuestionnaireRepository,
             AiClientAnalysisRepository aiClientAnalysisRepository,
             CategoryRepository categoryRepository,
             AIService aiService
     ) {
         this.clientRepository = clientRepository;
         this.questionRepository = questionRepository;
-        this.clientAnswerRepository = clientAnswerRepository;
+        this.clientQuestionnaireRepository = clientQuestionnaireRepository;
+        this.answersOfQuestionnaireRepository = answersOfQuestionnaireRepository;
         this.aiClientAnalysisRepository = aiClientAnalysisRepository;
         this.categoryRepository = categoryRepository;
         this.aiService = aiService;
@@ -37,28 +39,30 @@ public class ClientAnswerService {
 
     @Transactional
     public String saveQuestionnaireResult(QuestionnaireResult result) {
-        Client client = clientRepository.findById(1L).get();
-
+        Client client = clientRepository.findById(1L).orElseThrow();
         LocalDateTime timestamp = LocalDateTime.parse(result.getMetadata().getTimestamp());
-
         String categoryName = result.getMetadata().getCategory();
-        Category category = categoryRepository.findByCategory(categoryName).get();
+        Category category = categoryRepository.findByCategory(categoryName).orElseThrow();
+
+        ClientQuestionnaire questionnaire = new ClientQuestionnaire();
+        questionnaire.setClient(client);
+        questionnaire.setCategory(category);
+        questionnaire.setTimeWhenSolved(timestamp);
+        clientQuestionnaireRepository.save(questionnaire);
 
         StringBuilder promptBuilder = new StringBuilder();
         promptBuilder.append("Tipo: ").append(result.getMetadata().getClientType()).append("\n\n");
         promptBuilder.append("Categoría: ").append(categoryName).append("\n\n");
 
         for (QuestionnaireAnswer qa : result.getAnswers()) {
-            Question question = questionRepository.findById((long) qa.getQuestionId()).get();
-
+            Question question = questionRepository.findById((long) qa.getQuestionId()).orElseThrow();
             String answerText = String.join(" | ", qa.getAnswer());
 
-            ClientAnswer clientAnswer = new ClientAnswer();
-            clientAnswer.setClient(client);
-            clientAnswer.setQuestion(question);
-            clientAnswer.setAnswerText(answerText);
-            clientAnswer.setTimestampWhenAnswered(timestamp);
-            clientAnswerRepository.save(clientAnswer);
+            AnswersOfQuestionnaire answer = new AnswersOfQuestionnaire();
+            answer.setQuestionnaire(questionnaire);
+            answer.setQuestion(question);
+            answer.setAnswerText(answerText);
+            answersOfQuestionnaireRepository.save(answer);
 
             promptBuilder.append("Pregunta: ").append(question.getQuestion()).append("\n");
             promptBuilder.append("Respuesta: ").append(answerText).append("\n\n");
@@ -68,7 +72,7 @@ public class ClientAnswerService {
         String recomendacion = aiService.getRecommendationAsText(prompt);
 
         AiClientAnalysis analysis = new AiClientAnalysis();
-        analysis.setClient(client);
+        analysis.setQuestionnaire(questionnaire);
         analysis.setCategory(category);
         analysis.setRecommendation(recomendacion);
         analysis.setTimestamp(LocalDateTime.now());
@@ -76,5 +80,4 @@ public class ClientAnswerService {
 
         return recomendacion;
     }
-
 }

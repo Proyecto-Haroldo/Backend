@@ -29,9 +29,6 @@ public class Client {
     private ClientType clientType;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private List<AiClientAnalysis> aiAnalyses;
-
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private List<ClientAnswer> clientAnswers;
+    private List<ClientQuestionnaire> questionnaires;
 
 }
