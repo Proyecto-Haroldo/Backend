@@ -51,7 +51,7 @@ public class ClientAnswerService {
         clientQuestionnaireRepository.save(questionnaire);
 
         StringBuilder promptBuilder = new StringBuilder();
-        promptBuilder.append("Tipo: ").append(result.getMetadata().getClientType()).append("\n\n");
+        promptBuilder.append("Cliente: ").append(result.getMetadata().getClientType()).append("\n\n");
         promptBuilder.append("Categoría: ").append(categoryName).append("\n\n");
 
         for (QuestionnaireAnswer qa : result.getAnswers()) {

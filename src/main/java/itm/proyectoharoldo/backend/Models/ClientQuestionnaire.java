@@ -13,8 +13,6 @@ import java.util.List;
 @Table(name = "clientquestionnaire")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class ClientQuestionnaire {
 
     @Id
@@ -39,5 +37,51 @@ public class ClientQuestionnaire {
     @OneToMany(mappedBy = "questionnaire", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswersOfQuestionnaire> answers;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public LocalDateTime getTimeWhenSolved() {
+        return timeWhenSolved;
+    }
+
+    public void setTimeWhenSolved(LocalDateTime timeWhenSolved) {
+        this.timeWhenSolved = timeWhenSolved;
+    }
+
+    public List<AiClientAnalysis> getAnalyses() {
+        return analyses;
+    }
+
+    public void setAnalyses(List<AiClientAnalysis> analyses) {
+        this.analyses = analyses;
+    }
+
+    public List<AnswersOfQuestionnaire> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<AnswersOfQuestionnaire> answers) {
+        this.answers = answers;
+    }
 }

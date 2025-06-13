@@ -9,8 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Category {
@@ -33,4 +31,43 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<AiClientAnalysis> aiAnalyses;
 
+    public Long getCategoryid() {
+        return categoryid;
+    }
+
+    public void setCategoryid(Long categoryid) {
+        this.categoryid = categoryid;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public BigDecimal getDecimalvalue() {
+        return decimalvalue;
+    }
+
+    public void setDecimalvalue(BigDecimal decimalvalue) {
+        this.decimalvalue = decimalvalue;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
+
+    public List<AiClientAnalysis> getAiAnalyses() {
+        return aiAnalyses;
+    }
+
+    public void setAiAnalyses(List<AiClientAnalysis> aiAnalyses) {
+        this.aiAnalyses = aiAnalyses;
+    }
 }

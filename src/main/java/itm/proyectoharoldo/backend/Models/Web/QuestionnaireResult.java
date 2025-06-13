@@ -12,8 +12,6 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
 public class QuestionnaireResult {
 
     QuestionnaireMetadata metadata;
@@ -27,4 +25,19 @@ public class QuestionnaireResult {
     public QuestionnaireResult() {
     }
 
+    public QuestionnaireMetadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(QuestionnaireMetadata metadata) {
+        this.metadata = metadata;
+    }
+
+    public List<QuestionnaireAnswer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<QuestionnaireAnswer> answers) {
+        this.answers = answers;
+    }
 }
