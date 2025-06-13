@@ -41,8 +41,6 @@ public class WebQuestionController {
         List<Question> questions = questionRepository.findAll();
 
         for(Question question : questions){
-            QuestionType questionType = question.getQuestionType();
-
             QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                     question,
                     question.getQuestionType(),
@@ -69,8 +67,6 @@ public class WebQuestionController {
         List<Question> questions = questionRepository.findByCategory(category);
         
         for(Question question : questions) {
-            QuestionType questionType = question.getQuestionType();
-
             QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                     question,
                     question.getQuestionType(),
@@ -95,8 +91,6 @@ public class WebQuestionController {
         List<QuestionWebModel> questionWebModels = new ArrayList<>();
 
         for (Question question : questions) {
-            QuestionType questionType = question.getQuestionType();
-
             QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                     question,
                     question.getQuestionType(),
@@ -115,8 +109,6 @@ public class WebQuestionController {
     @GetMapping("/{id}")
     public QuestionWebModel getquestionbyid(@PathVariable Long id){
         Question question = questionRepository.findById(id).get();
-        QuestionType questionType = question.getQuestionType();
-
         QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                 question,
                 question.getQuestionType(),

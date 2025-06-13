@@ -4,8 +4,8 @@ import itm.proyectoharoldo.backend.Models.MultipleOptionQuestionAnswer;
 import itm.proyectoharoldo.backend.Models.Question;
 import itm.proyectoharoldo.backend.Models.Web.AnswersOptionWebModel;
 import itm.proyectoharoldo.backend.Repositories.MultipleOptionQuestionAnswerRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ public class MultipleOptionAnswersService {
         this.answerRepository = answerRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<MultipleOptionQuestionAnswer> getAnswersByQuestionId(Long questionid){
         return answerRepository.findByQuestion_questionid(questionid);
     }

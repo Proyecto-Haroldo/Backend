@@ -1,12 +1,14 @@
 package itm.proyectoharoldo.backend.Models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "clients")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Client {
@@ -26,35 +28,7 @@ public class Client {
     @Enumerated(EnumType.STRING)
     private ClientType clientType;
 
-    public Long getClientId() {
-        return clientId;
-    }
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<ClientQuestionnaire> questionnaires;
 
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
-    }
-
-    public String getCedulaOrNIT() {
-        return cedulaOrNIT;
-    }
-
-    public void setCedulaOrNIT(String cedulaOrNIT) {
-        this.cedulaOrNIT = cedulaOrNIT;
-    }
-
-    public String getLegalName() {
-        return legalName;
-    }
-
-    public void setLegalName(String legalName) {
-        this.legalName = legalName;
-    }
-
-    public ClientType getClientType() {
-        return clientType;
-    }
-
-    public void setClientType(ClientType clientType) {
-        this.clientType = clientType;
-    }
 }

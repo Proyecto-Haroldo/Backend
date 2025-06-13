@@ -10,9 +10,13 @@ export interface QuestionnaireAnswer {
  */
 
 import itm.proyectoharoldo.backend.Models.QuestionType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class QuestionnaireAnswer {
 
     int questionId;
@@ -28,38 +32,6 @@ public class QuestionnaireAnswer {
     }
 
     public QuestionnaireAnswer() {
-    }
-
-    public int getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(int questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getQuestionTitle() {
-        return questionTitle;
-    }
-
-    public void setQuestionTitle(String questionTitle) {
-        this.questionTitle = questionTitle;
-    }
-
-    public List<String> getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(List<String> answer) {
-        this.answer = answer;
-    }
-
-    public QuestionType getQuestionType() {
-        return questionType;
-    }
-
-    public void setQuestionType(QuestionType questionType) {
-        this.questionType = questionType;
     }
 
 }

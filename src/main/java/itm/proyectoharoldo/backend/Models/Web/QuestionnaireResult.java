@@ -7,33 +7,24 @@ export interface QuestionnaireResult {
 }
  */
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@Getter
+@Setter
 public class QuestionnaireResult {
 
     QuestionnaireMetadata metadata;
-    QuestionnaireAnswer answers;
+    List<QuestionnaireAnswer> answers;
 
-    public QuestionnaireResult(QuestionnaireMetadata metadata, QuestionnaireAnswer answers) {
+    public QuestionnaireResult(QuestionnaireMetadata metadata, List<QuestionnaireAnswer> answers) {
         this.metadata = metadata;
         this.answers = answers;
     }
 
     public QuestionnaireResult() {
-    }
-
-    public QuestionnaireMetadata getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(QuestionnaireMetadata metadata) {
-        this.metadata = metadata;
-    }
-
-    public QuestionnaireAnswer getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(QuestionnaireAnswer answers) {
-        this.answers = answers;
     }
 
 }

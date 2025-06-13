@@ -1,7 +1,5 @@
 package itm.proyectoharoldo.backend.Models;
 
-import lombok.*;
-
 /* According to Johann's model:
 export interface Keyword {
   title: string;

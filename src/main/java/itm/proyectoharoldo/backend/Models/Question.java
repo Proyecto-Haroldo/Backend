@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -39,6 +38,9 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<MultipleOptionQuestionAnswer> options;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<AnswersOfQuestionnaire> answersInQuestionnaires;
 
     public Long getQuestionid() {
         return questionid;
