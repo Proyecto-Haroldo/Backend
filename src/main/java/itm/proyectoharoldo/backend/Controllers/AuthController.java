@@ -51,6 +51,10 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Correo ya registrado");
         }
 
+        if(clientRepository.findByCedulaOrNIT(request.getCedulaOrNIT()).isPresent()){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un usuario con esta cédula/NIT");
+        }
+
         Client newClient = new Client();
         newClient.setEmail(request.getEmail());
         newClient.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -62,6 +66,8 @@ public class AuthController {
         clientRepository.save(newClient);
         return ResponseEntity.ok("Usuario registrado con éxito");
     }
+
 }
+
 
 
