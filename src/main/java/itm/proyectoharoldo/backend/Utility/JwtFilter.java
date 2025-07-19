@@ -26,21 +26,31 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (request.getServletPath().startsWith("/api/auth")) {
+        String path = request.getServletPath();
+        if (path.startsWith("/api/auth/") || path.startsWith("/api/public/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            String username = jwtUtil.extractUsername(token);
+        String token = null;
+        String username = null;
 
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+            try {
+                username = jwtUtil.extractUsername(token);
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+        }
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (jwtUtil.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
@@ -48,4 +58,3 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-

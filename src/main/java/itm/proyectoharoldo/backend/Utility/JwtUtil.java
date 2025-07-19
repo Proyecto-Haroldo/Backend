@@ -2,6 +2,8 @@ package itm.proyectoharoldo.backend.Utility;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -26,5 +28,14 @@ public class JwtUtil {
                 .build()
                 .verify(token)
                 .getSubject();
+    }
+
+    public boolean validateToken(String token, UserDetails userDetails) {
+        try {
+            String username = extractUsername(token);
+            return username.equals(userDetails.getUsername());
+        } catch (JWTVerificationException e) {
+            return false;
+        }
     }
 }
