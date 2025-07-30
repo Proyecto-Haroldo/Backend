@@ -4,11 +4,16 @@ import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.Objects;
+
+import static org.springframework.http.ResponseEntity.internalServerError;
 
 @Service
 public class ClientAnswerService {
@@ -40,8 +45,8 @@ public class ClientAnswerService {
     }
 
     @Transactional
-    public String saveQuestionnaireResult(QuestionnaireResult result) {
-        Client client = clientRepository.findById(1L).orElseThrow();
+    public ResponseEntity<String> saveQuestionnaireResult(QuestionnaireResult result, Long clientId) {
+        Client client = clientRepository.findById(clientId).orElseThrow();
         
         // Parse timestamp with timezone support
         LocalDateTime timestamp;
@@ -82,15 +87,35 @@ public class ClientAnswerService {
         }
 
         String prompt = promptBuilder.toString();
-        String recomendacion = aiService.getRecommendationAsText(prompt);
+
+        ResponseEntity<Map> recomendationResponse = aiService.getAiRecommendation(prompt);
+        ResponseEntity<String> responseEntity = processRecomendation(recomendationResponse);
 
         AiClientAnalysis analysis = new AiClientAnalysis();
         analysis.setQuestionnaire(questionnaire);
         analysis.setCategory(category);
-        analysis.setRecommendation(recomendacion);
+        if(responseEntity.getStatusCode().is2xxSuccessful()){
+            analysis.setRecommendation(responseEntity.getBody());
+        } else {
+            analysis.setRecommendation("Error al realizar recomendación, inténtelo nuevamente.");
+        }
         analysis.setTimestamp(LocalDateTime.now());
         aiClientAnalysisRepository.save(analysis);
 
-        return recomendacion;
+
+        return responseEntity;
+    }
+
+    private ResponseEntity<String> processRecomendation(ResponseEntity<Map> recomendationResponse){
+        if(recomendationResponse.getStatusCode().is5xxServerError()){
+            return ResponseEntity.internalServerError().body(
+                    "No se pudo obtener la recomendación de IA en este momento. " +
+                            Objects.requireNonNull(recomendationResponse.getBody()).get("response").toString()
+            );
+        } else {
+            return ResponseEntity.ok(
+                    Objects.requireNonNull(recomendationResponse.getBody()).get("response").toString()
+            );
+        }
     }
 }
