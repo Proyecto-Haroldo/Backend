@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class ClientAnswerService {
@@ -40,7 +42,18 @@ public class ClientAnswerService {
     @Transactional
     public String saveQuestionnaireResult(QuestionnaireResult result) {
         Client client = clientRepository.findById(1L).orElseThrow();
-        LocalDateTime timestamp = LocalDateTime.parse(result.getMetadata().getTimestamp());
+        
+        // Parse timestamp with timezone support
+        LocalDateTime timestamp;
+        try {
+            // Try to parse as ISO 8601 with timezone
+            ZonedDateTime zonedDateTime = ZonedDateTime.parse(result.getMetadata().getTimestamp());
+            timestamp = zonedDateTime.toLocalDateTime();
+        } catch (Exception e) {
+            // Fallback to LocalDateTime if no timezone
+            timestamp = LocalDateTime.parse(result.getMetadata().getTimestamp());
+        }
+        
         String categoryName = result.getMetadata().getCategory();
         Category category = categoryRepository.findByCategory(categoryName).orElseThrow();
 
@@ -51,7 +64,7 @@ public class ClientAnswerService {
         clientQuestionnaireRepository.save(questionnaire);
 
         StringBuilder promptBuilder = new StringBuilder();
-        promptBuilder.append("Tipo: ").append(result.getMetadata().getClientType()).append("\n\n");
+        promptBuilder.append("Cliente: ").append(result.getMetadata().getClientType()).append("\n\n");
         promptBuilder.append("Categoría: ").append(categoryName).append("\n\n");
 
         for (QuestionnaireAnswer qa : result.getAnswers()) {
