@@ -9,11 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
-
-import static org.springframework.http.ResponseEntity.internalServerError;
 
 @Service
 public class ClientAnswerService {

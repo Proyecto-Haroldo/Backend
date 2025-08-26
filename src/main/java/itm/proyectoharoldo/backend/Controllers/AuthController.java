@@ -5,7 +5,6 @@ import itm.proyectoharoldo.backend.Models.DTO.AuthRequest;
 import itm.proyectoharoldo.backend.Models.DTO.RegisterRequest;
 import itm.proyectoharoldo.backend.Repositories.ClientRepository;
 import itm.proyectoharoldo.backend.Utility.JwtUtil;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

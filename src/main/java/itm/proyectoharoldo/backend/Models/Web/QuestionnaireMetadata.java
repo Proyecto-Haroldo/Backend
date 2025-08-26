@@ -8,8 +8,6 @@ export interface QuestionnaireMetadata {
 }
  */
 
-import lombok.Getter;
-import lombok.Setter;
 
 public class QuestionnaireMetadata {
 

@@ -1,16 +1,42 @@
 services:
-  app:
+  backend:
     build: .
-    container_name: springboot-app
+    container_name: backend-haroldo
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://aws-0-us-east-2.pooler.supabase.com:6543/postgres?user=postgres.umtlidnqgmsutxwmljyx&password=PRgqC0yJZMkIwkgQ&preferQueryMode=simple
+      SPRING_DATASOURCE_URL: jdbc:postgresql://aws-0-us-east-2.pooler.supabase.com:6543/postgres?preferQueryMode=simple
       SPRING_DATASOURCE_USERNAME: postgres.umtlidnqgmsutxwmljyx
-      SPRING_DATASOURCE_PASSWORD: PRgqC0yJZMkIwkgQ
+      SPRING_DATASOURCE_PASSWORD: fEJW94sBHS0jAL2y2121aas
+      MICROSERVICE_IA_URL: http://microservicio-ia:8081/ia/recomendacion
+    depends_on:
+      - microservicio-ia
     networks:
-      - red-microservicios
+      - haroldo-network
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+  microservicio-ia:
+    build: ../microservicioia
+    container_name: microservicio-ia-haroldo
+    ports:
+      - "8081:8081"
+    environment:
+      GEMINI_API_KEY: AIzaSyAOZNnV0dsUdIiqBHEIIV4fxUoJKTNXsgM
+    networks:
+      - haroldo-network
+
+  frontend:
+    build: ../Frontend
+    container_name: frontend-haroldo
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - haroldo-network
 
 networks:
-  red-microservicios:
-    external: true
+  haroldo-network:
+    driver: bridge

@@ -1,7 +1,6 @@
 package itm.proyectoharoldo.backend.Models.Web;
 
 import itm.proyectoharoldo.backend.Models.GlossaryWord;
-import itm.proyectoharoldo.backend.Models.MultipleOptionQuestionAnswer;
 import itm.proyectoharoldo.backend.Models.QuestionType;
 
 import java.util.List;
