@@ -10,8 +10,6 @@ export interface QuestionnaireAnswer {
  */
 
 import itm.proyectoharoldo.backend.Models.QuestionType;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 

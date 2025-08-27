@@ -6,7 +6,6 @@ import itm.proyectoharoldo.backend.Models.DTO.ClientQuestionnaireDTO;
 import itm.proyectoharoldo.backend.Models.DTO.QuestionnaireAnswerDTO;
 import itm.proyectoharoldo.backend.Repositories.ClientQuestionnaireRepository;
 import itm.proyectoharoldo.backend.Repositories.ClientRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

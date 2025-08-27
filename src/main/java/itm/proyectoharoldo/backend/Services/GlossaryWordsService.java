@@ -1,6 +1,5 @@
 package itm.proyectoharoldo.backend.Services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import itm.proyectoharoldo.backend.Models.GlossaryWord;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;

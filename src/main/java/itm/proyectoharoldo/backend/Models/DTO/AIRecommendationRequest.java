@@ -7,10 +7,10 @@ import lombok.Setter;
 @Setter
 public class AIRecommendationRequest {
 
-    private String prompt;
+    private String clientAnswers;
 
     public AIRecommendationRequest(String prompt){
-        this.prompt = prompt;
+        this.clientAnswers = prompt;
     }
 
     public AIRecommendationRequest(){

@@ -7,9 +7,6 @@ export interface QuestionnaireResult {
 }
  */
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.List;
 
 public class QuestionnaireResult {
