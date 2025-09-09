@@ -8,6 +8,9 @@ import itm.proyectoharoldo.backend.Services.KeywordsService;
 import itm.proyectoharoldo.backend.Services.MultipleOptionAnswersService;
 import itm.proyectoharoldo.backend.Services.WebQuestionService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +40,11 @@ public class WebQuestionController {
 
     @GetMapping
     public List<QuestionWebModel> getEmAll(){
-        List<QuestionWebModel> questionWebModels = new ArrayList<QuestionWebModel>();
-        List<Question> questions = questionRepository.findAll();
+        // Use optimized query with JOIN FETCH
+        List<Question> questions = questionRepository.findAllWithOptions();
+        List<QuestionWebModel> questionWebModels = new ArrayList<>();
 
+        // Convert to web models
         for(Question question : questions){
             QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                     question,
@@ -47,25 +52,22 @@ public class WebQuestionController {
                     multipleOptionAnswersService.getAnswersAsWebModel(question),
                     List.of()
             );
-
-            keywordsService.enrichQuestionWithKeywords(model);
-
             questionWebModels.add(model);
-
         }
+
+        // Batch process keywords for all questions
+        keywordsService.enrichQuestionsWithKeywords(questionWebModels);
 
         return questionWebModels;
     }
 
     @GetMapping("/categoria/{categoryName}")
     public List<QuestionWebModel> getQuestionsByCategory(@PathVariable String categoryName) {
+        // Use optimized query with JOIN FETCH
+        List<Question> questions = questionRepository.findByCategoryNameWithOptions(categoryName);
         List<QuestionWebModel> questionWebModels = new ArrayList<>();
         
-        Category category = categoryRepository.findByCategory(categoryName)
-            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
-            
-        List<Question> questions = questionRepository.findByCategory(category);
-        
+        // Convert to web models
         for(Question question : questions) {
             QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                     question,
@@ -73,11 +75,11 @@ public class WebQuestionController {
                     multipleOptionAnswersService.getAnswersAsWebModel(question),
                     List.of()
             );
-
-            keywordsService.enrichQuestionWithKeywords(model);
-
             questionWebModels.add(model);
         }
+        
+        // Batch process keywords for all questions
+        keywordsService.enrichQuestionsWithKeywords(questionWebModels);
         
         return questionWebModels;
     }
@@ -87,9 +89,11 @@ public class WebQuestionController {
             @RequestParam String category,
             @RequestParam ClientType clienttype) {
 
-        List<Question> questions = questionRepository.findByCategory_CategoryAndClientType(category, clienttype);
+        // Use optimized query with JOIN FETCH
+        List<Question> questions = questionRepository.findByCategoryAndClientTypeWithOptions(category, clienttype);
         List<QuestionWebModel> questionWebModels = new ArrayList<>();
 
+        // Convert to web models
         for (Question question : questions) {
             QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                     question,
@@ -97,13 +101,58 @@ public class WebQuestionController {
                     multipleOptionAnswersService.getAnswersAsWebModel(question),
                     List.of()
             );
-
-            keywordsService.enrichQuestionWithKeywords(model);
-
             questionWebModels.add(model);
         }
 
+        // Batch process keywords for all questions
+        keywordsService.enrichQuestionsWithKeywords(questionWebModels);
+
         return questionWebModels;
+    }
+
+    // Paginated endpoints for better performance with large datasets
+    @GetMapping("/paginated")
+    public Page<QuestionWebModel> getQuestionsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Question> questionPage = questionRepository.findByCategoryWithOptions(null, pageable);
+        
+        return questionPage.map(question -> {
+            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
+                    question,
+                    question.getQuestionType(),
+                    multipleOptionAnswersService.getAnswersAsWebModel(question),
+                    List.of()
+            );
+            keywordsService.enrichQuestionWithKeywords(model);
+            return model;
+        });
+    }
+
+    @GetMapping("/categoria/{categoryName}/paginated")
+    public Page<QuestionWebModel> getQuestionsByCategoryPaginated(
+            @PathVariable String categoryName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        
+        Category category = categoryRepository.findByCategory(categoryName)
+            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+            
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Question> questionPage = questionRepository.findByCategoryWithOptions(category, pageable);
+        
+        return questionPage.map(question -> {
+            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
+                    question,
+                    question.getQuestionType(),
+                    multipleOptionAnswersService.getAnswersAsWebModel(question),
+                    List.of()
+            );
+            keywordsService.enrichQuestionWithKeywords(model);
+            return model;
+        });
     }
 
     @GetMapping("/{id}")

@@ -18,7 +18,7 @@ services:
       - 8.8.4.4
 
   microservicio-ia:
-    build: ../microservicioia
+    build: ../IA-Microservice
     container_name: microservicio-ia-haroldo
     ports:
       - "8081:8081"
