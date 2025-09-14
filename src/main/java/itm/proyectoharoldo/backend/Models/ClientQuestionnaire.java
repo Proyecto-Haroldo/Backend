@@ -35,6 +35,10 @@ public class ClientQuestionnaire {
     @OneToMany(mappedBy = "questionnaire", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswersOfQuestionnaire> answers;
 
+    @Column(name = "state")
+    @Enumerated(EnumType.STRING)
+    private QuestionnaireState state;
+
     public Long getId() {
         return id;
     }
@@ -81,5 +85,13 @@ public class ClientQuestionnaire {
 
     public void setAnswers(List<AnswersOfQuestionnaire> answers) {
         this.answers = answers;
+    }
+
+    public QuestionnaireState getState(){
+        return state;
+    }
+
+    public void setState(QuestionnaireState  state){
+        this.state = state;
     }
 }
