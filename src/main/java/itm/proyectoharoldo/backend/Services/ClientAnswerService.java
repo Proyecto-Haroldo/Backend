@@ -1,6 +1,7 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Models.DTO.AiClientAnalysisDTO;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import jakarta.transaction.Transactional;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -43,31 +46,82 @@ public class ClientAnswerService {
 
     @Transactional
     public ResponseEntity<String> saveQuestionnaireResult(QuestionnaireResult result, Long clientId) {
-        Client client = clientRepository.findById(clientId).orElseThrow();
-        
-        // Parse timestamp with timezone support
-        LocalDateTime timestamp;
-        try {
-            // Try to parse as ISO 8601 with timezone
-            ZonedDateTime zonedDateTime = ZonedDateTime.parse(result.getMetadata().getTimestamp());
-            timestamp = zonedDateTime.toLocalDateTime();
-        } catch (Exception e) {
-            // Fallback to LocalDateTime if no timezone
-            timestamp = LocalDateTime.parse(result.getMetadata().getTimestamp());
+
+        Category category = categoryRepository.findByCategory(result.getMetadata().getCategory()).orElseThrow();
+        ClientQuestionnaire questionnaire = saveNewQuestionnaire(result, clientId);
+        saveAnswersOfQuestionnaire(result, questionnaire);
+        String AiPrompt = buildAiPrompt(result);
+
+        ResponseEntity<Map> recomendationResponse = aiService.getAiRecommendation(AiPrompt);
+        ResponseEntity<String> responseEntity = processRecomendation(recomendationResponse);
+
+        saveAnalysis(category, questionnaire, responseEntity);
+
+        return responseEntity;
+    }
+
+    private ResponseEntity<String> processRecomendation(ResponseEntity<Map> recomendationResponse) {
+        if (recomendationResponse.getStatusCode().is5xxServerError()) {
+            return ResponseEntity.internalServerError().body(
+                    "No se pudo obtener la recomendación de IA en este momento. " +
+                            Objects.requireNonNull(recomendationResponse.getBody()).get("response").toString()
+            );
+        } else {
+            String cleanResponse = cleanJsonResponse(recomendationResponse.getBody().get("response").toString());
+            try{
+                return ResponseEntity.ok(Objects.requireNonNull(cleanResponse));
+            } catch (Exception ex){
+                return ResponseEntity.internalServerError().body(
+                        "No se pudo obtener la recomendación de IA en este momento. " +
+                                ex.getMessage()
+                );
+            }
+
         }
-        
-        String categoryName = result.getMetadata().getCategory();
-        Category category = categoryRepository.findByCategory(categoryName).orElseThrow();
+    }
+
+    private LocalDateTime dateTimeParser(String timestamp) {
+        try {
+            return ZonedDateTime.parse(timestamp).toLocalDateTime();
+        } catch (Exception e) {
+            return LocalDateTime.parse(timestamp);
+        }
+    }
+
+    private ClientQuestionnaire saveNewQuestionnaire(QuestionnaireResult result, Long clientId) {
+
+        Client client = clientRepository.findById(clientId).orElseThrow();
+        Category category = categoryRepository.findByCategory(result.getMetadata().getCategory()).orElseThrow();
 
         ClientQuestionnaire questionnaire = new ClientQuestionnaire();
         questionnaire.setClient(client);
         questionnaire.setCategory(category);
-        questionnaire.setTimeWhenSolved(timestamp);
-        clientQuestionnaireRepository.save(questionnaire);
+        questionnaire.setTimeWhenSolved(dateTimeParser(result.getMetadata().getTimestamp()));
+        questionnaire.setState(QuestionnaireState.pending);
+        return clientQuestionnaireRepository.save(questionnaire);
+    }
+
+    private String buildAiPrompt(QuestionnaireResult result){
 
         StringBuilder promptBuilder = new StringBuilder();
         promptBuilder.append("Cliente: ").append(result.getMetadata().getClientType()).append("\n\n");
-        promptBuilder.append("Categoría: ").append(categoryName).append("\n\n");
+        promptBuilder.append("Categoría: ").append(result.getMetadata().getCategory()).append("\n\n");
+
+        for(QuestionnaireAnswer answerData : result.getAnswers()){
+            Question question = questionRepository.findById((long) answerData.getQuestionId()).orElseThrow();
+            String answerText = String.join(" | ", answerData.getAnswer());
+
+            promptBuilder.append("Pregunta: ").append(question.getQuestion()).append("\n");
+            promptBuilder.append("Respuesta: ").append(answerText).append("\n\n");
+        }
+
+        return promptBuilder.toString();
+
+    }
+
+    private void saveAnswersOfQuestionnaire(QuestionnaireResult result, ClientQuestionnaire questionnaire){
+
+        List<AnswersOfQuestionnaire> questionnaireAnswerList = new ArrayList<>();
 
         for (QuestionnaireAnswer qa : result.getAnswers()) {
             Question question = questionRepository.findById((long) qa.getQuestionId()).orElseThrow();
@@ -77,42 +131,52 @@ public class ClientAnswerService {
             answer.setQuestionnaire(questionnaire);
             answer.setQuestion(question);
             answer.setAnswerText(answerText);
-            answersOfQuestionnaireRepository.save(answer);
 
-            promptBuilder.append("Pregunta: ").append(question.getQuestion()).append("\n");
-            promptBuilder.append("Respuesta: ").append(answerText).append("\n\n");
+            questionnaireAnswerList.add(answer);
         }
 
-        String prompt = promptBuilder.toString();
+        answersOfQuestionnaireRepository.saveAll(questionnaireAnswerList);
+    }
 
-        ResponseEntity<Map> recomendationResponse = aiService.getAiRecommendation(prompt);
-        ResponseEntity<String> responseEntity = processRecomendation(recomendationResponse);
-
+    private void saveAnalysis(Category category, ClientQuestionnaire questionnaire, ResponseEntity<String> aiServiceResponse){
         AiClientAnalysis analysis = new AiClientAnalysis();
         analysis.setQuestionnaire(questionnaire);
         analysis.setCategory(category);
-        if(responseEntity.getStatusCode().is2xxSuccessful()){
-            analysis.setRecommendation(responseEntity.getBody());
+        if (aiServiceResponse.getStatusCode().is2xxSuccessful()) {
+            analysis.setRecommendation(aiServiceResponse.getBody());
         } else {
             analysis.setRecommendation("Error al realizar recomendación, inténtelo nuevamente.");
         }
         analysis.setTimestamp(LocalDateTime.now());
         aiClientAnalysisRepository.save(analysis);
-
-
-        return responseEntity;
     }
 
-    private ResponseEntity<String> processRecomendation(ResponseEntity<Map> recomendationResponse){
-        if(recomendationResponse.getStatusCode().is5xxServerError()){
-            return ResponseEntity.internalServerError().body(
-                    "No se pudo obtener la recomendación de IA en este momento. " +
-                            Objects.requireNonNull(recomendationResponse.getBody()).get("response").toString()
-            );
-        } else {
-            return ResponseEntity.ok(
-                    Objects.requireNonNull(recomendationResponse.getBody()).get("response").toString()
-            );
+    private String cleanJsonResponse(String response) {
+        if (response == null || response.trim().isEmpty()) {
+            return response;
         }
+
+        String cleaned = response.trim();
+
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
+                "```(?:json)?\\s*\\n?([\\s\\S]*?)```",
+                java.util.regex.Pattern.DOTALL
+        );
+        java.util.regex.Matcher matcher = pattern.matcher(cleaned);
+
+        if (matcher.find()) {
+            cleaned = matcher.group(1).trim();
+        }
+
+        if (!cleaned.startsWith("{") || !cleaned.endsWith("}")) {
+            int startIndex = cleaned.indexOf("{");
+            int endIndex = cleaned.lastIndexOf("}");
+
+            if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
+                cleaned = cleaned.substring(startIndex, endIndex + 1);
+            }
+        }
+
+        return cleaned.trim();
     }
 }
