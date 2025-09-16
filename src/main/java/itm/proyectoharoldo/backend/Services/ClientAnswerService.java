@@ -1,6 +1,7 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Models.DTO.AiClientAnalysisDTO;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import jakarta.transaction.Transactional;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -64,9 +67,16 @@ public class ClientAnswerService {
                             Objects.requireNonNull(recomendationResponse.getBody()).get("response").toString()
             );
         } else {
-            return ResponseEntity.ok(
-                    Objects.requireNonNull(recomendationResponse.getBody()).get("response").toString()
-            );
+            String cleanResponse = cleanJsonResponse(recomendationResponse.getBody().get("response").toString());
+            try{
+                return ResponseEntity.ok(Objects.requireNonNull(cleanResponse));
+            } catch (Exception ex){
+                return ResponseEntity.internalServerError().body(
+                        "No se pudo obtener la recomendación de IA en este momento. " +
+                                ex.getMessage()
+                );
+            }
+
         }
     }
 
@@ -87,6 +97,7 @@ public class ClientAnswerService {
         questionnaire.setClient(client);
         questionnaire.setCategory(category);
         questionnaire.setTimeWhenSolved(dateTimeParser(result.getMetadata().getTimestamp()));
+        questionnaire.setState(QuestionnaireState.pending);
         return clientQuestionnaireRepository.save(questionnaire);
     }
 
@@ -110,6 +121,8 @@ public class ClientAnswerService {
 
     private void saveAnswersOfQuestionnaire(QuestionnaireResult result, ClientQuestionnaire questionnaire){
 
+        List<AnswersOfQuestionnaire> questionnaireAnswerList = new ArrayList<>();
+
         for (QuestionnaireAnswer qa : result.getAnswers()) {
             Question question = questionRepository.findById((long) qa.getQuestionId()).orElseThrow();
             String answerText = String.join(" | ", qa.getAnswer());
@@ -118,8 +131,11 @@ public class ClientAnswerService {
             answer.setQuestionnaire(questionnaire);
             answer.setQuestion(question);
             answer.setAnswerText(answerText);
-            answersOfQuestionnaireRepository.save(answer);
+
+            questionnaireAnswerList.add(answer);
         }
+
+        answersOfQuestionnaireRepository.saveAll(questionnaireAnswerList);
     }
 
     private void saveAnalysis(Category category, ClientQuestionnaire questionnaire, ResponseEntity<String> aiServiceResponse){
@@ -133,5 +149,34 @@ public class ClientAnswerService {
         }
         analysis.setTimestamp(LocalDateTime.now());
         aiClientAnalysisRepository.save(analysis);
+    }
+
+    private String cleanJsonResponse(String response) {
+        if (response == null || response.trim().isEmpty()) {
+            return response;
+        }
+
+        String cleaned = response.trim();
+
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
+                "```(?:json)?\\s*\\n?([\\s\\S]*?)```",
+                java.util.regex.Pattern.DOTALL
+        );
+        java.util.regex.Matcher matcher = pattern.matcher(cleaned);
+
+        if (matcher.find()) {
+            cleaned = matcher.group(1).trim();
+        }
+
+        if (!cleaned.startsWith("{") || !cleaned.endsWith("}")) {
+            int startIndex = cleaned.indexOf("{");
+            int endIndex = cleaned.lastIndexOf("}");
+
+            if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
+                cleaned = cleaned.substring(startIndex, endIndex + 1);
+            }
+        }
+
+        return cleaned.trim();
     }
 }
