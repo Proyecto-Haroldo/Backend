@@ -1,5 +1,6 @@
 package itm.proyectoharoldo.backend.Models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,6 +38,7 @@ public class Client {
     private Role role;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ClientQuestionnaire> questionnaires;
 
     public Long getClientId() {
