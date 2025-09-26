@@ -1,9 +1,10 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
-import itm.proyectoharoldo.backend.Models.DTO.AiClientAnalysisDTO;
+import itm.proyectoharoldo.backend.Models.DTO.AIAnalysisResultDTO;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
+import itm.proyectoharoldo.backend.Utility.AIAnalysisParser;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class ClientAnswerService {
@@ -22,7 +22,6 @@ public class ClientAnswerService {
     private final QuestionRepository questionRepository;
     private final ClientQuestionnaireRepository clientQuestionnaireRepository;
     private final AnswersOfQuestionnaireRepository answersOfQuestionnaireRepository;
-    private final AiClientAnalysisRepository aiClientAnalysisRepository;
     private final CategoryRepository categoryRepository;
     private final AIService aiService;
 
@@ -31,7 +30,6 @@ public class ClientAnswerService {
             QuestionRepository questionRepository,
             ClientQuestionnaireRepository clientQuestionnaireRepository,
             AnswersOfQuestionnaireRepository answersOfQuestionnaireRepository,
-            AiClientAnalysisRepository aiClientAnalysisRepository,
             CategoryRepository categoryRepository,
             AIService aiService
     ) {
@@ -39,44 +37,34 @@ public class ClientAnswerService {
         this.questionRepository = questionRepository;
         this.clientQuestionnaireRepository = clientQuestionnaireRepository;
         this.answersOfQuestionnaireRepository = answersOfQuestionnaireRepository;
-        this.aiClientAnalysisRepository = aiClientAnalysisRepository;
         this.categoryRepository = categoryRepository;
         this.aiService = aiService;
     }
 
     @Transactional
-    public ResponseEntity<String> saveQuestionnaireResult(QuestionnaireResult result, Long clientId) {
-
+    public AIAnalysisResultDTO saveQuestionnaireResult(QuestionnaireResult result, Long clientId) {
         Category category = categoryRepository.findByCategory(result.getMetadata().getCategory()).orElseThrow();
-        ClientQuestionnaire questionnaire = saveNewQuestionnaire(result, clientId);
-        saveAnswersOfQuestionnaire(result, questionnaire);
         String AiPrompt = buildAiPrompt(result);
 
         ResponseEntity<Map> recomendationResponse = aiService.getAiRecommendation(AiPrompt);
-        ResponseEntity<String> responseEntity = processRecomendation(recomendationResponse);
+        AIAnalysisResultDTO responseDTO = processRecomendation(recomendationResponse);
 
-        saveAnalysis(category, questionnaire, responseEntity);
+        ClientQuestionnaire questionnaire = saveNewQuestionnaire(result, clientId, responseDTO);
+        saveAnswersOfQuestionnaire(result, questionnaire);
 
-        return responseEntity;
+        return responseDTO;
     }
 
-    private ResponseEntity<String> processRecomendation(ResponseEntity<Map> recomendationResponse) {
+    private AIAnalysisResultDTO processRecomendation(ResponseEntity<Map> recomendationResponse) {
         if (recomendationResponse.getStatusCode().is5xxServerError()) {
-            return ResponseEntity.internalServerError().body(
-                    "No se pudo obtener la recomendación de IA en este momento. " +
-                            Objects.requireNonNull(recomendationResponse.getBody()).get("response").toString()
-            );
+            return null;
         } else {
             String cleanResponse = cleanJsonResponse(recomendationResponse.getBody().get("response").toString());
             try{
-                return ResponseEntity.ok(Objects.requireNonNull(cleanResponse));
+                return new AIAnalysisParser().parseResponseToAnalysis(cleanResponse);
             } catch (Exception ex){
-                return ResponseEntity.internalServerError().body(
-                        "No se pudo obtener la recomendación de IA en este momento. " +
-                                ex.getMessage()
-                );
+                return null;
             }
-
         }
     }
 
@@ -88,7 +76,7 @@ public class ClientAnswerService {
         }
     }
 
-    private ClientQuestionnaire saveNewQuestionnaire(QuestionnaireResult result, Long clientId) {
+    private ClientQuestionnaire saveNewQuestionnaire(QuestionnaireResult result, Long clientId, AIAnalysisResultDTO aiAnalysisResultDTO) {
 
         Client client = clientRepository.findById(clientId).orElseThrow();
         Category category = categoryRepository.findByCategory(result.getMetadata().getCategory()).orElseThrow();
@@ -98,6 +86,10 @@ public class ClientAnswerService {
         questionnaire.setCategory(category);
         questionnaire.setTimeWhenSolved(dateTimeParser(result.getMetadata().getTimestamp()));
         questionnaire.setState(QuestionnaireState.pending);
+        questionnaire.setRecomendacionUsuario(aiAnalysisResultDTO.getResumenUsuario());
+        questionnaire.setColorSemaforo(aiAnalysisResultDTO.getColorSemaforo());
+        questionnaire.setAnalisisAsesor(aiAnalysisResultDTO.getAnalisisAsesor());
+        questionnaire.setConteo(clientQuestionnaireRepository.countByClientAndCategory(client, category) + 1);
         return clientQuestionnaireRepository.save(questionnaire);
     }
 
@@ -138,19 +130,6 @@ public class ClientAnswerService {
         answersOfQuestionnaireRepository.saveAll(questionnaireAnswerList);
     }
 
-    private void saveAnalysis(Category category, ClientQuestionnaire questionnaire, ResponseEntity<String> aiServiceResponse){
-        AiClientAnalysis analysis = new AiClientAnalysis();
-        analysis.setQuestionnaire(questionnaire);
-        analysis.setCategory(category);
-        if (aiServiceResponse.getStatusCode().is2xxSuccessful()) {
-            analysis.setRecommendation(aiServiceResponse.getBody());
-        } else {
-            analysis.setRecommendation("Error al realizar recomendación, inténtelo nuevamente.");
-        }
-        analysis.setTimestamp(LocalDateTime.now());
-        aiClientAnalysisRepository.save(analysis);
-    }
-
     private String cleanJsonResponse(String response) {
         if (response == null || response.trim().isEmpty()) {
             return response;
@@ -179,4 +158,5 @@ public class ClientAnswerService {
 
         return cleaned.trim();
     }
+
 }

@@ -28,9 +28,6 @@ public class Category {
     @JsonManagedReference
     private List<Question> questions;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<AiClientAnalysis> aiAnalyses;
-
     public Long getCategoryid() {
         return categoryid;
     }
@@ -63,11 +60,4 @@ public class Category {
         this.questions = questions;
     }
 
-    public List<AiClientAnalysis> getAiAnalyses() {
-        return aiAnalyses;
-    }
-
-    public void setAiAnalyses(List<AiClientAnalysis> aiAnalyses) {
-        this.aiAnalyses = aiAnalyses;
-    }
 }
