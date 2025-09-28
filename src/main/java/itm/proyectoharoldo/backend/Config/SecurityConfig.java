@@ -1,6 +1,7 @@
 package itm.proyectoharoldo.backend.Config;
 
 import itm.proyectoharoldo.backend.Services.UserDetailsServiceImpl;
+import itm.proyectoharoldo.backend.Utility.CustomAuthEntryPoint;
 import itm.proyectoharoldo.backend.Utility.JwtFilter;
 import itm.proyectoharoldo.backend.Utility.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,9 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler()))
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler(customAccessDeniedHandler())
+                        .authenticationEntryPoint(customAuthEntryPoint()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -76,6 +79,11 @@ public class SecurityConfig {
     @Bean
     public CustomAccessDeniedHandler customAccessDeniedHandler() {
         return new CustomAccessDeniedHandler();
+    }
+
+    @Bean
+    public CustomAuthEntryPoint customAuthEntryPoint(){
+        return new CustomAuthEntryPoint();
     }
 
     @Bean

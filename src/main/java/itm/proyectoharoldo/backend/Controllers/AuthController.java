@@ -26,7 +26,8 @@ public class AuthController {
     private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, ClientRepository clientRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
+            ClientRepository clientRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.clientRepository = clientRepository;
@@ -42,7 +43,11 @@ public class AuthController {
         Client client = clientRepository.findByEmail(request.getEmail()).orElseThrow();
         String token = jwtUtil.generateToken(client.getEmail());
 
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "role", client.getRole(),
+                "id", client.getClientId(),
+                "message", "Inicio de sesión exitoso."));
     }
 
     @PostMapping("/register")
@@ -51,7 +56,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Correo ya registrado");
         }
 
-        if(clientRepository.findByCedulaOrNIT(request.getCedulaOrNIT()).isPresent()){
+        if (clientRepository.findByCedulaOrNIT(request.getCedulaOrNIT()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un usuario con esta cédula/NIT");
         }
 
@@ -63,11 +68,14 @@ public class AuthController {
         newClient.setClientType(request.getClientType());
         newClient.setRole(request.getRole());
 
+        String token = jwtUtil.generateToken(newClient.getEmail());
+
         clientRepository.save(newClient);
-        return ResponseEntity.ok("Usuario registrado con éxito");
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "role", newClient.getRole(),
+                "id", newClient.getClientId(),
+                "message", "Registro de usuario exitoso."));
     }
 
 }
-
-
-
