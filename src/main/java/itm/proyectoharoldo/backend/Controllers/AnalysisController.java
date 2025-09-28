@@ -1,16 +1,12 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.Client;
-import itm.proyectoharoldo.backend.Models.ClientQuestionnaire;
 import itm.proyectoharoldo.backend.Models.DTO.AIClientAnalysesDTO;
-import itm.proyectoharoldo.backend.Repositories.ClientRepository;
 import itm.proyectoharoldo.backend.Services.ClientAnswerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,35 +15,54 @@ import java.util.List;
 public class AnalysisController {
 
     private final ClientAnswerService clientAnswerService;
-    private final ClientRepository clientRepository;
 
-    public AnalysisController(ClientAnswerService clientAnswerService,
-                              ClientRepository clientRepository) {
+    public AnalysisController(ClientAnswerService clientAnswerService) {
         this.clientAnswerService = clientAnswerService;
-        this.clientRepository = clientRepository;
     }
 
     @GetMapping("/usuario")
-    public ResponseEntity<List<AIClientAnalysesDTO>> getAllUserSummaries() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        Client client = clientRepository.findByEmail(userEmail).orElseThrow();
-
-        List<AIClientAnalysesDTO> result = client.getQuestionnaires().stream()
-                .map(this::toDto)
-                .toList();
-
-        return ResponseEntity.ok(result);
+    public ResponseEntity<List<AIClientAnalysesDTO>> getAllUserAnalyses() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = authentication.getName();
+            
+            if (userEmail == null || userEmail.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            
+            List<AIClientAnalysesDTO> analyses = clientAnswerService.getAllUserAnalyses(userEmail);
+            return ResponseEntity.ok(analyses);
+            
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    private AIClientAnalysesDTO toDto(ClientQuestionnaire a) {
-        return new AIClientAnalysesDTO(
-                a.getConteo(),
-                a.getTimeWhenSolved(),
-                a.getCategory() != null ? a.getCategory().getCategory() : null,
-                a.getRecomendacionUsuario(),
-                a.getColorSemaforo()
-        );
+    @GetMapping("/usuario/categoria/{categoria}")
+    public ResponseEntity<List<AIClientAnalysesDTO>> getUserAnalysesByCategory(
+            @PathVariable String categoria) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = authentication.getName();
+            
+            if (userEmail == null || userEmail.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            
+            if (categoria == null || categoria.trim().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            List<AIClientAnalysesDTO> analyses = clientAnswerService.getUserAnalysesByCategory(userEmail, categoria);
+            return ResponseEntity.ok(analyses);
+            
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
 

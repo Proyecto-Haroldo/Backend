@@ -2,6 +2,7 @@ package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.DTO.AIAnalysisResultDTO;
+import itm.proyectoharoldo.backend.Models.DTO.AIClientAnalysesDTO;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.AIAnalysisParser;
@@ -43,7 +44,6 @@ public class ClientAnswerService {
 
     @Transactional
     public AIAnalysisResultDTO saveQuestionnaireResult(QuestionnaireResult result, Long clientId) {
-        Category category = categoryRepository.findByCategory(result.getMetadata().getCategory()).orElseThrow();
         String AiPrompt = buildAiPrompt(result);
 
         ResponseEntity<Map> recomendationResponse = aiService.getAiRecommendation(AiPrompt);
@@ -55,11 +55,16 @@ public class ClientAnswerService {
         return responseDTO;
     }
 
+    @SuppressWarnings("unchecked")
     private AIAnalysisResultDTO processRecomendation(ResponseEntity<Map> recomendationResponse) {
         if (recomendationResponse.getStatusCode().is5xxServerError()) {
             return null;
         } else {
-            String cleanResponse = cleanJsonResponse(recomendationResponse.getBody().get("response").toString());
+            Map<String, Object> responseBody = (Map<String, Object>) recomendationResponse.getBody();
+            if (responseBody == null || !responseBody.containsKey("response")) {
+                return null;
+            }
+            String cleanResponse = cleanJsonResponse(responseBody.get("response").toString());
             try{
                 return new AIAnalysisParser().parseResponseToAnalysis(cleanResponse);
             } catch (Exception ex){
@@ -157,6 +162,44 @@ public class ClientAnswerService {
         }
 
         return cleaned.trim();
+    }
+
+    public List<AIClientAnalysesDTO> getAllUserAnalyses(String userEmail) {
+        Client client = clientRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
+        
+        List<ClientQuestionnaire> questionnaires = clientQuestionnaireRepository
+                .findByClientOrderByTimeWhenSolvedDesc(client);
+        
+        return questionnaires.stream()
+                .map(this::toAnalysisDto)
+                .toList();
+    }
+
+    public List<AIClientAnalysesDTO> getUserAnalysesByCategory(String userEmail, String categoryName) {
+        Client client = clientRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
+        
+        Category category = categoryRepository.findByCategory(categoryName)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + categoryName));
+        
+        List<ClientQuestionnaire> questionnaires = clientQuestionnaireRepository
+                .findByClientAndCategoryOrderByTimeWhenSolvedDesc(client, category);
+        
+        return questionnaires.stream()
+                .map(this::toAnalysisDto)
+                .toList();
+    }
+
+
+    private AIClientAnalysesDTO toAnalysisDto(ClientQuestionnaire questionnaire) {
+        return new AIClientAnalysesDTO(
+                questionnaire.getConteo(),
+                questionnaire.getTimeWhenSolved(),
+                questionnaire.getCategory() != null ? questionnaire.getCategory().getCategory() : null,
+                questionnaire.getRecomendacionUsuario(),
+                questionnaire.getColorSemaforo()
+        );
     }
 
 }
