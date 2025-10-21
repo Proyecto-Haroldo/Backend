@@ -3,6 +3,7 @@ package itm.proyectoharoldo.backend.Repositories;
 import itm.proyectoharoldo.backend.Models.Category;
 import itm.proyectoharoldo.backend.Models.Client;
 import itm.proyectoharoldo.backend.Models.ClientQuestionnaire;
+import itm.proyectoharoldo.backend.Models.QuestionnaireState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +27,6 @@ public interface ClientQuestionnaireRepository extends JpaRepository<ClientQuest
     List<ClientQuestionnaire> findByClientAndCategoryOrderByTimeWhenSolvedDesc(
             @Param("client") Client client, 
             @Param("category") Category category);
+
+    List<ClientQuestionnaire> findByState(QuestionnaireState state);
 }

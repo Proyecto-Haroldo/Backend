@@ -1,51 +1,58 @@
-package itm.proyectoharoldo.backend.Models.DTO;
+package itm.proyectoharoldo.backend.DTO;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class ClientQuestionnaireDTO {
-    private Long questionnaireId;
-    private String category;
-    private LocalDateTime timestamp;
-    private List<QuestionnaireAnswerDTO> answers;
 
-    public ClientQuestionnaireDTO(Long questionnaireId, String category, LocalDateTime timestamp, List<QuestionnaireAnswerDTO> answers) {
-        this.questionnaireId = questionnaireId;
-        this.category = category;
-        this.timestamp = timestamp;
-        this.answers = answers;
+    private Long id;
+    private String categoryName;
+    private String clientName;
+    private LocalDateTime timeWhenSolved;
+    private String state;
+    private String recomendacionUsuario;
+    private String colorSemaforo;
+    private String analisisAsesor;
+    private Integer conteo;
+
+    public ClientQuestionnaireDTO(Long id, String categoryName, String clientName, LocalDateTime timeWhenSolved,
+                                  String state, String recomendacionUsuario, String colorSemaforo,
+                                  String analisisAsesor, Integer conteo) {
+        this.id = id;
+        this.categoryName = categoryName;
+        this.clientName = clientName;
+        this.timeWhenSolved = timeWhenSolved;
+        this.state = state;
+        this.recomendacionUsuario = recomendacionUsuario;
+        this.colorSemaforo = colorSemaforo;
+        this.analisisAsesor = analisisAsesor;
+        this.conteo = conteo;
     }
 
-    public Long getQuestionnaireId() {
-        return questionnaireId;
-    }
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setQuestionnaireId(Long questionnaireId) {
-        this.questionnaireId = questionnaireId;
-    }
+    public String getCategoryName() { return categoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
-    public String getCategory() {
-        return category;
-    }
+    public String getClientName() { return clientName; }
+    public void setClientName(String clientName) { this.clientName = clientName; }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+    public LocalDateTime getTimeWhenSolved() { return timeWhenSolved; }
+    public void setTimeWhenSolved(LocalDateTime timeWhenSolved) { this.timeWhenSolved = timeWhenSolved; }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
+    public String getRecomendacionUsuario() { return recomendacionUsuario; }
+    public void setRecomendacionUsuario(String recomendacionUsuario) { this.recomendacionUsuario = recomendacionUsuario; }
 
-    public List<QuestionnaireAnswerDTO> getAnswers() {
-        return answers;
-    }
+    public String getColorSemaforo() { return colorSemaforo; }
+    public void setColorSemaforo(String colorSemaforo) { this.colorSemaforo = colorSemaforo; }
 
-    public void setAnswers(List<QuestionnaireAnswerDTO> answers) {
-        this.answers = answers;
-    }
+    public String getAnalisisAsesor() { return analisisAsesor; }
+    public void setAnalisisAsesor(String analisisAsesor) { this.analisisAsesor = analisisAsesor; }
+
+    public Integer getConteo() { return conteo; }
+    public void setConteo(Integer conteo) { this.conteo = conteo; }
 }
-
