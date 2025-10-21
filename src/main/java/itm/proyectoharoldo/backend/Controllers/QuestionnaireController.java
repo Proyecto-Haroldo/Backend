@@ -1,50 +1,52 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.Client;
+import itm.proyectoharoldo.backend.DTO.ClientQuestionnaireDTO;
 import itm.proyectoharoldo.backend.Models.ClientQuestionnaire;
-import itm.proyectoharoldo.backend.Models.DTO.ClientQuestionnaireDTO;
-import itm.proyectoharoldo.backend.Models.DTO.QuestionnaireAnswerDTO;
+import itm.proyectoharoldo.backend.Models.QuestionnaireState;
 import itm.proyectoharoldo.backend.Repositories.ClientQuestionnaireRepository;
-import itm.proyectoharoldo.backend.Repositories.ClientRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/cuestionarios")
-@RequiredArgsConstructor
+@RequestMapping("/api/questionnaires")
 public class QuestionnaireController {
 
-    private final ClientRepository clientRepository;
-    private final ClientQuestionnaireRepository clientQuestionnaireRepository;
+    @Autowired
+    private ClientQuestionnaireRepository clientQuestionnaireRepository;
 
-    @GetMapping
-    public List<ClientQuestionnaireDTO> getQuestionnaires(@RequestParam Long clientid) {
-        Client client = clientRepository.findById(clientid).get();
-
-        return clientQuestionnaireRepository.findByClient(client).stream()
-                .map(this::mapToDTO)
-                .toList();
-    }
-
-    private ClientQuestionnaireDTO mapToDTO(ClientQuestionnaire questionnaire) {
-        List<QuestionnaireAnswerDTO> answerDTOs = questionnaire.getAnswers().stream()
-                .map(ans -> new QuestionnaireAnswerDTO(
-                        ans.getQuestion().getQuestionid(),
-                        ans.getQuestion().getQuestion(),
-                        ans.getAnswerText()))
-                .toList();
-
+    private ClientQuestionnaireDTO toDto(ClientQuestionnaire q) {
         return new ClientQuestionnaireDTO(
-                questionnaire.getId(),
-                questionnaire.getCategory().getCategory(),
-                questionnaire.getTimeWhenSolved(),
-                answerDTOs
+                q.getId(),
+                q.getCategory() != null ? q.getCategory().getCategory() : "Sin categoría",
+                q.getClient() != null ? q.getClient().getLegalName() : "Sin cliente",
+                q.getTimeWhenSolved(),
+                q.getState() != null ? q.getState().name() : "NULL",
+                q.getRecomendacionUsuario(),
+                q.getColorSemaforo(),
+                q.getAnalisisAsesor(),
+                q.getConteo()
         );
     }
-}
 
+    @GetMapping("/all")
+    public ResponseEntity<List<ClientQuestionnaireDTO>> getAllQuestionnaires() {
+        List<ClientQuestionnaireDTO> questionnaires = clientQuestionnaireRepository.findAll()
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(questionnaires);
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<List<ClientQuestionnaireDTO>> getPendingQuestionnaires() {
+        List<ClientQuestionnaireDTO> questionnaires = clientQuestionnaireRepository.findByState(QuestionnaireState.pending)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(questionnaires);
+    }
+}
