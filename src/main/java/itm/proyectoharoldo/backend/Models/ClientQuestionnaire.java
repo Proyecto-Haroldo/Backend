@@ -1,17 +1,23 @@
 package itm.proyectoharoldo.backend.Models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "clientquestionnaire")
 @AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 public class ClientQuestionnaire {
 
@@ -51,84 +57,5 @@ public class ClientQuestionnaire {
     @Column(name = "conteo")
     private Integer conteo;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public LocalDateTime getTimeWhenSolved() {
-        return timeWhenSolved;
-    }
-
-    public void setTimeWhenSolved(LocalDateTime timeWhenSolved) {
-        this.timeWhenSolved = timeWhenSolved;
-    }
-
-    public List<AnswersOfQuestionnaire> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(List<AnswersOfQuestionnaire> answers) {
-        this.answers = answers;
-    }
-
-    public QuestionnaireState getState() {
-        return state;
-    }
-
-    public void setState(QuestionnaireState state) {
-        this.state = state;
-    }
-
-    public String getRecomendacionUsuario() {
-        return recomendacionUsuario;
-    }
-
-    public void setRecomendacionUsuario(String recomendacionUsuario) {
-        this.recomendacionUsuario = recomendacionUsuario;
-    }
-
-    public String getColorSemaforo() {
-        return colorSemaforo;
-    }
-
-    public void setColorSemaforo(String colorSemaforo) {
-        this.colorSemaforo = colorSemaforo;
-    }
-
-    public String getAnalisisAsesor() {
-        return analisisAsesor;
-    }
-
-    public void setAnalisisAsesor(String analisisAsesor) {
-        this.analisisAsesor = analisisAsesor;
-    }
-
-    public Integer getConteo() {
-        return conteo;
-    }
-
-    public void setConteo(Integer conteo) {
-        this.conteo = conteo;
-    }
 }
 
