@@ -1,6 +1,6 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.DTO.ClientQuestionnaireDTO;
+import itm.proyectoharoldo.backend.Models.DTO.ClientQuestionnaireDTO;
 import itm.proyectoharoldo.backend.Models.ClientQuestionnaire;
 import itm.proyectoharoldo.backend.Models.QuestionnaireState;
 import itm.proyectoharoldo.backend.Repositories.ClientQuestionnaireRepository;
