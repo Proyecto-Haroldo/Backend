@@ -13,6 +13,7 @@ import java.util.List;
 public interface ClientQuestionnaireRepository extends JpaRepository<ClientQuestionnaire, Long> {
     List<ClientQuestionnaire> findByClient(Client client);
     Integer countByClientAndCategory(Client client, Category category);
+    List<ClientQuestionnaire> findByState(QuestionnaireState state);
     
     @Query("SELECT DISTINCT cq FROM ClientQuestionnaire cq " +
            "LEFT JOIN FETCH cq.category " +
@@ -27,6 +28,4 @@ public interface ClientQuestionnaireRepository extends JpaRepository<ClientQuest
     List<ClientQuestionnaire> findByClientAndCategoryOrderByTimeWhenSolvedDesc(
             @Param("client") Client client, 
             @Param("category") Category category);
-
-    List<ClientQuestionnaire> findByState(QuestionnaireState state);
 }
