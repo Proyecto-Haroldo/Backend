@@ -26,8 +26,8 @@ public class KeywordsService {
     public void enrichQuestionWithKeywords(QuestionWebModel questionWebModel) {
         // Extract all text content from question and options
         Set<String> textContent = new HashSet<>();
-        if (questionWebModel.getTitle() != null) {
-            textContent.add(questionWebModel.getTitle().toLowerCase());
+        if (questionWebModel.getCategory() != null) {
+            textContent.add(questionWebModel.getCategory().toLowerCase());
         }
         
         for (AnswersOptionWebModel option : questionWebModel.getOptions()) {
@@ -80,8 +80,8 @@ public class KeywordsService {
     private void enrichQuestionWithKeywordsOptimized(QuestionWebModel questionWebModel, List<String> allKeywords) {
         // Extract all text content from question and options
         Set<String> textContent = new HashSet<>();
-        if (questionWebModel.getTitle() != null) {
-            textContent.add(questionWebModel.getTitle().toLowerCase());
+        if (questionWebModel.getCategory() != null) {
+            textContent.add(questionWebModel.getCategory().toLowerCase());
         }
         
         for (AnswersOptionWebModel option : questionWebModel.getOptions()) {

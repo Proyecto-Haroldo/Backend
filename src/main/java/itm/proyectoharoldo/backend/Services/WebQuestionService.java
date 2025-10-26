@@ -29,7 +29,8 @@ public class WebQuestionService {
     {
         return new QuestionWebModel.Builder()
                 .id(question.getQuestionid())
-                .title(question.getQuestion())
+                .category(question.getCategory().getCategory())
+                .question(question.getQuestion())
                 .type(questionType)
                 .options(possibleOptions)
                 .keywords(glossaryWords)
@@ -38,7 +39,7 @@ public class WebQuestionService {
 
     @Transactional
     public Question createQuestionOnDatabase(QuestionWebModel webModel) {
-        String categoryName = webModel.getTitle();
+        String categoryName = webModel.getCategory();
         Category category = categoryRepository.findByCategory(categoryName)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 

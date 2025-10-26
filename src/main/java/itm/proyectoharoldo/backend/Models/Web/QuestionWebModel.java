@@ -7,7 +7,8 @@ import java.util.List;
 
 public class QuestionWebModel {
     private Long id;
-    private String title;
+    private String category;
+    private String question;
     private QuestionType type;
     private List<AnswersOptionWebModel> options;
     private List<GlossaryWord> keywords;
@@ -19,7 +20,8 @@ public class QuestionWebModel {
     // Constructor privado para forzar el uso del builder
     private QuestionWebModel(Builder builder) {
         this.id = builder.id;
-        this.title = builder.title;
+        this.category = builder.category;
+        this.question = builder.question;
         this.type = builder.type;
         this.options = builder.options;
         this.keywords = builder.keywords;
@@ -28,7 +30,8 @@ public class QuestionWebModel {
     // Builder estático
     public static class Builder {
         private Long id;
-        private String title;
+        private String category;
+        private String question;
         private QuestionType type;
         private List<AnswersOptionWebModel> options;
         private List<GlossaryWord> keywords;
@@ -38,8 +41,13 @@ public class QuestionWebModel {
             return this;
         }
 
-        public Builder title(String title) {
-            this.title = title;
+        public Builder category(String category) {
+            this.category = category;
+            return this;
+        }
+
+        public Builder question(String question) {
+            this.question = question;
             return this;
         }
 
@@ -71,12 +79,20 @@ public class QuestionWebModel {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getCategory() {
+        return category;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
     public QuestionType getType() {

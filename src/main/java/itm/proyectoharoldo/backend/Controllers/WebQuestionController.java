@@ -84,32 +84,6 @@ public class WebQuestionController {
         return questionWebModels;
     }
 
-    @GetMapping("/categoriaycliente")
-    public List<QuestionWebModel> getQuestionsByCategoryAndClientType(
-            @RequestParam String category,
-            @RequestParam ClientType clienttype) {
-
-        // Use optimized query with JOIN FETCH
-        List<Question> questions = questionRepository.findByCategoryAndClientTypeWithOptions(category, clienttype);
-        List<QuestionWebModel> questionWebModels = new ArrayList<>();
-
-        // Convert to web models
-        for (Question question : questions) {
-            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
-                    question,
-                    question.getQuestionType(),
-                    multipleOptionAnswersService.getAnswersAsWebModel(question),
-                    List.of()
-            );
-            questionWebModels.add(model);
-        }
-
-        // Batch process keywords for all questions
-        keywordsService.enrichQuestionsWithKeywords(questionWebModels);
-
-        return questionWebModels;
-    }
-
     // Paginated endpoints for better performance with large datasets
     @GetMapping("/paginated")
     public Page<QuestionWebModel> getQuestionsPaginated(
