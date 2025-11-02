@@ -49,4 +49,31 @@ public class QuestionnaireController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(questionnaires);
     }
+
+    @GetMapping("/proofread")
+    public ResponseEntity<List<ClientQuestionnaireDTO>> getProofreadQuestionnaires() {
+        List<ClientQuestionnaireDTO> questionnaires = clientQuestionnaireRepository.findByState(QuestionnaireState.proofread)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(questionnaires);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClientQuestionnaireDTO> updateQuestionnaire(@PathVariable Long id, @RequestBody ClientQuestionnaireDTO questionnaireDTO) {
+        ClientQuestionnaire questionnaire = clientQuestionnaireRepository.findById(id).orElseThrow(() -> new RuntimeException("Questionnaire not found"));
+        questionnaire.setState(QuestionnaireState.valueOf(questionnaireDTO.getState()));
+        questionnaire.setRecomendacionUsuario(questionnaireDTO.getRecomendacionUsuario());
+        questionnaire.setAnalisisAsesor(questionnaireDTO.getAnalisisAsesor());
+        clientQuestionnaireRepository.save(questionnaire);
+        return ResponseEntity.ok(toDto(questionnaire));
+    }
+
+    @PutMapping("/setproofread/{id}")
+    public ResponseEntity<ClientQuestionnaireDTO> proofreadQuestionnaire(@PathVariable Long id) {
+        ClientQuestionnaire questionnaire = clientQuestionnaireRepository.findById(id).orElseThrow(() -> new RuntimeException("Questionnaire not found"));
+        questionnaire.setState(QuestionnaireState.proofread);
+        clientQuestionnaireRepository.save(questionnaire);
+        return ResponseEntity.ok(toDto(questionnaire));
+    }
 }
