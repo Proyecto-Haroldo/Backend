@@ -29,7 +29,8 @@ public class WebQuestionService {
     {
         return new QuestionWebModel.Builder()
                 .id(question.getQuestionid())
-                .title(question.getQuestion())
+                .category(question.getCategory().getCategory())
+                .question(question.getQuestion())
                 .type(questionType)
                 .options(possibleOptions)
                 .keywords(glossaryWords)
@@ -38,12 +39,24 @@ public class WebQuestionService {
 
     @Transactional
     public Question createQuestionOnDatabase(QuestionWebModel webModel) {
-        String categoryName = webModel.getTitle();
+        String categoryName = webModel.getCategory();
         Category category = categoryRepository.findByCategory(categoryName)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         Question question = QuestionConverter.convertWebModelToEntity(webModel, category);
         return questionRepository.save(question);
+    }
+
+    @Transactional
+    public Question updateQuestionOnDatabase(Long id, QuestionWebModel webModel) {
+        Question question = questionRepository.findById(id).get();
+        Question updatedQuestion = QuestionConverter.convertWebModelToEntity(webModel, question.getCategory());
+        return questionRepository.save(updatedQuestion);
+    }
+
+    @Transactional
+    public void deleteQuestionOnDatabase(Long id) {
+        questionRepository.deleteById(id);
     }
 
 }

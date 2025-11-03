@@ -1,4 +1,4 @@
-package itm.proyectoharoldo.backend.DTO;
+package itm.proyectoharoldo.backend.Models.DTO;
 
 import java.time.LocalDateTime;
 
