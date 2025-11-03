@@ -47,4 +47,16 @@ public class WebQuestionService {
         return questionRepository.save(question);
     }
 
+    @Transactional
+    public Question updateQuestionOnDatabase(Long id, QuestionWebModel webModel) {
+        Question question = questionRepository.findById(id).get();
+        Question updatedQuestion = QuestionConverter.convertWebModelToEntity(webModel, question.getCategory());
+        return questionRepository.save(updatedQuestion);
+    }
+
+    @Transactional
+    public void deleteQuestionOnDatabase(Long id) {
+        questionRepository.deleteById(id);
+    }
+
 }

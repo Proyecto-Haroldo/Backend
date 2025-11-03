@@ -26,7 +26,7 @@ public class GlossaryWordsService {
     
     private final RestTemplate restTemplate;
     
-    @Value("${redis.base.url:https://handy-lemming-28224.upstash.io}")
+    @Value("${redis.base.url:}")
     private String redisBaseUrl;
     
     @Value("${redis.bearer.token:}")

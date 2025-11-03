@@ -149,4 +149,16 @@ public class WebQuestionController {
         Question savedQuestion = webQuestionService.createQuestionOnDatabase(webModel);
         return savedQuestion;
     }
+
+    @PutMapping("/{id}")
+    public Question updateQuestion(@PathVariable Long id, @RequestBody QuestionWebModel webModel) {
+        Question updatedQuestion = webQuestionService.updateQuestionOnDatabase(id, webModel);
+        return updatedQuestion;
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteQuestion(@PathVariable Long id) {
+        webQuestionService.deleteQuestionOnDatabase(id);
+    }
+    
 }

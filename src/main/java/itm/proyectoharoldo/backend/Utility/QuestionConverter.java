@@ -13,6 +13,7 @@ public class QuestionConverter {
 
     public static Question convertWebModelToEntity(QuestionWebModel webModel, Category category) {
         Question question = new Question();
+        question.setQuestionid(webModel.getId());
         question.setQuestion(webModel.getQuestion());
         question.setQuestionType(webModel.getType());
         question.setCategory(category);
