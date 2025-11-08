@@ -30,7 +30,7 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
 
    @Query("""
          SELECT DISTINCT an
-         FROM Analysis an
+         FROM analyses an
          LEFT JOIN FETCH an.questionnaire
          WHERE an.usuarioResponde = :user
          ORDER BY an.timeWhenSolved DESC
@@ -39,7 +39,7 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
 
    @Query("""
          SELECT DISTINCT an
-         FROM Analysis an
+         FROM analyses an
          LEFT JOIN FETCH an.questionnaire
          WHERE an.asesor = :asesor
          ORDER BY an.timeWhenChecked DESC
@@ -48,7 +48,7 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
 
    @Query("""
          SELECT DISTINCT an
-         FROM Analysis an
+         FROM analyses an
          LEFT JOIN FETCH an.questionnaire
          WHERE an.usuarioResponde = :user
            AND an.questionnaire = :questionnaire
