@@ -1,6 +1,6 @@
 package itm.proyectoharoldo.backend.Models;
 
-public enum QuestionnaireState {
+public enum AnalysisStatus {
     pending,
-    proofread
+    checked
 }

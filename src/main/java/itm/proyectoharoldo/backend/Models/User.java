@@ -9,17 +9,17 @@ import java.util.List;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table(name = "clients")
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Client {
+public class User {
 
     @Id
-    @Column(name="clientid")
+    @Column(name="userid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long clientId;
+    private Long userId;
 
     @Column(name="cedulaornit", nullable = false, unique = true)
     private String cedulaOrNIT;
@@ -44,8 +44,8 @@ public class Client {
     @JoinColumn(name = "role")
     private Role role;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<ClientQuestionnaire> questionnaires;
+    private List<Questionnaire> questionnaires;
 
 }

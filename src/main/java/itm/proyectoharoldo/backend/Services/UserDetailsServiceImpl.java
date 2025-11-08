@@ -1,10 +1,9 @@
 package itm.proyectoharoldo.backend.Services;
 
-import itm.proyectoharoldo.backend.Models.Client;
-import itm.proyectoharoldo.backend.Repositories.ClientRepository;
+import itm.proyectoharoldo.backend.Models.User;
+import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,13 +15,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Client client = clientRepository.findByEmail(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        return new User(client.getEmail(), client.getPassword(), List.of(new SimpleGrantedAuthority(client.getRole().getName())));
+        return new org.springframework.security.core.userdetails.
+        User(user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority(user.getRole().getName())));
     }
 }

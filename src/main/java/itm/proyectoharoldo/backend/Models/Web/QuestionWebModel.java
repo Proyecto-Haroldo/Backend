@@ -2,9 +2,15 @@ package itm.proyectoharoldo.backend.Models.Web;
 
 import itm.proyectoharoldo.backend.Models.GlossaryWord;
 import itm.proyectoharoldo.backend.Models.QuestionType;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
+@Builder
 public class QuestionWebModel {
     private Long id;
     private String category;
@@ -12,110 +18,4 @@ public class QuestionWebModel {
     private QuestionType type;
     private List<AnswersOptionWebModel> options;
     private List<GlossaryWord> keywords;
-
-    public QuestionWebModel(){
-
-    }
-
-    // Constructor privado para forzar el uso del builder
-    private QuestionWebModel(Builder builder) {
-        this.id = builder.id;
-        this.category = builder.category;
-        this.question = builder.question;
-        this.type = builder.type;
-        this.options = builder.options;
-        this.keywords = builder.keywords;
-    }
-
-    // Builder estático
-    public static class Builder {
-        private Long id;
-        private String category;
-        private String question;
-        private QuestionType type;
-        private List<AnswersOptionWebModel> options;
-        private List<GlossaryWord> keywords;
-
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder category(String category) {
-            this.category = category;
-            return this;
-        }
-
-        public Builder question(String question) {
-            this.question = question;
-            return this;
-        }
-
-        public Builder type(QuestionType type) {
-            this.type = type;
-            return this;
-        }
-
-        public Builder options(List<AnswersOptionWebModel> options) {
-            this.options = options;
-            return this;
-        }
-
-        public Builder keywords(List<GlossaryWord> keywords) {
-            this.keywords = keywords;
-            return this;
-        }
-
-        public QuestionWebModel build() {
-            return new QuestionWebModel(this);
-        }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public QuestionType getType() {
-        return type;
-    }
-
-    public void setType(QuestionType type) {
-        this.type = type;
-    }
-
-    public List<AnswersOptionWebModel> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<AnswersOptionWebModel> options) {
-        this.options = options;
-    }
-
-    public List<GlossaryWord> getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(List<GlossaryWord> keywords) {
-        this.keywords = keywords;
-    }
 }

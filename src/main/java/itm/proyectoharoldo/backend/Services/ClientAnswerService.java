@@ -2,11 +2,13 @@ package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.DTO.AIAnalysisResultDTO;
-import itm.proyectoharoldo.backend.Models.DTO.AIClientAnalysesDTO;
+import itm.proyectoharoldo.backend.Models.DTO.AnalysisDTO;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.AIAnalysisParser;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,30 +19,17 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@AllArgsConstructor
 public class ClientAnswerService {
 
-    private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
-    private final ClientQuestionnaireRepository clientQuestionnaireRepository;
+    private final QuestionnaireRepository questionnaireRepository;
+    private final AnalysisRepository analysisRepository;
+    private final AnalysisService analysisService;
     private final AnswersOfQuestionnaireRepository answersOfQuestionnaireRepository;
     private final CategoryRepository categoryRepository;
     private final AIService aiService;
-
-    public ClientAnswerService(
-            ClientRepository clientRepository,
-            QuestionRepository questionRepository,
-            ClientQuestionnaireRepository clientQuestionnaireRepository,
-            AnswersOfQuestionnaireRepository answersOfQuestionnaireRepository,
-            CategoryRepository categoryRepository,
-            AIService aiService
-    ) {
-        this.clientRepository = clientRepository;
-        this.questionRepository = questionRepository;
-        this.clientQuestionnaireRepository = clientQuestionnaireRepository;
-        this.answersOfQuestionnaireRepository = answersOfQuestionnaireRepository;
-        this.categoryRepository = categoryRepository;
-        this.aiService = aiService;
-    }
 
     @Transactional
     public AIAnalysisResultDTO saveQuestionnaireResult(QuestionnaireResult result, Long clientId) {
@@ -49,8 +38,8 @@ public class ClientAnswerService {
         ResponseEntity<Map> recomendationResponse = aiService.getAiRecommendation(AiPrompt);
         AIAnalysisResultDTO responseDTO = processRecomendation(recomendationResponse);
 
-        ClientQuestionnaire questionnaire = saveNewQuestionnaire(result, clientId, responseDTO);
-        saveAnswersOfQuestionnaire(result, questionnaire);
+        saveNewAnalysis(result, clientId, responseDTO);
+        saveAnswersOfQuestionnaire(result);
 
         return responseDTO;
     }
@@ -81,21 +70,20 @@ public class ClientAnswerService {
         }
     }
 
-    private ClientQuestionnaire saveNewQuestionnaire(QuestionnaireResult result, Long clientId, AIAnalysisResultDTO aiAnalysisResultDTO) {
+    private Analysis saveNewAnalysis(QuestionnaireResult result, Long userId, AIAnalysisResultDTO aiAnalysisResultDTO) {
 
-        Client client = clientRepository.findById(clientId).orElseThrow();
+        User client = userRepository.findById(userId).orElseThrow();
         Category category = categoryRepository.findByCategory(result.getMetadata().getCategory()).orElseThrow();
 
-        ClientQuestionnaire questionnaire = new ClientQuestionnaire();
-        questionnaire.setClient(client);
-        questionnaire.setCategory(category);
-        questionnaire.setTimeWhenSolved(dateTimeParser(result.getMetadata().getTimestamp()));
-        questionnaire.setState(QuestionnaireState.pending);
-        questionnaire.setRecomendacionUsuario(aiAnalysisResultDTO.getResumenUsuario());
-        questionnaire.setColorSemaforo(aiAnalysisResultDTO.getColorSemaforo());
-        questionnaire.setAnalisisAsesor(aiAnalysisResultDTO.getAnalisisAsesor());
-        questionnaire.setConteo(clientQuestionnaireRepository.countByClientAndCategory(client, category) + 1);
-        return clientQuestionnaireRepository.save(questionnaire);
+        Analysis analysis = new Analysis();
+        analysis.setUsuarioResponde(client);
+        analysis.setQuestionnaire(questionnaireRepository.findByCategory(category).getFirst());
+        analysis.setTimeWhenSolved(dateTimeParser(result.getMetadata().getTimestamp()));
+        analysis.setStatus(AnalysisStatus.pending);
+        analysis.setRecomendacionInicial(aiAnalysisResultDTO.getResumenUsuario());
+        analysis.setColorSemaforo(aiAnalysisResultDTO.getColorSemaforo());
+        analysis.setContenidoRevision(aiAnalysisResultDTO.getAnalisisAsesor());
+        return analysisRepository.save(analysis);
     }
 
     private String buildAiPrompt(QuestionnaireResult result){
@@ -116,7 +104,7 @@ public class ClientAnswerService {
 
     }
 
-    private void saveAnswersOfQuestionnaire(QuestionnaireResult result, ClientQuestionnaire questionnaire){
+    private void saveAnswersOfQuestionnaire(QuestionnaireResult result){
 
         List<AnswersOfQuestionnaire> questionnaireAnswerList = new ArrayList<>();
 
@@ -125,7 +113,6 @@ public class ClientAnswerService {
             String answerText = String.join(" | ", qa.getAnswer());
 
             AnswersOfQuestionnaire answer = new AnswersOfQuestionnaire();
-            answer.setQuestionnaire(questionnaire);
             answer.setQuestion(question);
             answer.setAnswerText(answerText);
 
@@ -164,42 +151,31 @@ public class ClientAnswerService {
         return cleaned.trim();
     }
 
-    public List<AIClientAnalysesDTO> getAllUserAnalyses(String userEmail) {
-        Client client = clientRepository.findByEmail(userEmail)
+    public List<AnalysisDTO> getAllUserAnalyses(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
         
-        List<ClientQuestionnaire> questionnaires = clientQuestionnaireRepository
-                .findByClientOrderByTimeWhenSolvedDesc(client);
+        List<Analysis> analyses = analysisRepository
+                .findByUsuarioRespondeOrderByTimeWhenSolvedDesc(user);
         
-        return questionnaires.stream()
-                .map(this::toAnalysisDto)
+        return analyses.stream()
+                .map(analysisService::toAnalysisDTO)
                 .toList();
     }
 
-    public List<AIClientAnalysesDTO> getUserAnalysesByCategory(String userEmail, String categoryName) {
-        Client client = clientRepository.findByEmail(userEmail)
+    public List<AnalysisDTO> getUserAnalysesByCategory(String userEmail, String categoryName) {
+        User client = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
         
         Category category = categoryRepository.findByCategory(categoryName)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + categoryName));
         
-        List<ClientQuestionnaire> questionnaires = clientQuestionnaireRepository
-                .findByClientAndCategoryOrderByTimeWhenSolvedDesc(client, category);
+        List<Analysis> analyses = analysisRepository
+                .findByUsuarioRespondeAndQuestionnaireOrderByTimeWhenSolvedDesc(client, questionnaireRepository.findByCategory(category).getFirst());
         
-        return questionnaires.stream()
-                .map(this::toAnalysisDto)
+        return analyses.stream()
+                .map(analysisService::toAnalysisDTO)
                 .toList();
-    }
-
-
-    private AIClientAnalysesDTO toAnalysisDto(ClientQuestionnaire questionnaire) {
-        return new AIClientAnalysesDTO(
-                questionnaire.getConteo(),
-                questionnaire.getTimeWhenSolved(),
-                questionnaire.getCategory() != null ? questionnaire.getCategory().getCategory() : null,
-                questionnaire.getRecomendacionUsuario(),
-                questionnaire.getColorSemaforo()
-        );
     }
 
 }

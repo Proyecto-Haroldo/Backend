@@ -1,9 +1,9 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.Client;
+import itm.proyectoharoldo.backend.Models.User;
 import itm.proyectoharoldo.backend.Models.DTO.AIAnalysisResultDTO;
 import itm.proyectoharoldo.backend.Models.Web.QuestionnaireResult;
-import itm.proyectoharoldo.backend.Repositories.ClientRepository;
+import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import itm.proyectoharoldo.backend.Services.ClientAnswerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,11 +17,11 @@ import java.util.Map;
 public class WebAnswersController {
 
     private final ClientAnswerService clientAnswerService;
-    private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
 
-    public WebAnswersController(ClientAnswerService clientAnswerService, ClientRepository clientRepository) {
+    public WebAnswersController(ClientAnswerService clientAnswerService, UserRepository userRepository) {
         this.clientAnswerService = clientAnswerService;
-        this.clientRepository = clientRepository;
+        this.userRepository = userRepository;
     }
 
     @PostMapping
@@ -29,8 +29,8 @@ public class WebAnswersController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         
-        Client client = clientRepository.findByEmail(userEmail).orElseThrow();
-        AIAnalysisResultDTO aiAnalysisResultDTO = clientAnswerService.saveQuestionnaireResult(result, client.getClientId());
+        User user = userRepository.findByEmail(userEmail).orElseThrow();
+        AIAnalysisResultDTO aiAnalysisResultDTO = clientAnswerService.saveQuestionnaireResult(result, user.getUserId());
 
         Map<String, String> response = Map.of(
                 "resumenUsuario", aiAnalysisResultDTO.getResumenUsuario(),

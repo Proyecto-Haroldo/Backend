@@ -30,6 +30,6 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonManagedReference
-    private List<Question> questions;
+    private List<Questionnaire> questionnaires;
 
 }

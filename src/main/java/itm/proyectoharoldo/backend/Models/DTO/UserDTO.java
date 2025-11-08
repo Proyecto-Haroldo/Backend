@@ -2,9 +2,9 @@ package itm.proyectoharoldo.backend.Models.DTO;
 
 import itm.proyectoharoldo.backend.Models.ClientType;
 
-public class ClientDTO {
+public class UserDTO {
 
-    private Long clientId;
+    private Long userId;    
     private String cedulaOrNIT;
     private String legalName;
     private ClientType clientType;
@@ -12,9 +12,9 @@ public class ClientDTO {
     private String sector;
     private String roleName;
 
-    public ClientDTO(Long clientId, String cedulaOrNIT, String legalName,
+    public UserDTO(Long clientId, String cedulaOrNIT, String legalName,
                      ClientType clientType, String email, String sector, String roleName) {
-        this.clientId = clientId;
+        this.userId = clientId;
         this.cedulaOrNIT = cedulaOrNIT;
         this.legalName = legalName;
         this.clientType = clientType;
@@ -24,8 +24,8 @@ public class ClientDTO {
     }
 
     // Getters y Setters
-    public Long getClientId() { return clientId; }
-    public void setClientId(Long clientId) { this.clientId = clientId; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long clientId) { this.userId = clientId; }
 
     public String getCedulaOrNIT() { return cedulaOrNIT; }
     public void setCedulaOrNIT(String cedulaOrNIT) { this.cedulaOrNIT = cedulaOrNIT; }

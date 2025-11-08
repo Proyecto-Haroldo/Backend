@@ -1,9 +1,9 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.Client;
+import itm.proyectoharoldo.backend.Models.User;
 import itm.proyectoharoldo.backend.Models.DTO.AuthRequest;
 import itm.proyectoharoldo.backend.Models.DTO.RegisterRequest;
-import itm.proyectoharoldo.backend.Repositories.ClientRepository;
+import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import itm.proyectoharoldo.backend.Utility.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +23,14 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-            ClientRepository clientRepository, PasswordEncoder passwordEncoder) {
+            UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        this.clientRepository = clientRepository;
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -40,41 +40,41 @@ public class AuthController {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        Client client = clientRepository.findByEmail(request.getEmail()).orElseThrow();
-        String token = jwtUtil.generateToken(client.getEmail());
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        String token = jwtUtil.generateToken(user.getEmail());
 
         return ResponseEntity.ok(Map.of(
                 "token", token,
-                "role", client.getRole(),
-                "id", client.getClientId(),
+                "role", user.getRole(),
+                "id", user.getUserId(),
                 "message", "Inicio de sesión exitoso."));
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        if (clientRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Correo ya registrado");
         }
 
-        if (clientRepository.findByCedulaOrNIT(request.getCedulaOrNIT()).isPresent()) {
+        if (userRepository.findByCedulaOrNIT(request.getCedulaOrNIT()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un usuario con esta cédula/NIT");
         }
 
-        Client newClient = new Client();
-        newClient.setEmail(request.getEmail());
-        newClient.setPassword(passwordEncoder.encode(request.getPassword()));
-        newClient.setCedulaOrNIT(request.getCedulaOrNIT());
-        newClient.setLegalName(request.getLegalName());
-        newClient.setClientType(request.getClientType());
-        newClient.setRole(request.getRole());
+        User newUser = new User();
+        newUser.setEmail(request.getEmail());
+        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setCedulaOrNIT(request.getCedulaOrNIT());
+        newUser.setLegalName(request.getLegalName());
+        newUser.setClientType(request.getClientType());
+        newUser.setRole(request.getRole());
 
-        String token = jwtUtil.generateToken(newClient.getEmail());
+        String token = jwtUtil.generateToken(newUser.getEmail());
 
-        clientRepository.save(newClient);
+        userRepository.save(newUser);
         return ResponseEntity.ok(Map.of(
                 "token", token,
-                "role", newClient.getRole(),
-                "id", newClient.getClientId(),
+                "role", newUser.getRole(),
+                "id", newUser.getUserId(),
                 "message", "Registro de usuario exitoso."));
     }
 

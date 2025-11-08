@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @Table(name = "questions")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class Question {
 
     @Id
@@ -32,8 +36,8 @@ public class Question {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    @JoinColumn(name = "category", referencedColumnName = "categoryid", nullable = false)
-    private Category category;
+    @JoinColumn(name = "questionnaire", referencedColumnName = "id", nullable = false)
+    private Questionnaire questionnaire;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -41,53 +45,5 @@ public class Question {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<AnswersOfQuestionnaire> answersInQuestionnaires;
-
-    public Long getQuestionid() {
-        return questionid;
-    }
-
-    public void setQuestionid(Long questionid) {
-        this.questionid = questionid;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public QuestionType getQuestionType() {
-        return questionType;
-    }
-
-    public void setQuestionType(QuestionType questionType) {
-        this.questionType = questionType;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public List<MultipleOptionQuestionAnswer> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<MultipleOptionQuestionAnswer> options) {
-        this.options = options;
-    }
-
-    public ClientType getClientType() {
-        return clientType;
-    }
-
-    public void setClientType(ClientType clientType) {
-        this.clientType = clientType;
-    }
 
 }
