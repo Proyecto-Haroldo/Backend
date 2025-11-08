@@ -1,70 +1,61 @@
 package itm.proyectoharoldo.backend.Controllers;
 
+import itm.proyectoharoldo.backend.DTOs.QuestionnaireDTO;
 import itm.proyectoharoldo.backend.Models.Questionnaire;
-import itm.proyectoharoldo.backend.Models.Category;
-import itm.proyectoharoldo.backend.Repositories.QuestionnaireRepository;
-import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
-import lombok.AllArgsConstructor;
+import itm.proyectoharoldo.backend.Services.QuestionnaireService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/questionnaires")
-@CrossOrigin(origins = "*")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class QuestionnaireController {
 
-    private final QuestionnaireRepository questionnaireRepository;
-    private final CategoryRepository categoryRepository;
+    private final QuestionnaireService questionnaireService;
 
-    @GetMapping
-    public ResponseEntity<List<Questionnaire>> getAllQuestionnaires() {
-        List<Questionnaire> questionnaires = questionnaireRepository.findAll();
-        return ResponseEntity.ok(questionnaires);
+    @GetMapping("/all")
+    public ResponseEntity<List<QuestionnaireDTO>> getAllQuestionnaires() {
+        return ResponseEntity.ok(questionnaireService.getAllQuestionnaires());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Questionnaire> getQuestionnaireById(@PathVariable Long id) {
-        Optional<Questionnaire> questionnaire = questionnaireRepository.findById(id);
-        return questionnaire.map(ResponseEntity::ok)
+    public ResponseEntity<QuestionnaireDTO> getQuestionnaireById(@PathVariable Long id) {
+        return questionnaireService.getQuestionnaireById(id)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<Questionnaire>> getQuestionnairesByCategory(@PathVariable Long categoryId) {
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        if (category.isPresent()) {
-            List<Questionnaire> questionnaires = questionnaireRepository.findByCategory(category.get());
-            return ResponseEntity.ok(questionnaires);
+    public ResponseEntity<List<QuestionnaireDTO>> getByCategory(@PathVariable Long categoryId) {
+        List<QuestionnaireDTO> questionnaires = questionnaireService.getByCategory(categoryId);
+        if (questionnaires.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(questionnaires);
     }
 
     @PostMapping
-    public ResponseEntity<Questionnaire> createQuestionnaire(@RequestBody Questionnaire questionnaire) {
-        Questionnaire savedQuestionnaire = questionnaireRepository.save(questionnaire);
-        return ResponseEntity.ok(savedQuestionnaire);
+    public ResponseEntity<Questionnaire> create(@RequestBody Questionnaire questionnaire) {
+        return ResponseEntity.ok(questionnaireService.createQuestionnaire(questionnaire));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Questionnaire> updateQuestionnaire(@PathVariable Long id, @RequestBody Questionnaire questionnaire) {
-        if (!questionnaireRepository.existsById(id)) {
+    public ResponseEntity<Questionnaire> update(@PathVariable Long id, @RequestBody Questionnaire questionnaire) {
+        if (questionnaireService.getQuestionnaireById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        questionnaire.setId(id);
-        Questionnaire updatedQuestionnaire = questionnaireRepository.save(questionnaire);
-        return ResponseEntity.ok(updatedQuestionnaire);
+        return ResponseEntity.ok(questionnaireService.updateQuestionnaire(id, questionnaire));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteQuestionnaire(@PathVariable Long id) {
-        if (!questionnaireRepository.existsById(id)) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (questionnaireService.getQuestionnaireById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        questionnaireRepository.deleteById(id);
+        questionnaireService.deleteQuestionnaire(id);
         return ResponseEntity.noContent().build();
     }
 }
