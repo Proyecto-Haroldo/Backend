@@ -28,21 +28,32 @@ public class WebQuestionService {
         this.questionnaireRepository = questionnaireRepository;
     }
 
-    public QuestionWebModel CreateQuestionWebModel (Question question, QuestionType questionType, List<AnswersOptionWebModel> possibleOptions, List<GlossaryWord> glossaryWords)
-    {
-        return QuestionWebModel.builder()
-                .id(question.getQuestionid())
-                .category(question.getQuestionnaire().getCategory().getCategory())
-                .question(question.getQuestion())
-                .type(questionType)
-                .options(possibleOptions)
-                .keywords(glossaryWords)
-                .build();
+    public QuestionWebModel CreateQuestionWebModel(
+        Question question,
+        QuestionType questionType,
+        List<AnswersOptionWebModel> options,
+        List<GlossaryWord> keywords
+) {
+    QuestionWebModel model = new QuestionWebModel();
+
+    model.setId(question.getQuestionid());
+    model.setQuestion(question.getQuestion());
+    model.setQuestionType(questionType != null ? questionType : null);
+    model.setOptions(options);
+    model.setKeywords(keywords);
+
+    if (question.getQuestionnaire() != null) {
+        model.setQuestionnaireId(question.getQuestionnaire().getId());
+        model.setCategoryName(question.getQuestionnaire().getCategory().getCategory());
+        model.setCategoryId(question.getQuestionnaire().getCategory().getCategoryid());
     }
+
+    return model;
+}
 
     @Transactional
     public Question createQuestionOnDatabase(QuestionWebModel webModel) {
-        String categoryName = webModel.getCategory();
+        String categoryName = webModel.getCategoryName();
         Category category = categoryRepository.findByCategory(categoryName)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 

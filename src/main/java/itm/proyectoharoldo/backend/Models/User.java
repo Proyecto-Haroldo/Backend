@@ -7,7 +7,7 @@ import lombok.*;
 
 import java.util.List;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
@@ -17,27 +17,27 @@ import java.util.List;
 public class User {
 
     @Id
-    @Column(name="userid")
+    @Column(name = "userid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name="cedulaornit", nullable = false, unique = true)
+    @Column(name = "cedulaornit", nullable = false, unique = true)
     private String cedulaOrNIT;
 
-    @Column(name="legalname", nullable = false)
+    @Column(name = "legalname", nullable = false)
     private String legalName;
 
-    @Column(name="clienttype", nullable = false)
+    @Column(name = "clienttype", nullable = false)
     @Enumerated(EnumType.STRING)
     private ClientType clientType;
 
-    @Column(name="email", nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name="password", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name="sector", nullable = false)
+    @Column(name = "sector", nullable = false)
     private String sector;
 
     @ManyToOne

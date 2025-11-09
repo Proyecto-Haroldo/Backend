@@ -15,7 +15,7 @@ public class QuestionConverter {
         Question question = new Question();
         question.setQuestionid(webModel.getId());
         question.setQuestion(webModel.getQuestion());
-        question.setQuestionType(webModel.getType());
+        question.setQuestionType(webModel.getQuestionType());
         question.setQuestionnaire(questionnaire);
 
 

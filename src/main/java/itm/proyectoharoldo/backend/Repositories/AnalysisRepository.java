@@ -25,43 +25,46 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
 
     // Próximo conteo de análisis para un usuario y cuestionario (consulta nativa)
     @Query(value = """
-        SELECT COUNT(*) + 1
-        FROM analyses a
-        WHERE a.usuarioresponde = :usuarioId
-        AND a.questionnaire = :questionnaireId
-        """, nativeQuery = true)
+            SELECT COUNT(*) + 1
+            FROM analyses a
+            WHERE a.usuarioresponde = :usuarioId
+            AND a.questionnaire = :questionnaireId
+            """, nativeQuery = true)
     Integer findNextAnalysisCount(@Param("usuarioId") Long usuarioId,
-                                 @Param("questionnaireId") Long questionnaireId);
+            @Param("questionnaireId") Long questionnaireId);
 
-    // Obtener análisis de un usuario con cuestionario cargado, orden descendente por resolución
+    // Obtener análisis de un usuario con cuestionario cargado, orden descendente
+    // por resolución
     @Query("""
-        SELECT DISTINCT a
-        FROM Analysis a
-        LEFT JOIN FETCH a.questionnaire
-        WHERE a.usuarioResponde = :usuarioResponde
-        ORDER BY a.timeWhenSolved DESC
-        """)
+            SELECT DISTINCT a
+            FROM Analysis a
+            LEFT JOIN FETCH a.questionnaire
+            WHERE a.usuarioResponde = :usuarioResponde
+            ORDER BY a.timeWhenSolved DESC
+            """)
     List<Analysis> findByUsuarioRespondeOrderByTimeWhenSolvedDesc(@Param("usuarioResponde") User usuarioResponde);
 
-    // Obtener análisis de un asesor con cuestionario cargado, orden descendente por revisión
+    // Obtener análisis de un asesor con cuestionario cargado, orden descendente por
+    // revisión
     @Query("""
-        SELECT DISTINCT a
-        FROM Analysis a
-        LEFT JOIN FETCH a.questionnaire
-        WHERE a.asesor = :asesor
-        ORDER BY a.timeWhenChecked DESC
-        """)
+            SELECT DISTINCT a
+            FROM Analysis a
+            LEFT JOIN FETCH a.questionnaire
+            WHERE a.asesor = :asesor
+            ORDER BY a.timeWhenChecked DESC
+            """)
     List<Analysis> findByAsesorOrderByTimeWhenCheckedDesc(@Param("asesor") User asesor);
 
-    // Obtener análisis de un usuario y un cuestionario específico, orden descendente por resolución
+    // Obtener análisis de un usuario y un cuestionario específico, orden
+    // descendente por resolución
     @Query("""
-        SELECT DISTINCT a
-        FROM Analysis a
-        LEFT JOIN FETCH a.questionnaire
-        WHERE a.usuarioResponde = :usuarioResponde
-          AND a.questionnaire = :questionnaire
-        ORDER BY a.timeWhenSolved DESC
-        """)
+            SELECT DISTINCT a
+            FROM Analysis a
+            LEFT JOIN FETCH a.questionnaire
+            WHERE a.usuarioResponde = :usuarioResponde
+              AND a.questionnaire = :questionnaire
+            ORDER BY a.timeWhenSolved DESC
+            """)
     List<Analysis> findByUsuarioRespondeAndQuestionnaireOrderByTimeWhenSolvedDesc(
             @Param("usuarioResponde") User usuarioResponde,
             @Param("questionnaire") Questionnaire questionnaire);
