@@ -1,6 +1,6 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.DTO.QuestionnaireDTO;
+import itm.proyectoharoldo.backend.Models.DTO.QuestionnaireDTO;
 import itm.proyectoharoldo.backend.Models.Questionnaire;
 import itm.proyectoharoldo.backend.Services.QuestionnaireService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class QuestionnaireController {
 
     private final QuestionnaireService questionnaireService;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<QuestionnaireDTO>> getAllQuestionnaires() {
         return ResponseEntity.ok(questionnaireService.getAllQuestionnaires());
     }
@@ -31,6 +31,15 @@ public class QuestionnaireController {
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<QuestionnaireDTO>> getByCategory(@PathVariable Long categoryId) {
         List<QuestionnaireDTO> questionnaires = questionnaireService.getByCategory(categoryId);
+        if (questionnaires.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(questionnaires);
+    }
+
+    @GetMapping("/creator/{creatorId}")
+    public ResponseEntity<List<QuestionnaireDTO>> getByCreator(@PathVariable Long creatorId) {
+        List<QuestionnaireDTO> questionnaires = questionnaireService.getByCreator(creatorId);
         if (questionnaires.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

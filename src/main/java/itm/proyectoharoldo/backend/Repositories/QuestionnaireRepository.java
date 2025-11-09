@@ -16,9 +16,9 @@ public interface QuestionnaireRepository extends JpaRepository<Questionnaire, Lo
 
     List<Questionnaire> findByCreator(User creator);
 
-    @Query("SELECT q FROM questionnaires q ORDER BY q.id DESC")
+    @Query("SELECT q FROM Questionnaire q ORDER BY q.id DESC")
     List<Questionnaire> findAllOrdered();
 
-    @Query("SELECT q FROM questionnaires q WHERE q.category = :category ORDER BY q.id DESC")
+    @Query("SELECT q FROM Questionnaire q WHERE q.category = :category ORDER BY q.id DESC")
     List<Questionnaire> findByCategoryOrdered(Category category);
 }
