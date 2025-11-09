@@ -16,5 +16,5 @@ public class QuestionnaireDTO {
     private Long categoryId;      // ID de la categoría
     private String creatorName;   // Nombre del creador (user)
     private Long creatorId;       // ID del creador
-    private List<Question> questionIds; // IDs de las preguntas asociadas
+    private List<Question> questions; // Preguntas asociadas
 }

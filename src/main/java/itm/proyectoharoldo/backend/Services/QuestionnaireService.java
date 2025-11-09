@@ -1,6 +1,6 @@
 package itm.proyectoharoldo.backend.Services;
 
-import itm.proyectoharoldo.backend.DTOs.QuestionnaireDTO;
+import itm.proyectoharoldo.backend.DTO.QuestionnaireDTO;
 import itm.proyectoharoldo.backend.Models.Category;
 import itm.proyectoharoldo.backend.Models.Questionnaire;
 import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
