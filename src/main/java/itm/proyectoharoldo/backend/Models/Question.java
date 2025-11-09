@@ -26,11 +26,11 @@ public class Question {
     @Column(name = "question", nullable = false, columnDefinition = "TEXT")
     private String question;
 
-    @Column(name="type", nullable = false)
+    @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private QuestionType questionType;
 
-    @Column(name="clienttype", nullable = true)
+    @Column(name = "clienttype", nullable = true)
     @Enumerated(EnumType.STRING)
     private ClientType clientType;
 

@@ -2,7 +2,6 @@ package itm.proyectoharoldo.backend.Controllers;
 
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.Web.QuestionWebModel;
-import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
 import itm.proyectoharoldo.backend.Repositories.QuestionRepository;
 import itm.proyectoharoldo.backend.Services.KeywordsService;
 import itm.proyectoharoldo.backend.Services.MultipleOptionAnswersService;
@@ -10,16 +9,13 @@ import itm.proyectoharoldo.backend.Services.WebQuestionService;
 import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/preguntas")
-@CrossOrigin(origins = "*") // Add CORS support
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 public class WebQuestionController {
 
@@ -29,19 +25,18 @@ public class WebQuestionController {
     private final KeywordsService keywordsService;
 
     @GetMapping
-    public List<QuestionWebModel> getEmAll(){
+    public List<QuestionWebModel> getEmAll() {
         // Use optimized query with JOIN FETCH
         List<Question> questions = questionRepository.findAllWithOptions();
         List<QuestionWebModel> questionWebModels = new ArrayList<>();
 
         // Convert to web models
-        for(Question question : questions){
+        for (Question question : questions) {
             QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                     question,
                     question.getQuestionType(),
                     multipleOptionAnswersService.getAnswersAsWebModel(question),
-                    List.of()
-            );
+                    List.of());
             questionWebModels.add(model);
         }
 
@@ -51,38 +46,58 @@ public class WebQuestionController {
         return questionWebModels;
     }
 
-    @GetMapping("/categoria/{categoryName}")
+    @GetMapping("/category/{categoryName}")
     public List<QuestionWebModel> getQuestionsByCategory(@PathVariable String categoryName) {
         // Use optimized query with JOIN FETCH
         List<Question> questions = questionRepository.findByCategoryNameWithOptions(categoryName);
         List<QuestionWebModel> questionWebModels = new ArrayList<>();
-        
+
         // Convert to web models
-        for(Question question : questions) {
+        for (Question question : questions) {
             QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                     question,
                     question.getQuestionType(),
                     multipleOptionAnswersService.getAnswersAsWebModel(question),
-                    List.of()
-            );
+                    List.of());
             questionWebModels.add(model);
         }
-        
+
         // Batch process keywords for all questions
         keywordsService.enrichQuestionsWithKeywords(questionWebModels);
-        
+
+        return questionWebModels;
+    }
+
+    @GetMapping("/questionnaire/{questionnaireId}")
+    public List<QuestionWebModel> getQuestionsByQuestionnaire(@PathVariable Long questionnaireId) {
+        // Use optimized query with JOIN FETCH
+        List<Question> questions = questionRepository.findByQuestionnaireWithOptions(questionnaireId);
+        List<QuestionWebModel> questionWebModels = new ArrayList<>();
+
+        // Convert to web models
+        for (Question question : questions) {
+            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
+                    question,
+                    question.getQuestionType(),
+                    multipleOptionAnswersService.getAnswersAsWebModel(question),
+                    List.of());
+            questionWebModels.add(model);
+        }
+
+        // Batch process keywords for all questions
+        keywordsService.enrichQuestionsWithKeywords(questionWebModels);
+
         return questionWebModels;
     }
 
     @GetMapping("/{id}")
-    public QuestionWebModel getquestionbyid(@PathVariable Long id){
+    public QuestionWebModel getquestionbyid(@PathVariable Long id) {
         Question question = questionRepository.findById(id).get();
         QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
                 question,
                 question.getQuestionType(),
                 multipleOptionAnswersService.getAnswersAsWebModel(question),
-                List.of()
-        );
+                List.of());
 
         keywordsService.enrichQuestionWithKeywords(model);
 
@@ -105,5 +120,5 @@ public class WebQuestionController {
     public void deleteQuestion(@PathVariable Long id) {
         webQuestionService.deleteQuestionOnDatabase(id);
     }
-    
+
 }

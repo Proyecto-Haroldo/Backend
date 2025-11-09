@@ -54,9 +54,9 @@ public class ClientAnswerService {
                 return null;
             }
             String cleanResponse = cleanJsonResponse(responseBody.get("response").toString());
-            try{
+            try {
                 return new AIAnalysisParser().parseResponseToAnalysis(cleanResponse);
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 return null;
             }
         }
@@ -86,13 +86,13 @@ public class ClientAnswerService {
         return analysisRepository.save(analysis);
     }
 
-    private String buildAiPrompt(QuestionnaireResult result){
+    private String buildAiPrompt(QuestionnaireResult result) {
 
         StringBuilder promptBuilder = new StringBuilder();
         promptBuilder.append("Cliente: ").append(result.getMetadata().getClientType()).append("\n\n");
         promptBuilder.append("Categoría: ").append(result.getMetadata().getCategory()).append("\n\n");
 
-        for(QuestionnaireAnswer answerData : result.getAnswers()){
+        for (QuestionnaireAnswer answerData : result.getAnswers()) {
             Question question = questionRepository.findById((long) answerData.getQuestionId()).orElseThrow();
             String answerText = String.join(" | ", answerData.getAnswer());
 
@@ -104,7 +104,7 @@ public class ClientAnswerService {
 
     }
 
-    private void saveAnswersOfQuestionnaire(QuestionnaireResult result){
+    private void saveAnswersOfQuestionnaire(QuestionnaireResult result) {
 
         List<AnswersOfQuestionnaire> questionnaireAnswerList = new ArrayList<>();
 
@@ -131,8 +131,7 @@ public class ClientAnswerService {
 
         java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
                 "```(?:json)?\\s*\\n?([\\s\\S]*?)```",
-                java.util.regex.Pattern.DOTALL
-        );
+                java.util.regex.Pattern.DOTALL);
         java.util.regex.Matcher matcher = pattern.matcher(cleaned);
 
         if (matcher.find()) {
@@ -151,29 +150,30 @@ public class ClientAnswerService {
         return cleaned.trim();
     }
 
-    public List<AnalysisDTO> getAllUserAnalyses(String userEmail) {
+    public List<AnalysisDTO> getUserAnalysis(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
-        
-        List<Analysis> analyses = analysisRepository
+
+        List<Analysis> analysis = analysisRepository
                 .findByUsuarioRespondeOrderByTimeWhenSolvedDesc(user);
-        
-        return analyses.stream()
+
+        return analysis.stream()
                 .map(analysisService::toAnalysisDTO)
                 .toList();
     }
 
-    public List<AnalysisDTO> getUserAnalysesByCategory(String userEmail, String categoryName) {
+    public List<AnalysisDTO> getUserAnalysisByCategory(String userEmail, String categoryName) {
         User client = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
-        
+
         Category category = categoryRepository.findByCategory(categoryName)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + categoryName));
-        
-        List<Analysis> analyses = analysisRepository
-                .findByUsuarioRespondeAndQuestionnaireOrderByTimeWhenSolvedDesc(client, questionnaireRepository.findByCategory(category).getFirst());
-        
-        return analyses.stream()
+
+        List<Analysis> analysis = analysisRepository
+                .findByUsuarioRespondeAndQuestionnaireOrderByTimeWhenSolvedDesc(client,
+                        questionnaireRepository.findByCategory(category).getFirst());
+
+        return analysis.stream()
                 .map(analysisService::toAnalysisDTO)
                 .toList();
     }
