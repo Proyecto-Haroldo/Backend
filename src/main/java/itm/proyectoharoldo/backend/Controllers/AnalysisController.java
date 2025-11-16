@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/analysis")
-@CrossOrigin(origins = "*") 
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 public class AnalysisController {
 
@@ -35,6 +35,14 @@ public class AnalysisController {
                 .map(analysisService::toAnalysisDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(analysis);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AnalysisDTO> getAnalysisById(@PathVariable Long id) {
+        return analysisRepository.findById(id)
+                .map(analysisService::toAnalysisDTO)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping("/pending")

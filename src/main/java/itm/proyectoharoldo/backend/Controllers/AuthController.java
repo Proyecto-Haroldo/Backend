@@ -3,8 +3,11 @@ package itm.proyectoharoldo.backend.Controllers;
 import itm.proyectoharoldo.backend.Models.User;
 import itm.proyectoharoldo.backend.Models.DTO.AuthRequest;
 import itm.proyectoharoldo.backend.Models.DTO.RegisterRequest;
+import itm.proyectoharoldo.backend.Repositories.RoleRepository;
 import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import itm.proyectoharoldo.backend.Utility.JwtUtil;
+import lombok.AllArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,20 +22,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@AllArgsConstructor
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil,
-            UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final RoleRepository roleRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
@@ -66,7 +63,8 @@ public class AuthController {
         newUser.setCedulaOrNIT(request.getCedulaOrNIT());
         newUser.setLegalName(request.getLegalName());
         newUser.setClientType(request.getClientType());
-        newUser.setRole(request.getRole());
+        newUser.setRole(roleRepository.findById(2L).get());
+        newUser.setSector("No especificado");
 
         String token = jwtUtil.generateToken(newUser.getEmail());
 
