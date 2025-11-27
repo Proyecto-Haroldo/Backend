@@ -20,11 +20,6 @@ public class WebAnswersController {
     private final ClientAnswerService clientAnswerService;
     private final UserRepository userRepository;
 
-    public WebAnswersController(ClientAnswerService clientAnswerService, UserRepository userRepository) {
-        this.clientAnswerService = clientAnswerService;
-        this.userRepository = userRepository;
-    }
-
     @PostMapping
     public ResponseEntity<Map> saveAnswers(@RequestBody WebAnswersDTO request) {
 
