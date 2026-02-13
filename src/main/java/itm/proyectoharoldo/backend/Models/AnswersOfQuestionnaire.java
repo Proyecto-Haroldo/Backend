@@ -23,6 +23,10 @@ public class AnswersOfQuestionnaire {
     @JoinColumn(name = "question", referencedColumnName = "questionid", nullable = false)
     private Question question;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "analysisid", referencedColumnName = "analysisid", nullable = true)
+    private Analysis analysis;
+
     @Column(name = "answertext", columnDefinition = "TEXT")
     private String answerText;
 }

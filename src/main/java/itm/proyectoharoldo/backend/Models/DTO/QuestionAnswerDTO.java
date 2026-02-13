@@ -1,0 +1,17 @@
+package itm.proyectoharoldo.backend.Models.DTO;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class QuestionAnswerDTO {
+
+    private Long questionId;
+    private String questionText;
+    private String answerText;
+}

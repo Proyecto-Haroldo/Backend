@@ -38,8 +38,8 @@ public class ClientAnswerService {
         ResponseEntity<Map> recomendationResponse = aiService.getAiRecommendation(AiPrompt);
         AIAnalysisResultDTO responseDTO = processRecomendation(recomendationResponse);
 
-        saveNewAnalysis(result, clientId, responseDTO);
-        saveAnswersOfQuestionnaire(result);
+        Analysis savedAnalysis = saveNewAnalysis(result, clientId, responseDTO);
+        saveAnswersOfQuestionnaire(result, savedAnalysis);
 
         return responseDTO;
     }
@@ -104,7 +104,7 @@ public class ClientAnswerService {
 
     }
 
-    private void saveAnswersOfQuestionnaire(QuestionnaireResult result) {
+    private void saveAnswersOfQuestionnaire(QuestionnaireResult result, Analysis analysis) {
 
         List<AnswersOfQuestionnaire> questionnaireAnswerList = new ArrayList<>();
 
@@ -115,6 +115,7 @@ public class ClientAnswerService {
             AnswersOfQuestionnaire answer = new AnswersOfQuestionnaire();
             answer.setQuestion(question);
             answer.setAnswerText(answerText);
+            answer.setAnalysis(analysis);
 
             questionnaireAnswerList.add(answer);
         }
