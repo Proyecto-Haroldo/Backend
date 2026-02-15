@@ -23,8 +23,8 @@ public class AnswersOfQuestionnaire {
     @JoinColumn(name = "question", referencedColumnName = "questionid", nullable = false)
     private Question question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "analysisid", referencedColumnName = "analysisid", nullable = true)
+    /** Not mapped: table answersofquestionnaire only has answerid, question, answertext. */
+    @Transient
     private Analysis analysis;
 
     @Column(name = "answertext", columnDefinition = "TEXT")
