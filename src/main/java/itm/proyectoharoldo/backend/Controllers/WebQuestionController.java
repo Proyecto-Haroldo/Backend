@@ -3,9 +3,7 @@ package itm.proyectoharoldo.backend.Controllers;
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.Web.QuestionWebModel;
 import itm.proyectoharoldo.backend.Repositories.QuestionRepository;
-import itm.proyectoharoldo.backend.Services.KeywordsService;
-import itm.proyectoharoldo.backend.Services.MultipleOptionAnswersService;
-import itm.proyectoharoldo.backend.Services.WebQuestionService;
+import itm.proyectoharoldo.backend.Services.*;
 import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;

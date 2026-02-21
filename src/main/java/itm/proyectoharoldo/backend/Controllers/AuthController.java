@@ -1,22 +1,15 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.User;
-import itm.proyectoharoldo.backend.Models.DTO.AuthRequest;
-import itm.proyectoharoldo.backend.Models.DTO.RegisterRequest;
-import itm.proyectoharoldo.backend.Repositories.RoleRepository;
-import itm.proyectoharoldo.backend.Repositories.UserRepository;
+import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Models.DTO.*;
+import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.JwtUtil;
 import lombok.AllArgsConstructor;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.*;
+import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 

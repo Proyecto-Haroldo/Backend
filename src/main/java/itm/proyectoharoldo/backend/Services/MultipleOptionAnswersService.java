@@ -1,7 +1,6 @@
 package itm.proyectoharoldo.backend.Services;
 
-import itm.proyectoharoldo.backend.Models.MultipleOptionQuestionAnswer;
-import itm.proyectoharoldo.backend.Models.Question;
+import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.Web.AnswersOptionWebModel;
 import itm.proyectoharoldo.backend.Repositories.MultipleOptionQuestionAnswerRepository;
 import org.springframework.stereotype.Service;

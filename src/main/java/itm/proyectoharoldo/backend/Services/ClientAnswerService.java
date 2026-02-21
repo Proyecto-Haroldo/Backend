@@ -1,8 +1,7 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
-import itm.proyectoharoldo.backend.Models.DTO.AIAnalysisResultDTO;
-import itm.proyectoharoldo.backend.Models.DTO.AnalysisDTO;
+import itm.proyectoharoldo.backend.Models.DTO.*;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.AIAnalysisParser;

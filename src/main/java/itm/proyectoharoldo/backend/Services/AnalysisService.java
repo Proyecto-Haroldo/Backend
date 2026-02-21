@@ -3,11 +3,9 @@ package itm.proyectoharoldo.backend.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import itm.proyectoharoldo.backend.Models.Analysis;
-import itm.proyectoharoldo.backend.Models.DTO.AnalysisDTO;
-import itm.proyectoharoldo.backend.Models.DTO.QuestionAnswerDTO;
-import itm.proyectoharoldo.backend.Repositories.AnalysisRepository;
-import itm.proyectoharoldo.backend.Repositories.AnswersOfQuestionnaireRepository;
+import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Models.DTO.*;
+import itm.proyectoharoldo.backend.Repositories.*;
 import lombok.AllArgsConstructor;
 
 import java.util.List;

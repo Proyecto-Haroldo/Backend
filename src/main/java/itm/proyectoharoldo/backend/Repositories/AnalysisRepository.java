@@ -1,9 +1,6 @@
 package itm.proyectoharoldo.backend.Repositories;
 
-import itm.proyectoharoldo.backend.Models.Analysis;
-import itm.proyectoharoldo.backend.Models.AnalysisStatus;
-import itm.proyectoharoldo.backend.Models.Questionnaire;
-import itm.proyectoharoldo.backend.Models.User;
+import itm.proyectoharoldo.backend.Models.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

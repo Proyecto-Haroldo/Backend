@@ -1,14 +1,8 @@
 package itm.proyectoharoldo.backend.Services;
 
-import itm.proyectoharoldo.backend.Models.Category;
-import itm.proyectoharoldo.backend.Models.GlossaryWord;
-import itm.proyectoharoldo.backend.Models.Question;
-import itm.proyectoharoldo.backend.Models.QuestionType;
-import itm.proyectoharoldo.backend.Models.Web.AnswersOptionWebModel;
-import itm.proyectoharoldo.backend.Models.Web.QuestionWebModel;
-import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
-import itm.proyectoharoldo.backend.Repositories.QuestionRepository;
-import itm.proyectoharoldo.backend.Repositories.QuestionnaireRepository;
+import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Models.Web.*;
+import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.QuestionConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

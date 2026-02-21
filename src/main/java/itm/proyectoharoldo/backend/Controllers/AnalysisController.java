@@ -1,19 +1,13 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.DTO.AnalysisDTO;
-import itm.proyectoharoldo.backend.Models.DTO.GradeRequest;
-import itm.proyectoharoldo.backend.Models.DTO.QuestionAnswerDTO;
-import itm.proyectoharoldo.backend.Models.Analysis;
-import itm.proyectoharoldo.backend.Models.AnalysisStatus;
-import itm.proyectoharoldo.backend.Repositories.AnalysisRepository;
-import itm.proyectoharoldo.backend.Repositories.UserRepository;
-import itm.proyectoharoldo.backend.Services.AnalysisService;
-import itm.proyectoharoldo.backend.Services.ClientAnswerService;
+import itm.proyectoharoldo.backend.Models.DTO.*;
+import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Repositories.*;
+import itm.proyectoharoldo.backend.Services.*;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("nullness")
 @RestController
 @RequestMapping("/api/analysis")
 @CrossOrigin(origins = "*")
