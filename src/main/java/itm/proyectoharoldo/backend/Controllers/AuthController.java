@@ -65,7 +65,7 @@ public class AuthController {
         newUser.setLegalName(request.getLegalName());
         newUser.setClientType(request.getClientType());
         newUser.setRole(roleRepository.findById(2L).get());
-        newUser.setSector("No especificado");
+        newUser.setSector(request.getSector() == null ? "No especificado" : request.getSector());
 
         String token = jwtUtil.generateToken(newUser.getEmail());
 
