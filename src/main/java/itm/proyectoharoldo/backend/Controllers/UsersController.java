@@ -19,16 +19,16 @@ public class UsersController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllClients() {
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userRepository.findAll().stream()
-                .map(client -> new UserDTO(
-                        client.getUserId(),
-                        client.getCedulaOrNIT(),
-                        client.getLegalName(),
-                        client.getClientType(),
-                        client.getEmail(),
-                        client.getSector(),
-                        client.getRole() != null ? client.getRole().getName() : null
+                .map(user -> new UserDTO(
+                        user.getUserId(),
+                        user.getCedulaOrNIT(),
+                        user.getLegalName(),
+                        user.getClientType(),
+                        user.getEmail(),
+                        user.getSector(),
+                        user.getRole() != null ? user.getRole().getName() : null
                 ))
                 .collect(Collectors.toList());
 
@@ -36,16 +36,16 @@ public class UsersController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDTO> getClientById(@PathVariable Long userId) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
         return userRepository.findById(userId)
-                .map(client -> new UserDTO(
-                        client.getUserId(),
-                        client.getCedulaOrNIT(),
-                        client.getLegalName(),
-                        client.getClientType(),
-                        client.getEmail(),
-                        client.getSector(),
-                        client.getRole() != null ? client.getRole().getName() : null
+                .map(user -> new UserDTO(
+                        user.getUserId(),
+                        user.getCedulaOrNIT(),
+                        user.getLegalName(),
+                        user.getClientType(),
+                        user.getEmail(),
+                        user.getSector(),
+                        user.getRole() != null ? user.getRole().getName() : null
                 ))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
