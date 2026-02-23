@@ -1,7 +1,7 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.*;
-import itm.proyectoharoldo.backend.Models.DTO.*;
+import itm.proyectoharoldo.backend.Models.User;
+import itm.proyectoharoldo.backend.Models.DTO.Auth.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.JwtUtil;
 import lombok.AllArgsConstructor;

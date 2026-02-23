@@ -1,6 +1,6 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.DTO.UserDTO;
+import itm.proyectoharoldo.backend.Models.DTO.Auth.UserDTO;
 import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

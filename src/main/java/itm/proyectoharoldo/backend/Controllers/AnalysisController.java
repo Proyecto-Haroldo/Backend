@@ -1,6 +1,7 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.DTO.*;
+import itm.proyectoharoldo.backend.Models.DTO.Analysis.*;
+import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionAnswerDTO;
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Services.*;

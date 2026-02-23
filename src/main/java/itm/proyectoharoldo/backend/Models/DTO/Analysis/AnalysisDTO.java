@@ -1,14 +1,12 @@
-package itm.proyectoharoldo.backend.Models.DTO;
+package itm.proyectoharoldo.backend.Models.DTO.Analysis;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class AnalysisDTO {
 
     private Long analysisId;

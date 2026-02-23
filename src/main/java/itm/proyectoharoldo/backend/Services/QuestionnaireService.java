@@ -1,9 +1,9 @@
 package itm.proyectoharoldo.backend.Services;
 
-import itm.proyectoharoldo.backend.Models.DTO.QuestionnaireDTO;
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Models.User;
+import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionnaireDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

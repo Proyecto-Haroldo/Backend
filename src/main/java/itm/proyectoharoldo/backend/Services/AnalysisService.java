@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import itm.proyectoharoldo.backend.Models.*;
-import itm.proyectoharoldo.backend.Models.DTO.*;
+import itm.proyectoharoldo.backend.Models.DTO.Analysis.AnalysisDTO;
+import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionAnswerDTO;
 import itm.proyectoharoldo.backend.Repositories.*;
 import lombok.AllArgsConstructor;
 
