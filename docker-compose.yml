@@ -7,10 +7,10 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://aws-0-us-east-2.pooler.supabase.com:6543/postgres?preferQueryMode=simple
       SPRING_DATASOURCE_USERNAME: postgres.umtlidnqgmsutxwmljyx
-      SPRING_DATASOURCE_PASSWORD: DBPASSWORD
+      SPRING_DATASOURCE_PASSWORD: ${DBPASSWORD}
       MICROSERVICE_IA_URL: http://microservicio-ia:8080/ia/recomendacion
       REDIS_BASE_URL: https://helped-cockatoo-53634.upstash.io
-      REDIS_BEARER_TOKEN: REDIS_TOKEN
+      REDIS_BEARER_TOKEN: ${REDIS_BEARER_TOKEN}
     depends_on:
       - microservicio-ia
     networks:
@@ -25,7 +25,7 @@ services:
     ports:
       - "8081:8080"
     environment:
-      GEMINI_API_KEY: API_KEY
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
     networks:
       - haroldo-network
 
