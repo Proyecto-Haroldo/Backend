@@ -1,22 +1,22 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.DTO.AnalysisDTO;
-import itm.proyectoharoldo.backend.Models.Analysis;
-import itm.proyectoharoldo.backend.Models.AnalysisStatus;
-import itm.proyectoharoldo.backend.Repositories.AnalysisRepository;
-import itm.proyectoharoldo.backend.Repositories.UserRepository;
-import itm.proyectoharoldo.backend.Services.AnalysisService;
-import itm.proyectoharoldo.backend.Services.ClientAnswerService;
+import itm.proyectoharoldo.backend.Models.DTO.Analysis.*;
+import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionAnswerDTO;
+import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Repositories.*;
+import itm.proyectoharoldo.backend.Services.*;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("nullness")
 @RestController
 @RequestMapping("/api/analysis")
 @CrossOrigin(origins = "*")
@@ -43,6 +43,41 @@ public class AnalysisController {
                 .map(analysisService::toAnalysisDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @GetMapping("/{id}/answers")
+    public ResponseEntity<List<QuestionAnswerDTO>> getAnalysisAnswers(@PathVariable Long id) {
+        if (!analysisRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        List<QuestionAnswerDTO> answers = analysisService.getAnalysisAnswers(id);
+        return ResponseEntity.ok(answers);
+    }
+
+    @PutMapping("/{id}/grade")
+    public ResponseEntity<AnalysisDTO> gradeAnalysis(@PathVariable Long id, @RequestBody GradeRequest request) {
+        String email = SecurityContextHolder.getContext().getAuthentication() != null
+                ? SecurityContextHolder.getContext().getAuthentication().getName()
+                : null;
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        var adviser = userRepository.findByEmail(email)
+                .orElseGet(() -> null);
+        if (adviser == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        Analysis analysis = analysisRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Analysis not found"));
+        analysis.setAsesor(adviser);
+        analysis.setContenidoRevision(request.getContenidoRevision() != null ? request.getContenidoRevision() : "");
+        if (request.getColorSemaforo() != null && !request.getColorSemaforo().isBlank()) {
+            analysis.setColorSemaforo(request.getColorSemaforo().trim().toLowerCase());
+        }
+        analysis.setTimeWhenChecked(LocalDateTime.now());
+        analysis.setStatus(AnalysisStatus.checked);
+        analysisRepository.save(analysis);
+        return ResponseEntity.ok(analysisService.toAnalysisDTO(analysis));
     }
 
     @GetMapping("/pending")

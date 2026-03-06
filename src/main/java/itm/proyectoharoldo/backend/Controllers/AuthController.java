@@ -1,22 +1,15 @@
 package itm.proyectoharoldo.backend.Controllers;
 
 import itm.proyectoharoldo.backend.Models.User;
-import itm.proyectoharoldo.backend.Models.DTO.AuthRequest;
-import itm.proyectoharoldo.backend.Models.DTO.RegisterRequest;
-import itm.proyectoharoldo.backend.Repositories.RoleRepository;
-import itm.proyectoharoldo.backend.Repositories.UserRepository;
+import itm.proyectoharoldo.backend.Models.DTO.Auth.*;
+import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.JwtUtil;
 import lombok.AllArgsConstructor;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.*;
+import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -34,9 +27,17 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        if (!userRepository.findByEmail(request.getEmail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El correo electrónico no está registrado");
+        }
 
+        try{
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
+        }
+        
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         String token = jwtUtil.generateToken(user.getEmail());
 
@@ -64,7 +65,7 @@ public class AuthController {
         newUser.setLegalName(request.getLegalName());
         newUser.setClientType(request.getClientType());
         newUser.setRole(roleRepository.findById(2L).get());
-        newUser.setSector("No especificado");
+        newUser.setSector(request.getSector() == null ? "No especificado" : request.getSector());
 
         String token = jwtUtil.generateToken(newUser.getEmail());
 

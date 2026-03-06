@@ -3,10 +3,16 @@ package itm.proyectoharoldo.backend.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import itm.proyectoharoldo.backend.Models.Analysis;
-import itm.proyectoharoldo.backend.Models.DTO.AnalysisDTO;
-import itm.proyectoharoldo.backend.Repositories.AnalysisRepository;
+import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Models.DTO.Analysis.AnalysisDTO;
+import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionAnswerDTO;
+import itm.proyectoharoldo.backend.Repositories.*;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import itm.proyectoharoldo.backend.Repositories.AnswersOfQuestionnaireRepository.QuestionAnswerProjection;
 
 @Service
 @AllArgsConstructor
@@ -14,6 +20,9 @@ public class AnalysisService {
 
     @Autowired
     private final AnalysisRepository analysisRepository;
+
+    @Autowired
+    private final AnswersOfQuestionnaireRepository answersOfQuestionnaireRepository;
 
     public AnalysisDTO toAnalysisDTO(Analysis analysis){
         return new AnalysisDTO(
@@ -30,5 +39,11 @@ public class AnalysisService {
             analysis.getQuestionnaire().getCategory().getCategory()
         );
     }
-    
+
+    public List<QuestionAnswerDTO> getAnalysisAnswers(Long analysisId) {
+        List<QuestionAnswerProjection> rows = answersOfQuestionnaireRepository.findAnswersByAnalysisId(analysisId);
+        return rows.stream()
+            .map(p -> new QuestionAnswerDTO(p.getQuestionid(), p.getQuestiontext(), p.getAnswertext()))
+            .collect(Collectors.toList());
+    }
 }

@@ -1,7 +1,8 @@
 package itm.proyectoharoldo.backend.Utility;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import itm.proyectoharoldo.backend.Models.DTO.AIAnalysisResultDTO;
+
+import itm.proyectoharoldo.backend.Models.DTO.Analysis.AIAnalysisResultDTO;
 
 public class AIAnalysisParser {
 

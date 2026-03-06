@@ -1,7 +1,7 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.DTO.AIAnalysisResultDTO;
 import itm.proyectoharoldo.backend.Models.DTO.WebAnswersDTO;
+import itm.proyectoharoldo.backend.Models.DTO.Analysis.AIAnalysisResultDTO;
 import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import itm.proyectoharoldo.backend.Services.ClientAnswerService;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,7 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
-import itm.proyectoharoldo.backend.Models.DTO.AIAnalysisResultDTO;
-import itm.proyectoharoldo.backend.Models.DTO.AnalysisDTO;
+import itm.proyectoharoldo.backend.Models.DTO.Analysis.*;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.AIAnalysisParser;
@@ -38,8 +37,8 @@ public class ClientAnswerService {
         ResponseEntity<Map> recomendationResponse = aiService.getAiRecommendation(AiPrompt);
         AIAnalysisResultDTO responseDTO = processRecomendation(recomendationResponse);
 
-        saveNewAnalysis(result, clientId, responseDTO);
-        saveAnswersOfQuestionnaire(result);
+        Analysis savedAnalysis = saveNewAnalysis(result, clientId, responseDTO);
+        saveAnswersOfQuestionnaire(result, savedAnalysis);
 
         return responseDTO;
     }
@@ -104,7 +103,7 @@ public class ClientAnswerService {
 
     }
 
-    private void saveAnswersOfQuestionnaire(QuestionnaireResult result) {
+    private void saveAnswersOfQuestionnaire(QuestionnaireResult result, Analysis analysis) {
 
         List<AnswersOfQuestionnaire> questionnaireAnswerList = new ArrayList<>();
 
@@ -115,6 +114,7 @@ public class ClientAnswerService {
             AnswersOfQuestionnaire answer = new AnswersOfQuestionnaire();
             answer.setQuestion(question);
             answer.setAnswerText(answerText);
+            answer.setAnalysis(analysis);
 
             questionnaireAnswerList.add(answer);
         }

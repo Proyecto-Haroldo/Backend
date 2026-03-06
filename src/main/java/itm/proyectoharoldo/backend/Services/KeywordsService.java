@@ -1,17 +1,12 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.GlossaryWord;
-import itm.proyectoharoldo.backend.Models.Web.AnswersOptionWebModel;
-import itm.proyectoharoldo.backend.Models.Web.QuestionWebModel;
+import itm.proyectoharoldo.backend.Models.Web.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Service
 public class KeywordsService {

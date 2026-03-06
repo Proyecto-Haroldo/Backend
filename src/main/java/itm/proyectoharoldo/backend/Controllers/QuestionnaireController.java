@@ -1,7 +1,7 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.DTO.QuestionnaireDTO;
 import itm.proyectoharoldo.backend.Models.Questionnaire;
+import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionnaireDTO;
 import itm.proyectoharoldo.backend.Services.QuestionnaireService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -68,4 +68,5 @@ public class QuestionnaireController {
         questionnaireService.deleteQuestionnaire(id);
         return ResponseEntity.noContent().build();
     }
+    
 }
