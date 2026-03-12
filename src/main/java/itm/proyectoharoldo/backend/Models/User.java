@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Entity
@@ -40,6 +41,10 @@ public class User {
     @Column(name = "sector", nullable = false)
     private String sector;
 
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
     @ManyToOne
     @JoinColumn(name = "role")
     private Role role;
@@ -47,5 +52,13 @@ public class User {
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Questionnaire> questionnaires;
+
+    @ManyToMany
+    @JoinTable(
+            name = "userspecialities",
+            joinColumns = @JoinColumn(name = "user", referencedColumnName = "userid"),
+            inverseJoinColumns = @JoinColumn(name = "category", referencedColumnName = "categoryid")
+    )
+    private Set<Category> specialities;
 
 }

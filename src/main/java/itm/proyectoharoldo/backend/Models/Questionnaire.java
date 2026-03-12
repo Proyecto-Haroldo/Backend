@@ -27,4 +27,7 @@ public class Questionnaire {
     @JoinColumn(name = "creator", referencedColumnName = "userid")
     private User creator;
 
+    @Column(name = "title", nullable = false)
+    private String title;
+
 }

@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
@@ -31,5 +32,8 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonManagedReference
     private List<Questionnaire> questionnaires;
+
+    @ManyToMany(mappedBy = "specialities")
+    private Set<User> usersWithSpeciality;
 
 }
