@@ -1,5 +1,7 @@
 package itm.proyectoharoldo.backend.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -26,14 +28,18 @@ public class Category {
     @Column(name = "category", nullable = false)
     private String category;
 
+    @Column(name = "description", nullable = false)
+    private String description;
+
     @Column(name = "decimalvalue")
     private BigDecimal decimalvalue;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = false)
-    @JsonManagedReference
+    @JsonManagedReference("category-questionnaires")
     private List<Questionnaire> questionnaires;
 
     @ManyToMany(mappedBy = "specialities")
+    @JsonIgnore
     private Set<User> usersWithSpeciality;
 
 }

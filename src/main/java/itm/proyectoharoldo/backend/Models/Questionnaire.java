@@ -1,5 +1,6 @@
 package itm.proyectoharoldo.backend.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,10 +22,12 @@ public class Questionnaire {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category", referencedColumnName = "categoryid")
+    @JsonBackReference("category-questionnaires")
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator", referencedColumnName = "userid")
+    @JsonBackReference("user-questionnaires")
     private User creator;
 
     @Column(name = "title", nullable = false)

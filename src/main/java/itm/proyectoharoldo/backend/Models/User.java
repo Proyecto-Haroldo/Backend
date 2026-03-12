@@ -50,7 +50,7 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("user-questionnaires")
     private List<Questionnaire> questionnaires;
 
     @ManyToMany
