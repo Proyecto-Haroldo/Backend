@@ -1,12 +1,5 @@
 package itm.proyectoharoldo.backend.Models;
 
-/* According to Johann's model:
-export interface Keyword {
-  title: string;
-  description: string;
-}
- */
-
 public class GlossaryWord {
     public String title;
     public String description;

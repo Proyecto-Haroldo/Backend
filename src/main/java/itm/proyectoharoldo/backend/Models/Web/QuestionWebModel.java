@@ -1,7 +1,7 @@
 package itm.proyectoharoldo.backend.Models.Web;
 
 import itm.proyectoharoldo.backend.Models.GlossaryWord;
-import itm.proyectoharoldo.backend.Models.QuestionType;
+import itm.proyectoharoldo.backend.Models.Enums.QuestionType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

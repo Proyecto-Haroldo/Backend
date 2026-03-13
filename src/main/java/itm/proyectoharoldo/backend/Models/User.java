@@ -2,6 +2,9 @@ package itm.proyectoharoldo.backend.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import itm.proyectoharoldo.backend.Models.Enums.ClientType;
+import itm.proyectoharoldo.backend.Models.Enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

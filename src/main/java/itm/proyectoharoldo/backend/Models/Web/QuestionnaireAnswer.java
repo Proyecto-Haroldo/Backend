@@ -1,17 +1,8 @@
 package itm.proyectoharoldo.backend.Models.Web;
 
-/*
-export interface QuestionnaireAnswer {
-  questionId: number;
-  questionTitle: string;
-  answer: string | string[] | null;
-  type: QuestionType;
-}
- */
-
-import itm.proyectoharoldo.backend.Models.QuestionType;
-
 import java.util.List;
+
+import itm.proyectoharoldo.backend.Models.Enums.QuestionType;
 
 public class QuestionnaireAnswer {
 

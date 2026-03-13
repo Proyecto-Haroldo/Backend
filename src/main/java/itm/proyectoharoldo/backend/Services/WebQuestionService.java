@@ -1,6 +1,7 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Models.Enums.QuestionType;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.QuestionConverter;

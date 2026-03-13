@@ -2,6 +2,9 @@ package itm.proyectoharoldo.backend.Models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import itm.proyectoharoldo.backend.Models.Enums.ClientType;
+import itm.proyectoharoldo.backend.Models.Enums.QuestionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

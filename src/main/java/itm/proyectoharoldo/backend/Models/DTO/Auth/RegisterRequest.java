@@ -1,7 +1,7 @@
 package itm.proyectoharoldo.backend.Models.DTO.Auth;
 
-import itm.proyectoharoldo.backend.Models.ClientType;
 import itm.proyectoharoldo.backend.Models.Role;
+import itm.proyectoharoldo.backend.Models.Enums.ClientType;
 import lombok.*;
 
 @Getter

@@ -75,14 +75,14 @@ public class AnalysisController {
             analysis.setColorSemaforo(request.getColorSemaforo().trim().toLowerCase());
         }
         analysis.setTimeWhenChecked(LocalDateTime.now());
-        analysis.setStatus(AnalysisStatus.checked);
+        analysis.setStatus(AnalysisStatus.CHECKED);
         analysisRepository.save(analysis);
         return ResponseEntity.ok(analysisService.toAnalysisDTO(analysis));
     }
 
     @GetMapping("/pending")
     public ResponseEntity<List<AnalysisDTO>> getPendingAnalysis() {
-        List<AnalysisDTO> analysis = analysisRepository.findByStatus(AnalysisStatus.pending)
+        List<AnalysisDTO> analysis = analysisRepository.findByStatus(AnalysisStatus.PENDING)
                 .stream()
                 .map(analysisService::toAnalysisDTO)
                 .collect(Collectors.toList());
@@ -91,7 +91,7 @@ public class AnalysisController {
 
     @GetMapping("/proofread")
     public ResponseEntity<List<AnalysisDTO>> getCheckedAnalysis() {
-        List<AnalysisDTO> analysis = analysisRepository.findByStatus(AnalysisStatus.checked)
+        List<AnalysisDTO> analysis = analysisRepository.findByStatus(AnalysisStatus.CHECKED)
                 .stream()
                 .map(analysisService::toAnalysisDTO)
                 .collect(Collectors.toList());
@@ -115,7 +115,7 @@ public class AnalysisController {
     public ResponseEntity<AnalysisDTO> setCheckedAnalysis(@PathVariable Long id) {
         Analysis analysis = analysisRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Analysis not found"));
-        analysis.setStatus(AnalysisStatus.checked);
+        analysis.setStatus(AnalysisStatus.CHECKED);
         analysisRepository.save(analysis);
         return ResponseEntity.ok(analysisService.toAnalysisDTO(analysis));
     }

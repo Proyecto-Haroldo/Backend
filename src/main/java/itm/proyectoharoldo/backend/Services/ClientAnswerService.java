@@ -78,7 +78,7 @@ public class ClientAnswerService {
         analysis.setUsuarioResponde(client);
         analysis.setQuestionnaire(questionnaireRepository.findByCategory(category).getFirst());
         analysis.setTimeWhenSolved(dateTimeParser(result.getMetadata().getTimestamp()));
-        analysis.setStatus(AnalysisStatus.pending);
+        analysis.setStatus(AnalysisStatus.PENDING);
         analysis.setRecomendacionInicial(aiAnalysisResultDTO.getResumenUsuario());
         analysis.setColorSemaforo(aiAnalysisResultDTO.getColorSemaforo());
         analysis.setContenidoRevision(aiAnalysisResultDTO.getAnalisisAsesor());
