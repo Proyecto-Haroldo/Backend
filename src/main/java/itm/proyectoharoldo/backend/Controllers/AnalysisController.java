@@ -2,6 +2,7 @@ package itm.proyectoharoldo.backend.Controllers;
 
 import itm.proyectoharoldo.backend.Models.DTO.Analysis.*;
 import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionAnswerDTO;
+import itm.proyectoharoldo.backend.Models.Enums.AnalysisStatus;
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Services.*;
@@ -70,7 +71,7 @@ public class AnalysisController {
         Analysis analysis = analysisRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Analysis not found"));
         analysis.setAsesor(adviser);
-        analysis.setContenidoRevision(request.getContenidoRevision() != null ? request.getContenidoRevision() : "");
+        analysis.setComentarioAsesor(request.getContenidoRevision() != null ? request.getContenidoRevision() : "");
         if (request.getColorSemaforo() != null && !request.getColorSemaforo().isBlank()) {
             analysis.setColorSemaforo(request.getColorSemaforo().trim().toLowerCase());
         }
@@ -103,9 +104,11 @@ public class AnalysisController {
         Analysis analysis = analysisRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Analysis not found"));
         analysis.setStatus(AnalysisStatus.valueOf(analysisFromWeb.getStatus()));
-        analysis.setContenidoRevision(analysisFromWeb.getContenidoRevision());
+        analysis.setResumenIA(analysisFromWeb.getResumenIA());
         analysis.setColorSemaforo(analysisFromWeb.getColorSemaforo());
-        analysis.setRecomendacionInicial(analysisFromWeb.getRecomendacionInicial());
+        analysis.setAnalisisIA(analysisFromWeb.getAnalisisIA());
+        analysis.setResumenIA(analysisFromWeb.getResumenIA());
+        analysis.setComentarioAsesor(analysisFromWeb.getComentarioAsesor());
         analysis.setAsesor(userRepository.findByLegalName(analysisFromWeb.getAsesorName()).get());
         analysisRepository.save(analysis);
         return ResponseEntity.ok(analysisService.toAnalysisDTO(analysis));

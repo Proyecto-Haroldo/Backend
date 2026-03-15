@@ -1,6 +1,8 @@
 package itm.proyectoharoldo.backend.Repositories;
 
 import itm.proyectoharoldo.backend.Models.*;
+import itm.proyectoharoldo.backend.Models.Enums.AnalysisStatus;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

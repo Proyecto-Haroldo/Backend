@@ -2,6 +2,7 @@ package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.DTO.Analysis.*;
+import itm.proyectoharoldo.backend.Models.Enums.AnalysisStatus;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.AIAnalysisParser;
@@ -79,9 +80,9 @@ public class ClientAnswerService {
         analysis.setQuestionnaire(questionnaireRepository.findByCategory(category).getFirst());
         analysis.setTimeWhenSolved(dateTimeParser(result.getMetadata().getTimestamp()));
         analysis.setStatus(AnalysisStatus.PENDING);
-        analysis.setRecomendacionInicial(aiAnalysisResultDTO.getResumenUsuario());
+        analysis.setAnalisisIA(aiAnalysisResultDTO.getAnalisisAsesor());
         analysis.setColorSemaforo(aiAnalysisResultDTO.getColorSemaforo());
-        analysis.setContenidoRevision(aiAnalysisResultDTO.getAnalisisAsesor());
+        analysis.setResumenIA(aiAnalysisResultDTO.getResumenUsuario());
         return analysisRepository.save(analysis);
     }
 

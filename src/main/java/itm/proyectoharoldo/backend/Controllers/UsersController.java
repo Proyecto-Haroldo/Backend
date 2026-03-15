@@ -28,7 +28,8 @@ public class UsersController {
                         user.getClientType(),
                         user.getEmail(),
                         user.getSector(),
-                        user.getRole() != null ? user.getRole().getName() : null
+                        user.getRole() != null ? user.getRole().getName() : null,
+                        user.getSpecialities()
                 ))
                 .collect(Collectors.toList());
 
@@ -45,7 +46,8 @@ public class UsersController {
                         user.getClientType(),
                         user.getEmail(),
                         user.getSector(),
-                        user.getRole() != null ? user.getRole().getName() : null
+                        user.getRole() != null ? user.getRole().getName() : null,
+                        user.getSpecialities()
                 ))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

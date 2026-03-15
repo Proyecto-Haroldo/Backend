@@ -13,9 +13,10 @@ public class AnalysisDTO {
     private String asesorName;
     private String clientName;
     private String status;
-    private String recomendacionInicial;
+    private String analisisIA;
     private String colorSemaforo;
-    private String contenidoRevision;
+    private String resumenIA;
+    private String comentarioAsesor;
     private LocalDateTime timeWhenSolved;
     private LocalDateTime timeWhenChecked;
     private Integer conteo;

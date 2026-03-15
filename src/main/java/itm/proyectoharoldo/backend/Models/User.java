@@ -52,7 +52,7 @@ public class User {
     @JoinColumn(name = "role")
     private Role role;
 
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "creator")
     @JsonManagedReference("user-questionnaires")
     private List<Questionnaire> questionnaires;
 

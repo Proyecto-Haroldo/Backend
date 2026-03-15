@@ -1,6 +1,10 @@
 package itm.proyectoharoldo.backend.Models.DTO.Auth;
 
 import itm.proyectoharoldo.backend.Models.Enums.ClientType;
+import itm.proyectoharoldo.backend.Models.Category;
+
+import java.util.Set;
+
 import lombok.*;
 
 @Getter
@@ -16,5 +20,6 @@ public class UserDTO {
     private String email;
     private String sector;
     private String roleName;
+    private Set<Category> specialities;
 
 }
