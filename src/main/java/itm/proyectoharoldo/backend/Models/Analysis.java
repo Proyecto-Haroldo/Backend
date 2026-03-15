@@ -38,13 +38,13 @@ public class Analysis {
     @Column(name = "colorsemaforo", columnDefinition = "TEXT")
     private String colorSemaforo;
 
-    @Column(name = "analisisIA", columnDefinition = "TEXT")
+    @Column(name = "analisisia", columnDefinition = "TEXT")
     private String analisisIA;
 
-    @Column(name = "resumenIA", columnDefinition = "TEXT")
+    @Column(name = "resumenia", columnDefinition = "TEXT")
     private String resumenIA;
 
-    @Column(name = "comentarioAsesor", columnDefinition = "TEXT")
+    @Column(name = "comentarioasesor", columnDefinition = "TEXT")
     private String comentarioAsesor;
 
     @Column(name = "status")
