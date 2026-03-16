@@ -29,6 +29,8 @@ public class UsersController {
                         user.getEmail(),
                         user.getSector(),
                         user.getRole() != null ? user.getRole().getName() : null,
+                        user.getNetwork(),
+                        user.getPhone(),
                         user.getSpecialities()
                 ))
                 .collect(Collectors.toList());
@@ -47,6 +49,8 @@ public class UsersController {
                         user.getEmail(),
                         user.getSector(),
                         user.getRole() != null ? user.getRole().getName() : null,
+                        user.getNetwork(),
+                        user.getPhone(),
                         user.getSpecialities()
                 ))
                 .map(ResponseEntity::ok)

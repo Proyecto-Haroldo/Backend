@@ -48,6 +48,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "network")
+    private String network;
+
     @ManyToOne
     @JoinColumn(name = "role")
     private Role role;

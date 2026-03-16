@@ -20,6 +20,8 @@ public class UserDTO {
     private String email;
     private String sector;
     private String roleName;
+    private String network;
+    private String phone;
     private Set<Category> specialities;
 
 }
