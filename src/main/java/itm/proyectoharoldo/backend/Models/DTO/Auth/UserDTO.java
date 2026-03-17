@@ -2,6 +2,7 @@ package itm.proyectoharoldo.backend.Models.DTO.Auth;
 
 import itm.proyectoharoldo.backend.Models.Enums.ClientType;
 import itm.proyectoharoldo.backend.Models.Category;
+import itm.proyectoharoldo.backend.Models.DTO.CategoryDTO;
 
 import java.util.Set;
 
@@ -22,6 +23,6 @@ public class UserDTO {
     private String roleName;
     private String network;
     private String phone;
-    private Set<Category> specialities;
+    private Set<CategoryDTO> specialities;
 
 }

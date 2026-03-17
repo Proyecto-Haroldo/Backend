@@ -1,6 +1,7 @@
 package itm.proyectoharoldo.backend.Controllers;
 
 import itm.proyectoharoldo.backend.Models.DTO.Auth.UserDTO;
+import itm.proyectoharoldo.backend.Models.DTO.*;
 import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,27 +21,32 @@ public class UsersController {
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userRepository.findAll().stream()
-                .map(user -> new UserDTO(
-                        user.getUserId(),
-                        user.getCedulaOrNIT(),
-                        user.getLegalName(),
-                        user.getClientType(),
-                        user.getEmail(),
-                        user.getSector(),
-                        user.getRole() != null ? user.getRole().getName() : null,
-                        user.getNetwork(),
-                        user.getPhone(),
-                        user.getSpecialities()
-                ))
-                .collect(Collectors.toList());
+        List<UserDTO> users = userRepository.findAllWithSpecialities().get().stream()
+            .map(user -> new UserDTO(
+                    user.getUserId(),
+                    user.getCedulaOrNIT(),
+                    user.getLegalName(),
+                    user.getClientType(),
+                    user.getEmail(),
+                    user.getSector(),
+                    user.getRole() != null ? user.getRole().getName() : null,
+                    user.getNetwork(),
+                    user.getPhone(),
+                    user.getSpecialities().stream()
+                        .map(category -> new CategoryDTO(
+                            category.getCategoryid(),
+                            category.getCategory(),
+                            category.getDescription()
+                        )).collect(Collectors.toSet())
+            ))
+            .collect(Collectors.toList());
 
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findUserWithSpecialities(userId)
                 .map(user -> new UserDTO(
                         user.getUserId(),
                         user.getCedulaOrNIT(),
@@ -51,7 +57,12 @@ public class UsersController {
                         user.getRole() != null ? user.getRole().getName() : null,
                         user.getNetwork(),
                         user.getPhone(),
-                        user.getSpecialities()
+                        user.getSpecialities().stream()
+                        .map(category -> new CategoryDTO(
+                            category.getCategoryid(),
+                            category.getCategory(),
+                            category.getDescription()
+                        )).collect(Collectors.toSet())
                 ))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
