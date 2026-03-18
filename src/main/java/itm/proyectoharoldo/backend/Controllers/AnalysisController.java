@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -27,9 +28,9 @@ public class AnalysisController {
     private final AnalysisRepository analysisRepository;
     private final AnalysisService analysisService;
     private final UserRepository userRepository;
-    private final ClientAnswerService clientAnswerService;
 
     @GetMapping("/all")
+    @Transactional
     public ResponseEntity<List<AnalysisDTO>> getAllAnalysis() {
         List<AnalysisDTO> analysis = analysisRepository.findAll()
                 .stream()
@@ -39,6 +40,7 @@ public class AnalysisController {
     }
 
     @GetMapping("/{id}")
+    @Transactional
     public ResponseEntity<AnalysisDTO> getAnalysisById(@PathVariable Long id) {
         return analysisRepository.findById(id)
                 .map(analysisService::toAnalysisDTO)
@@ -47,6 +49,7 @@ public class AnalysisController {
     }
 
     @GetMapping("/{id}/answers")
+    @Transactional
     public ResponseEntity<List<QuestionAnswerDTO>> getAnalysisAnswers(@PathVariable Long id) {
         if (!analysisRepository.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -56,6 +59,7 @@ public class AnalysisController {
     }
 
     @PutMapping("/{id}/grade")
+    @Transactional
     public ResponseEntity<AnalysisDTO> gradeAnalysis(@PathVariable Long id, @RequestBody GradeRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication() != null
                 ? SecurityContextHolder.getContext().getAuthentication().getName()
@@ -82,6 +86,7 @@ public class AnalysisController {
     }
 
     @GetMapping("/pending")
+    @Transactional
     public ResponseEntity<List<AnalysisDTO>> getPendingAnalysis() {
         List<AnalysisDTO> analysis = analysisRepository.findByStatus(AnalysisStatus.PENDING)
                 .stream()
@@ -91,6 +96,7 @@ public class AnalysisController {
     }
 
     @GetMapping("/proofread")
+    @Transactional
     public ResponseEntity<List<AnalysisDTO>> getCheckedAnalysis() {
         List<AnalysisDTO> analysis = analysisRepository.findByStatus(AnalysisStatus.CHECKED)
                 .stream()
@@ -100,6 +106,7 @@ public class AnalysisController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<AnalysisDTO> updateAnalysis(@PathVariable Long id, @RequestBody AnalysisDTO analysisFromWeb) {
         Analysis analysis = analysisRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Analysis not found"));
@@ -115,6 +122,7 @@ public class AnalysisController {
     }
 
     @PutMapping("/setChecked/{id}")
+    @Transactional
     public ResponseEntity<AnalysisDTO> setCheckedAnalysis(@PathVariable Long id) {
         Analysis analysis = analysisRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Analysis not found"));
@@ -124,6 +132,7 @@ public class AnalysisController {
     }
 
     @GetMapping("/adviser/{asesor}")
+    @Transactional
     public ResponseEntity<List<AnalysisDTO>> getAdviserAnalysis(@PathVariable Long asesor) {
         try {
             // Buscar asesor por ID
@@ -146,50 +155,40 @@ public class AnalysisController {
     }
 
     @GetMapping("/user/{userId}")
+    @Transactional
     public ResponseEntity<List<AnalysisDTO>> getUserAnalysis(@PathVariable Long userId) {
         try {
-            // Buscar usuario por ID
-            var user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            // Obtener el email del usuario
-            String userEmail = user.getEmail();
-
-            // Obtener análisis usando el email
-            List<AnalysisDTO> analysis = clientAnswerService.getUserAnalysis(userEmail);
+            List<AnalysisDTO> analysis = analysisRepository
+                    .findByUsuarioRespondeUserIdOrderByTimeWhenSolvedDesc(userId)
+                    .stream()
+                    .map(analysisService::toAnalysisDTO)
+                    .toList();
 
             return ResponseEntity.ok(analysis);
 
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("/user/{userId}/category/{categoria}")
+    @Transactional
     public ResponseEntity<List<AnalysisDTO>> getUserAnalysisByCategory(
             @PathVariable Long userId, @PathVariable String categoria) {
         try {
-            // Buscar usuario por ID
-            var user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
             // Validar categoría
             if (categoria == null || categoria.trim().isEmpty()) {
                 return ResponseEntity.badRequest().build();
             }
 
-            // Obtener el email del usuario
-            String userEmail = user.getEmail();
-
-            // Obtener análisis filtrados por categoría
-            List<AnalysisDTO> analysis = clientAnswerService.getUserAnalysisByCategory(userEmail, categoria);
+            List<AnalysisDTO> analysis = analysisRepository
+                    .findByUsuarioRespondeUserIdAndCategoryOrderByTimeWhenSolvedDesc(userId, categoria)
+                    .stream()
+                    .map(analysisService::toAnalysisDTO)
+                    .toList();
 
             return ResponseEntity.ok(analysis);
 
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

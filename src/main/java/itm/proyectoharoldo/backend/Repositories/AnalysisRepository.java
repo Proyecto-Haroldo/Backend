@@ -37,11 +37,41 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
     @Query("""
             SELECT DISTINCT a
             FROM Analysis a
-            LEFT JOIN FETCH a.questionnaire
+            LEFT JOIN FETCH a.usuarioResponde ur
+            LEFT JOIN FETCH a.asesor
+            LEFT JOIN FETCH a.questionnaire q
+            LEFT JOIN FETCH q.category
             WHERE a.usuarioResponde = :usuarioResponde
             ORDER BY a.timeWhenSolved DESC
             """)
     List<Analysis> findByUsuarioRespondeOrderByTimeWhenSolvedDesc(@Param("usuarioResponde") User usuarioResponde);
+
+    @Query("""
+            SELECT DISTINCT a
+            FROM Analysis a
+            LEFT JOIN FETCH a.questionnaire q
+            LEFT JOIN FETCH q.category
+            LEFT JOIN FETCH a.usuarioResponde
+            LEFT JOIN FETCH a.asesor
+            WHERE a.usuarioResponde.userId = :userId
+            ORDER BY a.timeWhenSolved DESC
+            """)
+    List<Analysis> findByUsuarioRespondeUserIdOrderByTimeWhenSolvedDesc(@Param("userId") Long userId);
+
+    @Query("""
+            SELECT DISTINCT a
+            FROM Analysis a
+            LEFT JOIN FETCH a.questionnaire q
+            LEFT JOIN FETCH q.category c
+            LEFT JOIN FETCH a.usuarioResponde
+            LEFT JOIN FETCH a.asesor
+            WHERE a.usuarioResponde.userId = :userId
+              AND c.category = :category
+            ORDER BY a.timeWhenSolved DESC
+            """)
+    List<Analysis> findByUsuarioRespondeUserIdAndCategoryOrderByTimeWhenSolvedDesc(
+            @Param("userId") Long userId,
+            @Param("category") String category);
 
     // Obtener análisis de un asesor con cuestionario cargado, orden descendente por
     // revisión
@@ -67,4 +97,15 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
     List<Analysis> findByUsuarioRespondeAndQuestionnaireOrderByTimeWhenSolvedDesc(
             @Param("usuarioResponde") User usuarioResponde,
             @Param("questionnaire") Questionnaire questionnaire);
+
+        @Query("""
+        SELECT DISTINCT a
+        FROM Analysis a
+        LEFT JOIN FETCH a.questionnaire q
+        LEFT JOIN FETCH q.category
+        LEFT JOIN FETCH a.usuarioResponde
+        LEFT JOIN FETCH a.asesor
+        """)
+        List<Analysis> findAllWithDetails();
+        
 }
