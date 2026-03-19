@@ -13,5 +13,6 @@ public class QuestionnaireDTO {
     private Long creatorId;
     private String creatorName;
     private String categoryName;
+    private String title;
     
 }

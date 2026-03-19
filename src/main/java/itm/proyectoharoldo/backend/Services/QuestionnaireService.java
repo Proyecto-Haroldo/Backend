@@ -61,33 +61,24 @@ public class QuestionnaireService {
         questionnaireRepository.deleteById(id);
     }
 
-    // Conversión a DTO
     public QuestionnaireDTO toQuestionnaireDTO(Questionnaire questionnaire) {
-        Long categoryId = questionnaire.getCategory() != null ? questionnaire.getCategory().getCategoryid() : null;
-        Long creatorId = questionnaire.getCreator() != null ? questionnaire.getCreator().getUserId() : null;
+        QuestionnaireDTO dto = new QuestionnaireDTO();
+        
+        dto.setId(questionnaire.getId());
+        dto.setTitle(questionnaire.getTitle());
 
-        String categoryName = null;
-        String creatorName = null;
-
-        // Obtener nombre de la categoría si existe
-        if (categoryId != null) {
-            categoryName = categoryRepository.findById(categoryId)
-                    .map(Category::getCategory)
-                    .orElse(null);
+        if(questionnaire.getCategory() != null){
+            Category category = questionnaire.getCategory();
+            dto.setCategoryId(category.getCategoryid());
+            dto.setCategoryName(category.getCategory());
         }
-
-        // Obtener nombre del creador si existe
-        if (creatorId != null) {
-            creatorName = userRepository.findById(creatorId)
-                    .map(User::getLegalName)
-                    .orElse(null);
+        
+        if(questionnaire.getCreator() != null){
+            User creator = questionnaire.getCreator();
+            dto.setCreatorId(creator.getUserId());
+            dto.setCreatorName(creator.getLegalName());
         }
-
-        return new QuestionnaireDTO(
-                questionnaire.getId(),
-                categoryId,
-                creatorId,
-                creatorName,
-                categoryName);
+        
+        return dto;
     }
 }
