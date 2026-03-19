@@ -41,9 +41,11 @@ public class AnalysisService {
         dto.setClientName(analysis.getUsuarioResponde() != null ? analysis.getUsuarioResponde().getLegalName() : null);
 
         // From joined Questionnaire → Category
-        dto.setCategoria(analysis.getQuestionnaire() != null && analysis.getQuestionnaire().getCategory() != null
+        dto.setCategoryName(analysis.getQuestionnaire() != null && analysis.getQuestionnaire().getCategory() != null
                 ? analysis.getQuestionnaire().getCategory().getCategory()
                 : null);
+
+        dto.setQuestionnaireTitle(analysis.getQuestionnaire().getTitle());
 
         // Conteo: how many analyses this user has for this questionnaire
         dto.setConteo(analysis.getUsuarioResponde() != null && analysis.getQuestionnaire() != null
@@ -51,6 +53,7 @@ public class AnalysisService {
                         analysis.getUsuarioResponde(),
                         analysis.getQuestionnaire())
                 : null);
+
 
         return dto;
     }

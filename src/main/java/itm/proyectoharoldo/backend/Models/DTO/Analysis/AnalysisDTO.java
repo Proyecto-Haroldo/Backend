@@ -12,14 +12,17 @@ public class AnalysisDTO {
     private Long analysisId;
     private String asesorName;
     private String clientName;
+
+    private LocalDateTime timeWhenSolved;
+    private LocalDateTime timeWhenChecked;
+
     private String status;
     private String analisisIA;
     private String colorSemaforo;
     private String resumenIA;
     private String comentarioAsesor;
-    private LocalDateTime timeWhenSolved;
-    private LocalDateTime timeWhenChecked;
     private Integer conteo;
-    private String categoria;
-
+    
+    private String categoryName;
+    private String questionnaireTitle;
 }
