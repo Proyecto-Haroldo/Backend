@@ -73,11 +73,10 @@ public class ClientAnswerService {
     private Analysis saveNewAnalysis(QuestionnaireResult result, Long userId, AIAnalysisResultDTO aiAnalysisResultDTO) {
 
         User client = userRepository.findById(userId).orElseThrow();
-        Category category = categoryRepository.findByCategory(result.getMetadata().getCategory()).orElseThrow();
 
         Analysis analysis = new Analysis();
         analysis.setUsuarioResponde(client);
-        analysis.setQuestionnaire(questionnaireRepository.findByCategory(category).getFirst());
+        analysis.setQuestionnaire(questionnaireRepository.findByTitle(result.getMetadata().getTitle()));
         analysis.setTimeWhenSolved(dateTimeParser(result.getMetadata().getTimestamp()));
         analysis.setStatus(AnalysisStatus.PENDING);
         analysis.setAnalisisIA(aiAnalysisResultDTO.getAnalisisAsesor());
