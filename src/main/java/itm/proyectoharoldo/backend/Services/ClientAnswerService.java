@@ -5,18 +5,17 @@ import itm.proyectoharoldo.backend.Models.DTO.Analysis.*;
 import itm.proyectoharoldo.backend.Models.Enums.AnalysisStatus;
 import itm.proyectoharoldo.backend.Models.Web.*;
 import itm.proyectoharoldo.backend.Repositories.*;
+
 import itm.proyectoharoldo.backend.Utility.AIAnalysisParser;
-import jakarta.transaction.Transactional;
+
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.*;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -62,14 +61,7 @@ public class ClientAnswerService {
         }
     }
 
-    private LocalDateTime dateTimeParser(String timestamp) {
-        try {
-            return ZonedDateTime.parse(timestamp).toLocalDateTime();
-        } catch (Exception e) {
-            return LocalDateTime.parse(timestamp);
-        }
-    }
-
+    @Transactional
     private Analysis saveNewAnalysis(QuestionnaireResult result, Long userId, AIAnalysisResultDTO aiAnalysisResultDTO) {
 
         User client = userRepository.findById(userId).orElseThrow();
@@ -85,24 +77,7 @@ public class ClientAnswerService {
         return analysisRepository.save(analysis);
     }
 
-    private String buildAiPrompt(QuestionnaireResult result) {
-
-        StringBuilder promptBuilder = new StringBuilder();
-        promptBuilder.append("Cliente: ").append(result.getMetadata().getClientType()).append("\n\n");
-        promptBuilder.append("Categoría: ").append(result.getMetadata().getCategory()).append("\n\n");
-
-        for (QuestionnaireAnswer answerData : result.getAnswers()) {
-            Question question = questionRepository.findById((long) answerData.getQuestionId()).orElseThrow();
-            String answerText = String.join(" | ", answerData.getAnswer());
-
-            promptBuilder.append("Pregunta: ").append(question.getQuestion()).append("\n");
-            promptBuilder.append("Respuesta: ").append(answerText).append("\n\n");
-        }
-
-        return promptBuilder.toString();
-
-    }
-
+    @Transactional
     private void saveAnswersOfQuestionnaire(QuestionnaireResult result, Analysis analysis) {
 
         List<AnswersOfQuestionnaire> questionnaireAnswerList = new ArrayList<>();
@@ -120,6 +95,36 @@ public class ClientAnswerService {
         }
 
         answersOfQuestionnaireRepository.saveAll(questionnaireAnswerList);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnalysisDTO> getUserAnalysis(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
+
+        List<Analysis> analysis = analysisRepository
+                .findByUsuarioRespondeOrderByTimeWhenSolvedDesc(user);
+
+        return analysis.stream()
+                .map(analysisService::toAnalysisDTO)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnalysisDTO> getUserAnalysisByCategory(String userEmail, String categoryName) {
+        User client = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
+
+        Category category = categoryRepository.findByCategory(categoryName)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + categoryName));
+
+        List<Analysis> analysis = analysisRepository
+                .findByUsuarioRespondeAndQuestionnaireOrderByTimeWhenSolvedDesc(client,
+                        questionnaireRepository.findByCategory(category).getFirst());
+
+        return analysis.stream()
+                .map(analysisService::toAnalysisDTO)
+                .toList();
     }
 
     private String cleanJsonResponse(String response) {
@@ -150,32 +155,30 @@ public class ClientAnswerService {
         return cleaned.trim();
     }
 
-    public List<AnalysisDTO> getUserAnalysis(String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
+    private String buildAiPrompt(QuestionnaireResult result) {
 
-        List<Analysis> analysis = analysisRepository
-                .findByUsuarioRespondeOrderByTimeWhenSolvedDesc(user);
+        StringBuilder promptBuilder = new StringBuilder();
+        promptBuilder.append("Cliente: ").append(result.getMetadata().getClientType()).append("\n\n");
+        promptBuilder.append("Categoría: ").append(result.getMetadata().getCategory()).append("\n\n");
 
-        return analysis.stream()
-                .map(analysisService::toAnalysisDTO)
-                .toList();
+        for (QuestionnaireAnswer answerData : result.getAnswers()) {
+            Question question = questionRepository.findById((long) answerData.getQuestionId()).orElseThrow();
+            String answerText = String.join(" | ", answerData.getAnswer());
+
+            promptBuilder.append("Pregunta: ").append(question.getQuestion()).append("\n");
+            promptBuilder.append("Respuesta: ").append(answerText).append("\n\n");
+        }
+
+        return promptBuilder.toString();
+
     }
 
-    public List<AnalysisDTO> getUserAnalysisByCategory(String userEmail, String categoryName) {
-        User client = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
-
-        Category category = categoryRepository.findByCategory(categoryName)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + categoryName));
-
-        List<Analysis> analysis = analysisRepository
-                .findByUsuarioRespondeAndQuestionnaireOrderByTimeWhenSolvedDesc(client,
-                        questionnaireRepository.findByCategory(category).getFirst());
-
-        return analysis.stream()
-                .map(analysisService::toAnalysisDTO)
-                .toList();
+    private LocalDateTime dateTimeParser(String timestamp) {
+        try {
+            return ZonedDateTime.parse(timestamp).toLocalDateTime();
+        } catch (Exception e) {
+            return LocalDateTime.parse(timestamp);
+        }
     }
 
 }

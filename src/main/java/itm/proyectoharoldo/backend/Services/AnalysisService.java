@@ -1,13 +1,14 @@
 package itm.proyectoharoldo.backend.Services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.DTO.Analysis.AnalysisDTO;
 import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionAnswerDTO;
 import itm.proyectoharoldo.backend.Repositories.*;
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,15 +16,13 @@ import java.util.stream.Collectors;
 import itm.proyectoharoldo.backend.Repositories.AnswersOfQuestionnaireRepository.QuestionAnswerProjection;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AnalysisService {
 
-    @Autowired
     private final AnalysisRepository analysisRepository;
-
-    @Autowired
     private final AnswersOfQuestionnaireRepository answersOfQuestionnaireRepository;
 
+    @Transactional(readOnly = true)
     public AnalysisDTO toAnalysisDTO(Analysis analysis) {
         AnalysisDTO dto = new AnalysisDTO();
 
@@ -58,6 +57,7 @@ public class AnalysisService {
         return dto;
     }
 
+    @Transactional(readOnly = true)
     public List<QuestionAnswerDTO> getAnalysisAnswers(Long analysisId) {
         List<QuestionAnswerProjection> rows = answersOfQuestionnaireRepository.findAnswersByAnalysisId(analysisId);
         return rows.stream()
