@@ -23,5 +23,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserWithSpecialities(@Param("id") Long id);
 
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.specialities")
-    Optional<List<User>> findAllWithSpecialities();
+    List<User> findAllWithSpecialities();
 }
