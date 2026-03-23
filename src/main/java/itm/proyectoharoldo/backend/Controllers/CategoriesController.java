@@ -2,11 +2,13 @@ package itm.proyectoharoldo.backend.Controllers;
 
 import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
 import itm.proyectoharoldo.backend.Models.Category;
+import itm.proyectoharoldo.backend.Models.DTO.CategoryDTO;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -29,8 +31,12 @@ public class CategoriesController {
     }
 
     @PostMapping
-    public ResponseEntity<Category> create(Category category){
-        return ResponseEntity.ok(categoryRepository.save(category));
+    public ResponseEntity<Category> create(CategoryDTO category){
+        Category newCategory = new Category();
+        newCategory.setCategory(category.getTitle());
+        newCategory.setDecimalvalue(BigDecimal.ZERO);
+        newCategory.setDescription(category.getDescription());
+        return ResponseEntity.ok(categoryRepository.save(newCategory));
     }
 
     @PutMapping("/{id}")

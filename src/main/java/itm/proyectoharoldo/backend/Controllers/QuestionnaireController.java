@@ -2,9 +2,12 @@ package itm.proyectoharoldo.backend.Controllers;
 
 import itm.proyectoharoldo.backend.Models.Questionnaire;
 import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionnaireDTO;
+import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
+import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import itm.proyectoharoldo.backend.Services.QuestionnaireService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +19,8 @@ import java.util.List;
 public class QuestionnaireController {
 
     private final QuestionnaireService questionnaireService;
+    private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<List<QuestionnaireDTO>> getAllQuestionnaires() {
@@ -48,8 +53,14 @@ public class QuestionnaireController {
     }
 
     @PostMapping
-    public ResponseEntity<Questionnaire> create(@RequestBody Questionnaire questionnaire) {
-        return ResponseEntity.ok(questionnaireService.createQuestionnaire(questionnaire));
+    @Transactional
+    public ResponseEntity<QuestionnaireDTO> create(@RequestBody QuestionnaireDTO questionnaire) {
+        Questionnaire newQuestionnaire = new Questionnaire();
+        newQuestionnaire.setCategory(categoryRepository.findById(questionnaire.getCategoryId()).get());
+        newQuestionnaire.setTitle(questionnaire.getTitle());
+        newQuestionnaire.setCreator(userRepository.findById(questionnaire.getCreatorId()).get());
+
+        return ResponseEntity.ok(questionnaireService.toQuestionnaireDTO(questionnaireService.createQuestionnaire(newQuestionnaire)));
     }
 
     @PutMapping("/{id}")
