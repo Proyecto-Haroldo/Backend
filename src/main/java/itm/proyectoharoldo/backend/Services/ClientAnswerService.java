@@ -115,7 +115,7 @@ public class ClientAnswerService {
         User client = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + userEmail));
 
-        Category category = categoryRepository.findByCategory(categoryName)
+        Category category = categoryRepository.findByTitle(categoryName)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + categoryName));
 
         List<Analysis> analysis = analysisRepository

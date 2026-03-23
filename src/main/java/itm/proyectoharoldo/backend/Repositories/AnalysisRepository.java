@@ -66,12 +66,12 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
             LEFT JOIN FETCH a.usuarioResponde
             LEFT JOIN FETCH a.asesor
             WHERE a.usuarioResponde.userId = :userId
-              AND c.category = :category
+              AND c.title = :title
             ORDER BY a.timeWhenSolved DESC
             """)
     List<Analysis> findByUsuarioRespondeUserIdAndCategoryOrderByTimeWhenSolvedDesc(
             @Param("userId") Long userId,
-            @Param("category") String category);
+            @Param("title") String title);
 
     // Obtener análisis de un asesor con cuestionario cargado, orden descendente por
     // revisión

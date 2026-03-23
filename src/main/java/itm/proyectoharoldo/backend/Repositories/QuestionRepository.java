@@ -18,28 +18,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                      FROM Question q
                      LEFT JOIN FETCH q.options
                      LEFT JOIN FETCH q.questionnaire qu
-                     LEFT JOIN FETCH qu.category c
-                     WHERE c = :category
-                     """)
-       List<Question> findByCategoryWithOptions(@Param("category") Category category);
-
-       @Query("""
-                     SELECT DISTINCT q
-                     FROM Question q
-                     LEFT JOIN FETCH q.options
-                     LEFT JOIN FETCH q.questionnaire qu
-                     LEFT JOIN FETCH qu.category c
-                     WHERE c.category = :categoryName
-                     AND q.clientType = :clientType
-                     """)
-       List<Question> findByCategoryAndClientTypeWithOptions(@Param("categoryName") String categoryName,
-                     @Param("clientType") ClientType clientType);
-
-       @Query("""
-                     SELECT DISTINCT q
-                     FROM Question q
-                     LEFT JOIN FETCH q.options
-                     LEFT JOIN FETCH q.questionnaire qu
                      LEFT JOIN FETCH qu.category
                      LEFT JOIN FETCH qu.creator
                      """)
@@ -51,9 +29,9 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                      LEFT JOIN FETCH q.options
                      LEFT JOIN FETCH q.questionnaire qu
                      LEFT JOIN FETCH qu.category c
-                     WHERE c.category = :categoryName
+                     WHERE c.title = :title
                      """)
-       List<Question> findByCategoryNameWithOptions(@Param("categoryName") String categoryName);
+       List<Question> findByCategoryNameWithOptions(@Param("title") String title);
 
        @Query("""
                      SELECT DISTINCT q
@@ -65,7 +43,4 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                      """)
        List<Question> findByQuestionnaireWithOptions(@Param("questionnaireId") Long questionnaireId);
 
-       List<Question> findByQuestionnaire_Category(Category category);
-
-       List<Question> findByQuestionnaire_Category_CategoryAndClientType(String category, ClientType clientType);
 }

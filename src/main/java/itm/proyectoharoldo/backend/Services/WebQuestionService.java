@@ -49,7 +49,7 @@ public class WebQuestionService {
     @Transactional
     public Question createQuestionOnDatabase(QuestionWebModel webModel) {
         String categoryName = webModel.getCategoryName();
-        Category category = categoryRepository.findByCategory(categoryName)
+        Category category = categoryRepository.findByTitle(categoryName)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         Question question = QuestionConverter.convertWebModelToEntity(webModel, questionnaireRepository.findByCategory(category).getFirst());
