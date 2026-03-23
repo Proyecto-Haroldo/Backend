@@ -81,7 +81,7 @@ public class QuestionnaireService {
 
         if(category != null){
             dto.setCategoryId(category.getCategoryid());
-            dto.setCategoryName(category.getCategory());
+            dto.setCategoryName(category.getTitle());
         }
         
         if(creator != null){

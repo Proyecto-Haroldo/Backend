@@ -39,7 +39,7 @@ public class WebQuestionService {
 
     if (question.getQuestionnaire() != null) {
         model.setQuestionnaireId(question.getQuestionnaire().getId());
-        model.setCategoryName(question.getQuestionnaire().getCategory().getCategory());
+        model.setCategoryName(question.getQuestionnaire().getCategory().getTitle());
         model.setCategoryId(question.getQuestionnaire().getCategory().getCategoryid());
     }
 

@@ -33,7 +33,7 @@ public class CategoriesController {
     @PostMapping
     public ResponseEntity<Category> create(CategoryDTO category){
         Category newCategory = new Category();
-        newCategory.setCategory(category.getTitle());
+        newCategory.setTitle(category.getTitle());
         newCategory.setDecimalvalue(BigDecimal.ZERO);
         newCategory.setDescription(category.getDescription());
         return ResponseEntity.ok(categoryRepository.save(newCategory));

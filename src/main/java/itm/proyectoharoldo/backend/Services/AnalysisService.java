@@ -41,7 +41,7 @@ public class AnalysisService {
 
         // From joined Questionnaire → Category
         dto.setCategoryName(analysis.getQuestionnaire() != null && analysis.getQuestionnaire().getCategory() != null
-                ? analysis.getQuestionnaire().getCategory().getCategory()
+                ? analysis.getQuestionnaire().getCategory().getTitle()
                 : null);
 
         dto.setQuestionnaireTitle(analysis.getQuestionnaire().getTitle());

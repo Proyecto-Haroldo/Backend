@@ -24,8 +24,8 @@ public class Category {
     @Column(name = "categoryid")
     private Long categoryid;
 
-    @Column(name = "category", nullable = false)
-    private String category;
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @Column(name = "description", nullable = false)
     private String description;

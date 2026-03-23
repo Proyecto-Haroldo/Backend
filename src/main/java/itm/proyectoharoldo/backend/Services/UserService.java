@@ -50,7 +50,7 @@ public class UserService {
 
         dto.setSpecialities(specialities != null ? specialities
             .stream().map(category -> new CategoryDTO(
-                category.getCategoryid(), category.getCategory(), category.getDescription()
+                category.getCategoryid(), category.getTitle(), category.getDescription()
             )).collect(Collectors.toSet()) : Set.of());
 
         return dto;
