@@ -1,6 +1,7 @@
 package itm.proyectoharoldo.backend.Utility;
 
 import org.slf4j.*;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
@@ -86,6 +88,22 @@ public class GlobalExceptionHandler {
         logger.warn("Authentication error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
             new ExceptionResponse("Las credenciales de autenticación fallaron", "Detalles del error no disponibles")
+        );
+    }
+
+    @ExceptionHandler(SQLException.class)
+    public ResponseEntity<ExceptionResponse> handlePSQLException(SQLException ex){
+        logger.warn("Database error: {}", ex.getMessage());
+        return ResponseEntity.internalServerError().body(
+            new ExceptionResponse("Fallo con la base de datos", "Detalles del error no disponibles")
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex){
+        logger.warn("Data integrity error: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+            new ExceptionResponse("Error con la integridad de los datos", ex.getMessage())
         );
     }
 
