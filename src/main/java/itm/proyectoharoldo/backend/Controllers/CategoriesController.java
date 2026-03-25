@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -19,14 +20,15 @@ public class CategoriesController {
     private final CategoryRepository categoryRepository;
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
-        return ResponseEntity.ok(categoryRepository.findAll());
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        return ResponseEntity.ok(categoryRepository.findAll().stream()
+    .map(this::toDto).collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getById(@PathVariable Long id){
+    public ResponseEntity<CategoryDTO> getById(@PathVariable Long id){
         return categoryRepository.findById(id)
-        .map(ResponseEntity::ok)
+        .map(this::toDto).map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
     }
 
@@ -54,6 +56,16 @@ public class CategoriesController {
         }
         categoryRepository.delete(category);
         return ResponseEntity.ok().build();
+    }
+
+    private CategoryDTO toDto(Category category){
+        CategoryDTO dto = new CategoryDTO();
+        dto.setCategoryId(category.getCategoryid());
+        dto.setDescription(category.getDescription());
+        dto.setIcon(category.getIcon());
+        dto.setTitle(category.getTitle());
+
+        return dto;
     }
 
 }

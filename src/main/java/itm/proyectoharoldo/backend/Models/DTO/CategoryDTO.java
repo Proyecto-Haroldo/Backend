@@ -14,5 +14,6 @@ public class CategoryDTO {
     private long categoryId;
     private String title;
     private String description;
+    private long icon;
 
 }

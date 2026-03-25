@@ -33,6 +33,9 @@ public class Category {
     @Column(name = "decimalvalue")
     private BigDecimal decimalvalue;
 
+    @Column(name = "icon")
+    private Long icon;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonManagedReference("category-questionnaires")
     private List<Questionnaire> questionnaires;
