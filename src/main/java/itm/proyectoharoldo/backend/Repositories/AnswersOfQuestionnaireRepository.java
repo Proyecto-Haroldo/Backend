@@ -17,12 +17,8 @@ public interface AnswersOfQuestionnaireRepository extends JpaRepository<AnswersO
         WHERE a.analysis.analysisId = :analysisId
         ORDER BY a.question.questionid
         """)
-    List<QuestionAnswerProjection> findAnswersByAnalysisId(@Param("analysisId") Long analysisId);
+    List<QuestionAnswerProjection> findByAnalysisId(@Param("analysisId") Long analysisId);
 
-    /** Projection for query result (aliases match getter names). */
-    interface QuestionAnswerProjection {
-        long getQuestionid();
-        String getQuestiontext();
-        String getAnswertext();
-    }
+    public record QuestionAnswerProjection(Long questionId, String questionText, String answerText) {};
+
 }
