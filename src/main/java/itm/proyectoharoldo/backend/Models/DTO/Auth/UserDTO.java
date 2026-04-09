@@ -23,6 +23,7 @@ public class UserDTO {
     private String roleName;
     private String network;
     private String phone;
+    private String address;
     private Set<CategoryDTO> specialities;
 
 }

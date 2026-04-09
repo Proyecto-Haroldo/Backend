@@ -19,5 +19,6 @@ public class RegisterRequest {
     private String sector;
     private String phone;
     private String network;
+    private String address;
 
 }

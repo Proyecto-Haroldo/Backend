@@ -54,6 +54,9 @@ public class User {
     @Column(name = "network")
     private String network;
 
+    @Column(name = "address")
+    private String address;
+
     @ManyToOne
     @JoinColumn(name = "role")
     private Role role;
