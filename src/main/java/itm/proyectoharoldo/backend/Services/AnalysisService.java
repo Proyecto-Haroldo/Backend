@@ -64,7 +64,7 @@ public class AnalysisService {
 
     @Transactional(readOnly = true)
     public List<AnalysisDTO> getUserAnalysesByUserId(Long userId) {
-        return analysisRepository.findByAsesorIdOrderByTimeWhenCheckedDesc(userId)
+        return analysisRepository.findByUsuarioRespondeUserIdOrderByTimeWhenSolvedDesc(userId)
                 .stream().map(this::toAnalysisDTO).toList();
     }
 
