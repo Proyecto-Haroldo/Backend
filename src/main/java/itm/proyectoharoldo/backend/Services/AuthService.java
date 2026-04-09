@@ -93,7 +93,7 @@ public class AuthService {
         newUser.setPhone(registerRequest.getPhone() != null ? registerRequest.getPhone() : "");
         newUser.setNetwork(registerRequest.getNetwork() != null ? registerRequest.getNetwork() : "");
         newUser.setRole(roleRepository.findById(USER_ROLE_ID).orElseThrow());
-        newUser.setAddress(registerRequest.getAddress() != null ? registerRequest.getAddress() : "");
+        newUser.setLocation(registerRequest.getLocation() != null ? registerRequest.getLocation() : "");
         newUser.setSector(registerRequest.getSector() != null ? registerRequest.getSector() : "No especificado");
         
         return newUser;

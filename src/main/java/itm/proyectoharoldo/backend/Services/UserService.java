@@ -46,6 +46,8 @@ public class UserService {
         dto.setSector(user.getSector());
         dto.setRoleName(user.getRole().getName());
         dto.setNetwork(user.getNetwork());
+        dto.setLocation(user.getLocation());
+        dto.setStatus(user.getStatus());
         dto.setPhone(user.getPhone());
 
         dto.setSpecialities(specialities != null ? specialities

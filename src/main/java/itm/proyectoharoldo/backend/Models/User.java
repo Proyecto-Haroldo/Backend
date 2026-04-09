@@ -44,7 +44,7 @@ public class User {
     @Column(name = "sector", nullable = false)
     private String sector;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
@@ -54,8 +54,8 @@ public class User {
     @Column(name = "network")
     private String network;
 
-    @Column(name = "address")
-    private String address;
+    @Column(name = "location")
+    private String location;
 
     @ManyToOne
     @JoinColumn(name = "role")
