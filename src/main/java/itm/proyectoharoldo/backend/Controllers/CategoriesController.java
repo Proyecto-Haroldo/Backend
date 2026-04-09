@@ -6,6 +6,7 @@ import itm.proyectoharoldo.backend.Models.DTO.CategoryDTO;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -26,7 +27,7 @@ public class CategoriesController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getById(@PathVariable Long id){
+    public ResponseEntity<CategoryDTO> getById(@PathVariable @NonNull Long id){
         return categoryRepository.findById(id)
         .map(this::toDto).map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
@@ -51,10 +52,7 @@ public class CategoriesController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, @RequestBody Category category) {
-        if (!categoryRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        categoryRepository.delete(category);
+        categoryRepository.delete(categoryRepository.findById(id).orElseThrow());
         return ResponseEntity.ok().build();
     }
 
