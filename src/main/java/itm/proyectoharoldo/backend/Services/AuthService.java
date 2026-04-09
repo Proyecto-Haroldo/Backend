@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import itm.proyectoharoldo.backend.Models.User;
+import itm.proyectoharoldo.backend.Models.Enums.UserStatus;
 import itm.proyectoharoldo.backend.Models.DTO.Auth.*;
 import itm.proyectoharoldo.backend.Repositories.RoleRepository;
 import itm.proyectoharoldo.backend.Repositories.UserRepository;
@@ -28,6 +29,9 @@ public class AuthService {
 
     @NonNull
     private final Long USER_ROLE_ID = 2L;
+
+    @NonNull
+    private final Long ADVISER_ROLE_ID = 1L;
 
     @Transactional
     public AuthResponse processLogin(AuthRequest authRequest){
@@ -92,7 +96,8 @@ public class AuthService {
         newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         newUser.setPhone(registerRequest.getPhone() != null ? registerRequest.getPhone() : "");
         newUser.setNetwork(registerRequest.getNetwork() != null ? registerRequest.getNetwork() : "");
-        newUser.setRole(roleRepository.findById(USER_ROLE_ID).orElseThrow());
+        newUser.setRole(registerRequest.getRole().getId() == USER_ROLE_ID ? roleRepository.findById(USER_ROLE_ID).orElseThrow() : roleRepository.findById(ADVISER_ROLE_ID).orElseThrow());
+        newUser.setStatus(registerRequest.getRole().getId() == ADVISER_ROLE_ID ? UserStatus.AUTHORIZED : UserStatus.UNAUTHORIZED);
         newUser.setLocation(registerRequest.getLocation() != null ? registerRequest.getLocation() : "");
         newUser.setSector(registerRequest.getSector() != null ? registerRequest.getSector() : "No especificado");
         
