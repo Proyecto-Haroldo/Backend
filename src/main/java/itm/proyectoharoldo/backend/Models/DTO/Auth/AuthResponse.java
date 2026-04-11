@@ -1,6 +1,8 @@
 package itm.proyectoharoldo.backend.Models.DTO.Auth;
 
 import itm.proyectoharoldo.backend.Models.Role;
+import itm.proyectoharoldo.backend.Models.Enums.UserStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +18,6 @@ public class AuthResponse {
     private Role role;
     private Long id;
     private String message;
+    private UserStatus status;
 
 }

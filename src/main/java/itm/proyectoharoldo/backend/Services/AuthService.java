@@ -73,9 +73,9 @@ public class AuthService {
         dto.setMessage(message);
         dto.setRole(user.getRole());
         dto.setToken(jwtUtil.generateToken(user.getEmail()));
+        dto.setStatus(user.getStatus());
 
         return dto;
-
     }
 
     private void authenticateUserFromRequest(AuthRequest authRequest){
