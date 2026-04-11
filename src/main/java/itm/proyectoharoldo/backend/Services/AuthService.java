@@ -86,6 +86,7 @@ public class AuthService {
         }
     }
 
+    @SuppressWarnings("null")
     private User createUserFromRegisterRequest(RegisterRequest registerRequest){
 
         User newUser = new User();
@@ -96,8 +97,8 @@ public class AuthService {
         newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         newUser.setPhone(registerRequest.getPhone() != null ? registerRequest.getPhone() : "");
         newUser.setNetwork(registerRequest.getNetwork() != null ? registerRequest.getNetwork() : "");
-        newUser.setRole(registerRequest.getRole().getId() == USER_ROLE_ID ? roleRepository.findById(USER_ROLE_ID).orElseThrow() : roleRepository.findById(ADVISER_ROLE_ID).orElseThrow());
-        newUser.setStatus(registerRequest.getRole().getId() == ADVISER_ROLE_ID ? UserStatus.AUTHORIZED : UserStatus.UNAUTHORIZED);
+        newUser.setRole(registerRequest.getRole().getId() == USER_ROLE_ID ? roleRepository.findById(USER_ROLE_ID).orElseThrow() : roleRepository.findById(registerRequest.getRole().getId()).orElseThrow());
+        newUser.setStatus(registerRequest.getRole().getId() == ADVISER_ROLE_ID ? UserStatus.UNAUTHORIZED : UserStatus.AUTHORIZED);
         newUser.setLocation(registerRequest.getLocation() != null ? registerRequest.getLocation() : "");
         newUser.setSector(registerRequest.getSector() != null ? registerRequest.getSector() : "No especificado");
         
