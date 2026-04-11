@@ -7,11 +7,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import itm.proyectoharoldo.backend.Models.User;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.Enums.UserStatus;
 import itm.proyectoharoldo.backend.Models.DTO.Auth.*;
-import itm.proyectoharoldo.backend.Repositories.RoleRepository;
-import itm.proyectoharoldo.backend.Repositories.UserRepository;
+import itm.proyectoharoldo.backend.Repositories.*;
 import itm.proyectoharoldo.backend.Utility.*;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
+    private final CategoryRepository categoryRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
@@ -97,11 +99,19 @@ public class AuthService {
         newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         newUser.setPhone(registerRequest.getPhone() != null ? registerRequest.getPhone() : "");
         newUser.setNetwork(registerRequest.getNetwork() != null ? registerRequest.getNetwork() : "");
-        newUser.setRole(registerRequest.getRole().getId() == USER_ROLE_ID ? roleRepository.findById(USER_ROLE_ID).orElseThrow() : roleRepository.findById(registerRequest.getRole().getId()).orElseThrow());
+        newUser.setRole(roleRepository.findById(registerRequest.getRole().getId()).orElseThrow());
         newUser.setStatus(registerRequest.getRole().getId() == ADVISER_ROLE_ID ? UserStatus.UNAUTHORIZED : null);
         newUser.setLocation(registerRequest.getLocation() != null ? registerRequest.getLocation() : "");
         newUser.setSector(registerRequest.getSector() != null ? registerRequest.getSector() : "No especificado");
         
+        if (registerRequest.getSpecialities() != null) {
+            Set<Category> specialities = registerRequest.getSpecialities()
+                    .stream()
+                    .map(dto -> categoryRepository.findById(dto.getCategoryId()).orElseThrow())
+                    .collect(Collectors.toSet());
+            newUser.setSpecialities(specialities);
+        }
+
         return newUser;
 
     }

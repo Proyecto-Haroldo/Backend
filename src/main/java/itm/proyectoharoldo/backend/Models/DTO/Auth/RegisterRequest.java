@@ -2,6 +2,10 @@ package itm.proyectoharoldo.backend.Models.DTO.Auth;
 
 import itm.proyectoharoldo.backend.Models.Role;
 import itm.proyectoharoldo.backend.Models.Enums.ClientType;
+import itm.proyectoharoldo.backend.Models.DTO.CategoryDTO;
+
+import java.util.Set;
+
 import lombok.*;
 
 @Getter
@@ -20,5 +24,6 @@ public class RegisterRequest {
     private String phone;
     private String network;
     private String location;
+    private Set<CategoryDTO> specialities;
 
 }
