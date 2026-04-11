@@ -68,7 +68,7 @@ public class User {
     @ManyToMany
     @JoinTable(
             name = "userspecialities",
-            joinColumns = @JoinColumn(name = "user", referencedColumnName = "userid"),
+            joinColumns = @JoinColumn(name = "userid", referencedColumnName = "userid"),
             inverseJoinColumns = @JoinColumn(name = "category", referencedColumnName = "categoryid")
     )
     private Set<Category> specialities;
