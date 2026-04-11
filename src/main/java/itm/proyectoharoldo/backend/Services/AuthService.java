@@ -98,7 +98,7 @@ public class AuthService {
         newUser.setPhone(registerRequest.getPhone() != null ? registerRequest.getPhone() : "");
         newUser.setNetwork(registerRequest.getNetwork() != null ? registerRequest.getNetwork() : "");
         newUser.setRole(registerRequest.getRole().getId() == USER_ROLE_ID ? roleRepository.findById(USER_ROLE_ID).orElseThrow() : roleRepository.findById(registerRequest.getRole().getId()).orElseThrow());
-        newUser.setStatus(registerRequest.getRole().getId() == ADVISER_ROLE_ID ? UserStatus.UNAUTHORIZED : UserStatus.AUTHORIZED);
+        newUser.setStatus(registerRequest.getRole().getId() == ADVISER_ROLE_ID ? UserStatus.UNAUTHORIZED : null);
         newUser.setLocation(registerRequest.getLocation() != null ? registerRequest.getLocation() : "");
         newUser.setSector(registerRequest.getSector() != null ? registerRequest.getSector() : "No especificado");
         
