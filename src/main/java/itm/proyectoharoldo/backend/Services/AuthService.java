@@ -31,7 +31,7 @@ public class AuthService {
     private final Long USER_ROLE_ID = 2L;
 
     @NonNull
-    private final Long ADVISER_ROLE_ID = 1L;
+    private final Long ADVISER_ROLE_ID = 3L;
 
     @Transactional
     public AuthResponse processLogin(AuthRequest authRequest){
