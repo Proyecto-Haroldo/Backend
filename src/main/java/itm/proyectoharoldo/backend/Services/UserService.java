@@ -33,6 +33,12 @@ public class UserService {
         return userRepository.findById(id).map(this::toUserDTO);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<UserDTO> getUserByEmail(@NonNull String email){
+        return userRepository.findByEmail(email)
+        .stream().map(this::toUserDTO).findFirst();
+    }
+
     private UserDTO toUserDTO(User user){
         UserDTO dto = new UserDTO();
 
