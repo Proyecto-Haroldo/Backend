@@ -14,6 +14,8 @@ import itm.proyectoharoldo.backend.Models.Category;
 import itm.proyectoharoldo.backend.Models.User;
 import itm.proyectoharoldo.backend.Models.DTO.CategoryDTO;
 import itm.proyectoharoldo.backend.Models.DTO.Auth.UserDTO;
+import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
+import itm.proyectoharoldo.backend.Repositories.RoleRepository;
 import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers(){
@@ -39,6 +43,12 @@ public class UserService {
         .stream().map(this::toUserDTO).findFirst();
     }
 
+    @SuppressWarnings("null")
+    @Transactional
+    public Optional<UserDTO> updateUser(@NonNull UserDTO requestUser){
+        return Optional.of(toUserDTO(userRepository.save(fromUserDTOtoUser(requestUser))));
+    }
+
     private UserDTO toUserDTO(User user){
         UserDTO dto = new UserDTO();
 
@@ -50,7 +60,7 @@ public class UserService {
         dto.setClientType(user.getClientType());
         dto.setEmail(user.getEmail());
         dto.setSector(user.getSector());
-        dto.setRoleName(user.getRole().getName());
+        dto.setRoleName(user.getRole() != null ? user.getRole().getName() : null);
         dto.setNetwork(user.getNetwork());
         dto.setLocation(user.getLocation());
         dto.setStatus(user.getStatus());
@@ -62,6 +72,33 @@ public class UserService {
             )).collect(Collectors.toSet()) : Set.of());
 
         return dto;
+    }
+
+    @SuppressWarnings("null")
+    private User fromUserDTOtoUser(UserDTO dto){
+        User user = new User();
+
+        user.setUserId(dto.getUserId());
+        user.setCedulaOrNIT(dto.getCedulaOrNIT());
+        user.setLegalName(dto.getLegalName());
+        user.setClientType(dto.getClientType());
+        user.setEmail(dto.getEmail());
+        user.setSector(dto.getSector());
+        user.setNetwork(dto.getNetwork());
+        user.setLocation(dto.getLocation());
+        user.setStatus(dto.getStatus());
+        user.setPhone(dto.getPhone());
+
+        user.setQuestionnaires(userRepository.findById(dto.getUserId()).get().getQuestionnaires());
+
+        user.setRole(roleRepository.findByName(dto.getRoleName()).orElseThrow());
+
+        user.setSpecialities(dto.getSpecialities() != null ? dto.getSpecialities()
+            .stream().map(categoryDTO ->
+                categoryRepository.findById(categoryDTO.getCategoryId()).orElseThrow()  
+            ).collect(Collectors.toSet()) : Collections.emptySet());
+
+        return user;
     }
 
 }

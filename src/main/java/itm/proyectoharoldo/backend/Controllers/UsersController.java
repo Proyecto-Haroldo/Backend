@@ -1,9 +1,6 @@
 package itm.proyectoharoldo.backend.Controllers;
 
 import itm.proyectoharoldo.backend.Models.DTO.Auth.UserDTO;
-import itm.proyectoharoldo.backend.Models.DTO.*;
-import itm.proyectoharoldo.backend.Models.User;
-import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import itm.proyectoharoldo.backend.Services.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -14,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -40,4 +35,10 @@ public class UsersController {
         UserDTO userDTO = userService.getUserByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(Map.of("status", userDTO.getStatus().name()));
     }
+
+    @PutMapping
+    public ResponseEntity<UserDTO> updateUser(@RequestBody @NonNull UserDTO userToSave) {
+        return ResponseEntity.ok(userService.updateUser(userToSave).orElseThrow());
+    }
+
 }
