@@ -39,9 +39,7 @@ public class AnalysisService {
 
     @Transactional(readOnly = true)
     public List<QuestionAnswerDTO> getAnalysisAnswersByAnalysisId(Long analysisId) {
-        return answersOfQuestionnaireRepository.findByAnalysisId(analysisId).stream()
-                .map(p -> new QuestionAnswerDTO(p.questionId(), p.questionText(), p.answerText()))
-                .toList();
+        return answersOfQuestionnaireRepository.findByAnalysisId(analysisId);
     }
 
     @Transactional(readOnly = true)
