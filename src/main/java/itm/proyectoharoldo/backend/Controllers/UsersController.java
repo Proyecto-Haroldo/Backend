@@ -38,7 +38,7 @@ public class UsersController {
 
     @PutMapping
     public ResponseEntity<UserDTO> updateUser(@RequestBody @NonNull UserDTO userToSave) {
-        return ResponseEntity.ok(userService.updateUser(userToSave).orElseThrow());
+        return ResponseEntity.ok(userService.updateUser(userToSave));
     }
 
 }

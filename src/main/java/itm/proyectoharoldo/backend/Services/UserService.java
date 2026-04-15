@@ -28,28 +28,60 @@ public class UserService {
     private final RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
-    public List<UserDTO> getAllUsers(){
+    public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream().map(this::toUserDTO).toList();
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserDTO> getUserById(@NonNull Long id){
+    public Optional<UserDTO> getUserById(@NonNull Long id) {
         return userRepository.findById(id).map(this::toUserDTO);
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserDTO> getUserByEmail(@NonNull String email){
+    public Optional<UserDTO> getUserByEmail(@NonNull String email) {
         return userRepository.findByEmail(email)
-        .stream().map(this::toUserDTO).findFirst();
+                .stream().map(this::toUserDTO).findFirst();
     }
 
     @SuppressWarnings("null")
     @Transactional
-    public Optional<UserDTO> updateUser(@NonNull UserDTO requestUser){
-        return Optional.of(toUserDTO(userRepository.save(fromUserDTOtoUser(requestUser))));
+    public UserDTO updateUser(@NonNull UserDTO dto) {
+        User existing = userRepository.findById(dto.getUserId())
+                .orElseThrow();
+
+        if (dto.getCedulaOrNIT() != null)
+            existing.setCedulaOrNIT(dto.getCedulaOrNIT());
+        if (dto.getLegalName() != null)
+            existing.setLegalName(dto.getLegalName());
+        if (dto.getClientType() != null)
+            existing.setClientType(dto.getClientType());
+        if (dto.getEmail() != null)
+            existing.setEmail(dto.getEmail());
+        if (dto.getSector() != null)
+            existing.setSector(dto.getSector());
+        if (dto.getNetwork() != null)
+            existing.setNetwork(dto.getNetwork());
+        if (dto.getLocation() != null)
+            existing.setLocation(dto.getLocation());
+        if (dto.getPhone() != null)
+            existing.setPhone(dto.getPhone());
+
+        if (dto.getRoleName() != null) {
+            existing.setRole(roleRepository.findByName(dto.getRoleName()).orElseThrow());
+        }
+
+        if (dto.getSpecialities() != null) {
+            existing.setSpecialities(dto.getSpecialities()
+                    .stream()
+                    .map(categoryDTO -> categoryRepository.findById(categoryDTO.getCategoryId())
+                            .orElseThrow())
+                    .collect(Collectors.toSet()));
+        }
+
+        return toUserDTO(userRepository.save(existing));
     }
 
-    private UserDTO toUserDTO(User user){
+    private UserDTO toUserDTO(User user) {
         UserDTO dto = new UserDTO();
 
         Set<Category> specialities = user.getSpecialities();
@@ -67,38 +99,11 @@ public class UserService {
         dto.setPhone(user.getPhone());
 
         dto.setSpecialities(specialities != null ? specialities
-            .stream().map(category -> new CategoryDTO(
-                category.getCategoryid(), category.getTitle(), category.getDescription(), category.getIcon()
-            )).collect(Collectors.toSet()) : Set.of());
+                .stream().map(category -> new CategoryDTO(
+                        category.getCategoryid(), category.getTitle(), category.getDescription(), category.getIcon()))
+                .collect(Collectors.toSet()) : Set.of());
 
         return dto;
-    }
-
-    @SuppressWarnings("null")
-    private User fromUserDTOtoUser(UserDTO dto){
-        User user = new User();
-
-        user.setUserId(dto.getUserId());
-        user.setCedulaOrNIT(dto.getCedulaOrNIT());
-        user.setLegalName(dto.getLegalName());
-        user.setClientType(dto.getClientType());
-        user.setEmail(dto.getEmail());
-        user.setSector(dto.getSector());
-        user.setNetwork(dto.getNetwork());
-        user.setLocation(dto.getLocation());
-        user.setStatus(dto.getStatus());
-        user.setPhone(dto.getPhone());
-
-        user.setQuestionnaires(userRepository.findById(dto.getUserId()).get().getQuestionnaires());
-
-        user.setRole(roleRepository.findByName(dto.getRoleName()).orElseThrow());
-
-        user.setSpecialities(dto.getSpecialities() != null ? dto.getSpecialities()
-            .stream().map(categoryDTO ->
-                categoryRepository.findById(categoryDTO.getCategoryId()).orElseThrow()  
-            ).collect(Collectors.toSet()) : Collections.emptySet());
-
-        return user;
     }
 
 }
