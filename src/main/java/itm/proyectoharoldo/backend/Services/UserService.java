@@ -65,6 +65,8 @@ public class UserService {
             existing.setLocation(dto.getLocation());
         if (dto.getPhone() != null)
             existing.setPhone(dto.getPhone());
+        if (dto.getStatus() != null)
+            existing.setStatus(dto.getStatus());
 
         if (dto.getRoleName() != null) {
             existing.setRole(roleRepository.findByName(dto.getRoleName()).orElseThrow());
