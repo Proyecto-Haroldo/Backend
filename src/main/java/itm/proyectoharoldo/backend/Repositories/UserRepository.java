@@ -19,6 +19,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.cedulaOrNIT = :cedulaornit")
     Optional<User> findByCedulaOrNIT(@Param("cedulaornit") String cedulaornit);
 
+    @Query("SELECT u FROM User u WHERE u.cedulaOrNIT = :cedulaornit")
+    List<User> findAllByCedulaOrNIT(@Param("cedulaornit") String cedulaornit);
+
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.specialities WHERE u.userId = :id")
     Optional<User> findUserWithSpecialities(@Param("id") Long id);
 

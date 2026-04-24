@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import itm.proyectoharoldo.backend.Models.*;
@@ -58,8 +58,10 @@ public class AuthService {
             throw new UserAlreadyExistsException("Ya existe un usuario con el correo ingresado");
         }
 
-        if(userRepository.findByCedulaOrNIT(registerRequest.getCedulaOrNIT()).isPresent()){
-            throw new UserAlreadyExistsException("Ya existe un usuario con la cédula/NIT ingresado");
+        List<User> existingUsers = userRepository.findAllByCedulaOrNIT(registerRequest.getCedulaOrNIT());
+
+        if(existingUsers.stream().anyMatch(u -> registerRequest.getClientType().equals(u.getClientType()))){
+            throw new UserAlreadyExistsException("Ya existe un usuario con la cédula/NIT ingresada");
         }
 
         User registeredUser = userRepository.save(createUserFromRegisterRequest(registerRequest));
