@@ -4,6 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import itm.proyectoharoldo.backend.Models.DTO.CategoryDTO;
+import itm.proyectoharoldo.backend.Services.CategoryService;
+
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -13,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/public")
 public class PublicController {
 
-    private final CategoriesController categoriesController;
+    private final CategoryService categoryService;
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
@@ -22,7 +24,7 @@ public class PublicController {
 
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryDTO>> getCategories() {
-        return categoriesController.getAllCategories();
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
 }
