@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.sql.SQLException;
@@ -49,6 +50,14 @@ public class GlobalExceptionHandler {
         logger.warn("Resource not found: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
             new ExceptionResponse("El elemento buscado no existe", ex.getMessage())
+        );
+    }
+
+    @ExceptionHandler(ResourceAccessException.class)
+    public ResponseEntity<ExceptionResponse> handleResourceAccessException(ResourceAccessException ex) {
+        logger.warn("Could not access the resourse: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(
+            new ExceptionResponse("No se pudo acceder al recurso", ex.getMessage())
         );
     }
 
