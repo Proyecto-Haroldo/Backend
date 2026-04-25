@@ -11,6 +11,7 @@ services:
       MICROSERVICE_IA_URL: http://microservicio-ia:8080/ia/recomendacion
       REDIS_BASE_URL: https://helped-cockatoo-53634.upstash.io
       REDIS_BEARER_TOKEN: ${REDIS_BEARER_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - microservicio-ia
     networks:
