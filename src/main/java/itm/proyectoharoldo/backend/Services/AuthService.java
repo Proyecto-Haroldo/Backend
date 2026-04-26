@@ -30,9 +30,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @NonNull
-    private final Long USER_ROLE_ID = 2L;
-
-    @NonNull
     private final Long ADVISER_ROLE_ID = 3L;
 
     @Transactional
