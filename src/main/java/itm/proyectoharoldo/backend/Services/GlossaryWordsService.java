@@ -1,6 +1,8 @@
 package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.GlossaryWord;
+import itm.proyectoharoldo.backend.Models.DTO.RedisResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,212 +19,140 @@ import java.util.concurrent.*;
 public class GlossaryWordsService {
 
     private static final Logger logger = LoggerFactory.getLogger(GlossaryWordsService.class);
-    
+    private static final long CACHE_TTL_MINUTES = 30;
+    private static final String ALL_KEYS_CACHE_KEY = "all_keys";
+
     private final RestTemplate restTemplate;
-    
+
     @Value("${redis.base.url:}")
     private String redisBaseUrl;
-    
+
     @Value("${redis.bearer.token:}")
     private String bearerToken;
-    
-    // In-memory cache for keywords
+
     private final Map<String, GlossaryWord> keywordCache = new ConcurrentHashMap<>();
-    private final Map<String, Long> cacheTimestamps = new ConcurrentHashMap<>();
     private final Map<String, List<String>> allKeysCache = new ConcurrentHashMap<>();
-    private final Map<String, Long> allKeysCacheTimestamp = new ConcurrentHashMap<>();
-    
-    // Cache TTL: 30 minutes
-    private static final long CACHE_TTL_MINUTES = 30;
-    
+    private final Map<String, Long> cacheTimestamps = new ConcurrentHashMap<>();
+
     public GlossaryWordsService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder
                 .connectTimeout(Duration.ofSeconds(10))
                 .readTimeout(Duration.ofSeconds(30))
                 .build();
     }
-    
-    private boolean isCacheValid(String cacheKey, Map<String, Long> timestampCache) {
-        Long timestamp = timestampCache.get(cacheKey);
-        if (timestamp == null) return false;
-        
-        long currentTime = System.currentTimeMillis();
-        long cacheAge = currentTime - timestamp;
-        return cacheAge < TimeUnit.MINUTES.toMillis(CACHE_TTL_MINUTES);
-    }
-    
-    private void updateCacheTimestamp(String cacheKey, Map<String, Long> timestampCache) {
-        timestampCache.put(cacheKey, System.currentTimeMillis());
-    }
 
-    public List<String> getAllKeys(){
-        if (redisBaseUrl == null || redisBaseUrl.trim().isEmpty()) {
-            logger.warn("Redis base URL is not configured");
-            return Collections.emptyList();
-        }
-        
-        if (bearerToken == null || bearerToken.trim().isEmpty()) {
-            logger.warn("Redis bearer token is not configured");
-            return Collections.emptyList();
-        }
+    @SuppressWarnings("null")
+    public List<String> getAllKeys() {
+        if (!isConfigured()) return Collections.emptyList();
 
-        // Check cache first
-        String cacheKey = "all_keys";
-        if (isCacheValid(cacheKey, allKeysCacheTimestamp)) {
-            List<String> cachedKeys = allKeysCache.get(cacheKey);
-            if (cachedKeys != null) {
-                logger.debug("Returning cached keys: {} items", cachedKeys.size());
-                return cachedKeys;
+        if (isCacheValid(ALL_KEYS_CACHE_KEY)) {
+            List<String> cached = allKeysCache.get(ALL_KEYS_CACHE_KEY);
+            if (cached != null) {
+                logger.debug("Returning cached keys: {} items", cached.size());
+                return cached;
             }
         }
-
-        String url = redisBaseUrl + "/keys/*";
-        logger.debug("Fetching all keys from Redis: {}", url);
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", bearerToken);
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-            @SuppressWarnings("unchecked")
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.GET, entity, 
-                (Class<Map<String, Object>>) (Class<?>) Map.class);
+            ResponseEntity<RedisResponse> response = restTemplate.exchange(
+                    redisBaseUrl + "/keys/*", HttpMethod.GET, buildAuthEntity(), RedisResponse.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                Map<String, Object> body = response.getBody();
-                if (body != null) {
-                    Object result = body.get("result");
-                    
-                    if (result instanceof List) {
-                        @SuppressWarnings("unchecked")
-                        List<String> keys = (List<String>) result;
-                        logger.info("Successfully retrieved {} keys from Redis", keys.size());
-                        
-                        // Cache the result
-                        allKeysCache.put(cacheKey, keys);
-                        updateCacheTimestamp(cacheKey, allKeysCacheTimestamp);
-                        
-                        return keys;
-                    } else {
-                        logger.warn("Unexpected response format from Redis - result is not a list: {}", result);
-                        return Collections.emptyList();
-                    }
-                } else {
-                    logger.warn("Response body is null from Redis");
-                    return Collections.emptyList();
+                Object result = response.getBody().getResult();
+                if (result instanceof List<?> keys) {
+                    @SuppressWarnings("unchecked")
+                    List<String> keyList = (List<String>) keys;
+                    logger.info("Successfully retrieved {} keys from Redis", keyList.size());
+                    allKeysCache.put(ALL_KEYS_CACHE_KEY, keyList);
+                    cacheTimestamps.put(ALL_KEYS_CACHE_KEY, System.currentTimeMillis());
+                    return keyList;
                 }
-            } else {
-                logger.warn("Unexpected response from Redis - Status: {}, Body: {}", 
-                           response.getStatusCode(), response.getBody());
-                return Collections.emptyList();
+                logger.warn("Unexpected response format from Redis - result is not a list: {}", result);
             }
-
         } catch (HttpClientErrorException e) {
-            logger.error("Client error when fetching keys from Redis: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-            return Collections.emptyList();
+            logger.error("Client error fetching keys from Redis: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
         } catch (HttpServerErrorException e) {
-            logger.error("Server error when fetching keys from Redis: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-            return Collections.emptyList();
+            logger.error("Server error fetching keys from Redis: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
         } catch (ResourceAccessException e) {
-            logger.error("Connection error when fetching keys from Redis: {}", e.getMessage());
-            return Collections.emptyList();
+            logger.error("Connection error fetching keys from Redis: {}", e.getMessage());
         } catch (Exception e) {
-            logger.error("Unexpected error when fetching keys from Redis", e);
-            return Collections.emptyList();
+            logger.error("Unexpected error fetching keys from Redis", e);
         }
+
+        return Collections.emptyList();
     }
 
+    @SuppressWarnings("null")
     public GlossaryWord getKeyword(String title) {
         if (title == null || title.trim().isEmpty()) {
             logger.warn("Title parameter is null or empty");
             return null;
         }
-        
-        if (redisBaseUrl == null || redisBaseUrl.trim().isEmpty()) {
-            logger.warn("Redis base URL is not configured");
-            return null;
-        }
-        
-        if (bearerToken == null || bearerToken.trim().isEmpty()) {
-            logger.warn("Redis bearer token is not configured");
-            return null;
-        }
 
-        // Check cache first
-        if (isCacheValid(title, cacheTimestamps)) {
-            GlossaryWord cachedKeyword = keywordCache.get(title);
-            if (cachedKeyword != null) {
+        if (!isConfigured()) return null;
+
+        if (isCacheValid(title)) {
+            GlossaryWord cached = keywordCache.get(title);
+            if (cached != null) {
                 logger.debug("Returning cached keyword: {}", title);
-                return cachedKeyword;
+                return cached;
             }
         }
-
-        String url = redisBaseUrl + "/get/" + title;
-        logger.debug("Fetching keyword from Redis: {}", url);
 
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", bearerToken);
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-            @SuppressWarnings("unchecked")
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.GET, entity, 
-                (Class<Map<String, Object>>) (Class<?>) Map.class);
+            ResponseEntity<RedisResponse> response = restTemplate.exchange(
+                    redisBaseUrl + "/get/" + title, HttpMethod.GET, buildAuthEntity(), RedisResponse.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                Map<String, Object> body = response.getBody();
-                if (body != null) {
-                    Object result = body.get("result");
-                    
-                    if (result instanceof String) {
-                        String rawResult = (String) result;
-                        if (rawResult.trim().isEmpty()) {
-                            logger.warn("Empty result for keyword: {}", title);
-                            return null;
-                        }
-                        logger.info("Successfully retrieved keyword: {}", title);
-                        
-                        // Cache the result
-                        GlossaryWord keyword = new GlossaryWord(title, rawResult);
-                        keywordCache.put(title, keyword);
-                        updateCacheTimestamp(title, cacheTimestamps);
-                        
-                        return keyword;
-                    } else {
-                        logger.warn("Unexpected response format for keyword '{}' - result is not a string: {}", title, result);
-                        return null;
-                    }
-                } else {
-                    logger.warn("Response body is null for keyword: {}", title);
-                    return null;
+                Object result = response.getBody().getResult();
+                if (result instanceof String rawResult && !rawResult.trim().isEmpty()) {
+                    logger.info("Successfully retrieved keyword: {}", title);
+                    GlossaryWord keyword = new GlossaryWord(title, rawResult);
+                    keywordCache.put(title, keyword);
+                    cacheTimestamps.put(title, System.currentTimeMillis());
+                    return keyword;
                 }
-            } else {
-                logger.warn("Unexpected response for keyword '{}' - Status: {}, Body: {}", 
-                           title, response.getStatusCode(), response.getBody());
-                return null;
+                logger.warn("Unexpected response format for keyword '{}': {}", title, result);
             }
-
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 logger.info("Keyword not found in Redis: {}", title);
             } else {
-                logger.error("Client error when fetching keyword '{}' from Redis: {} - {}", 
-                           title, e.getStatusCode(), e.getResponseBodyAsString());
+                logger.error("Client error fetching keyword '{}': {} - {}", title, e.getStatusCode(), e.getResponseBodyAsString());
             }
-            return null;
         } catch (HttpServerErrorException e) {
-            logger.error("Server error when fetching keyword '{}' from Redis: {} - {}", 
-                       title, e.getStatusCode(), e.getResponseBodyAsString());
-            return null;
+            logger.error("Server error fetching keyword '{}': {} - {}", title, e.getStatusCode(), e.getResponseBodyAsString());
         } catch (ResourceAccessException e) {
-            logger.error("Connection error when fetching keyword '{}' from Redis: {}", title, e.getMessage());
-            return null;
+            logger.error("Connection error fetching keyword '{}': {}", title, e.getMessage());
         } catch (Exception e) {
-            logger.error("Unexpected error when fetching keyword '{}' from Redis", title, e);
-            return null;
+            logger.error("Unexpected error fetching keyword '{}'", title, e);
         }
+
+        return null;
     }
 
+    private boolean isConfigured() {
+        if (redisBaseUrl == null || redisBaseUrl.trim().isEmpty()) {
+            logger.warn("Redis base URL is not configured");
+            return false;
+        }
+        if (bearerToken == null || bearerToken.trim().isEmpty()) {
+            logger.warn("Redis bearer token is not configured");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isCacheValid(String key) {
+        Long timestamp = cacheTimestamps.get(key);
+        if (timestamp == null) return false;
+        return System.currentTimeMillis() - timestamp < TimeUnit.MINUTES.toMillis(CACHE_TTL_MINUTES);
+    }
+
+    private HttpEntity<Void> buildAuthEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", bearerToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(headers);
+    }
 }
