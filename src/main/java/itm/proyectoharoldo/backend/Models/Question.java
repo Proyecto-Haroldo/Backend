@@ -39,7 +39,7 @@ public class Question {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    @JoinColumn(name = "questionnaire", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "questionnaire", referencedColumnName = "id")
     private Questionnaire questionnaire;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)

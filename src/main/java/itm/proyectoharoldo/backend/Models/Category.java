@@ -36,7 +36,7 @@ public class Category {
     @Column(name = "icon")
     private Long icon;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("category-questionnaires")
     private List<Questionnaire> questionnaires;
 
