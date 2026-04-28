@@ -62,23 +62,23 @@ public class AnalysisController {
         return ResponseEntity.ok(analysisService.getUserAnalysesByUserIdAndCategory(userId, category));
     }
 
-    @PutMapping("/{id}/grade")
+    @PutMapping("/{analysisId}/grade")
     public ResponseEntity<AnalysisDTO> gradeAnalysis(@PathVariable Long analysisId, @RequestBody GradeRequest gradingRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(analysisService.gradeAnalysis(analysisId, gradingRequest, email));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{analysisId}")
     public ResponseEntity<AnalysisDTO> updateAnalysis(@PathVariable @NonNull Long analysisId, @RequestBody @NonNull AnalysisDTO analysisFromWeb) {
         return ResponseEntity.ok(analysisService.updateAnalysis(analysisId, analysisFromWeb));
     }
 
-    @PutMapping("/setChecked/{id}")
+    @PutMapping("/setChecked/{analysisId}")
     public ResponseEntity<AnalysisDTO> setCheckedAnalysisById(@PathVariable @NonNull Long analysisId) {
         return ResponseEntity.ok(analysisService.setAnalysisToCheckedByAnalysisId(analysisId));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{analysisId}")
     public ResponseEntity<Void> deleteAnalysisById(@PathVariable @NonNull Long analysisId){
         analysisService.deleteAnalysisById(analysisId);
         return ResponseEntity.noContent().build();
