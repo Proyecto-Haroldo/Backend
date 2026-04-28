@@ -163,7 +163,7 @@ public class AnalysisService {
                 ? analysis.getQuestionnaire().getCategory().getTitle()
                 : null);
 
-        dto.setQuestionnaireTitle(analysis.getQuestionnaire().getTitle());
+        dto.setQuestionnaireTitle(analysis.getQuestionnaire() != null ? analysis.getQuestionnaire().getTitle() : null);
 
         // Conteo: how many analyses this user has for this questionnaire
         dto.setConteo(analysis.getUsuarioResponde() != null && analysis.getQuestionnaire() != null
