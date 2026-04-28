@@ -66,11 +66,13 @@ public class WebQuestionService {
     @SuppressWarnings("null")
     public Question createQuestion(QuestionWebModel webModel) {
         Category category = categoryRepository.findByTitle(webModel.getCategoryName())
-                .orElseThrow(() -> new NoSuchElementException("Categoría no encontrada: " + webModel.getCategoryName()));
+                .orElseThrow(
+                        () -> new NoSuchElementException("Categoría no encontrada: " + webModel.getCategoryName()));
 
         Questionnaire questionnaire = questionnaireRepository.findByCategory(category)
                 .stream().findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Cuestionario no encontrado para categoría: " + webModel.getCategoryName()));
+                .orElseThrow(() -> new NoSuchElementException(
+                        "Cuestionario no encontrado para categoría: " + webModel.getCategoryName()));
 
         return questionRepository.save(QuestionConverter.convertWebModelToEntity(webModel, questionnaire));
     }
@@ -80,7 +82,26 @@ public class WebQuestionService {
     public Question updateQuestion(Long id, QuestionWebModel webModel) {
         Question existing = questionRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Pregunta no encontrada con id: " + id));
-        return questionRepository.save(QuestionConverter.convertWebModelToEntity(webModel, existing.getQuestionnaire()));
+
+        if (webModel.getQuestion() != null)
+            existing.setQuestion(webModel.getQuestion());
+        if (webModel.getQuestionType() != null)
+            existing.setQuestionType(webModel.getQuestionType());
+
+        if (webModel.getOptions() != null) {
+            existing.getOptions().clear();
+            List<MultipleOptionQuestionAnswer> newOptions = webModel.getOptions().stream()
+                    .map(optionWeb -> {
+                        MultipleOptionQuestionAnswer option = new MultipleOptionQuestionAnswer();
+                        option.setAnswertext(optionWeb.getText());
+                        option.setQuestion(existing);
+                        return option;
+                    })
+                    .toList();
+            existing.getOptions().addAll(newOptions);
+        }
+
+        return questionRepository.save(existing);
     }
 
     @Transactional
