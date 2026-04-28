@@ -1,6 +1,7 @@
 package itm.proyectoharoldo.backend.Services;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -80,6 +81,14 @@ public class UserService {
         }
 
         return toUserDTO(userRepository.save(existing));
+    }
+
+    @SuppressWarnings("null")
+    @Transactional
+    public void deleteUserById(long userId){
+        User existing = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado con id: " + userId));
+        userRepository.delete(existing);
     }
 
     private UserDTO toUserDTO(User user) {
