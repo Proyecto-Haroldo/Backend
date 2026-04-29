@@ -28,6 +28,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final GmailEmailService gmailEmailService;
 
     @NonNull
     private final Long ADVISER_ROLE_ID = 3L;
@@ -62,6 +63,8 @@ public class AuthService {
         }
 
         User registeredUser = userRepository.save(createUserFromRegisterRequest(registerRequest));
+
+        gmailEmailService.sendWelcomeEmail(registerRequest.getEmail(), registerRequest.getLegalName());
 
         return toAuthResponse(registeredUser, "Usuario registrado existosamente");
 
