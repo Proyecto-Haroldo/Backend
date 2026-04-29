@@ -12,6 +12,8 @@ services:
       REDIS_BASE_URL: ${REDIS_BASE_URL}
       REDIS_BEARER_TOKEN: ${REDIS_BEARER_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
+      GMAIL_USERNAME: ${GMAIL_USERNAME}
+      GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD}
     depends_on:
       - microservicio-ia
     networks:
