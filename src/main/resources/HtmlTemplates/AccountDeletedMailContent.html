@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu cuenta ha sido eliminada</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f3f0f8;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #5a4e6b;
+            padding: 40px 16px;
+        }
+
+        .wrapper {
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: #fdfcff;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e8e2f2;
+        }
+
+        .header {
+            background-color: #7c5cbf;
+            padding: 40px 40px 32px;
+            text-align: center;
+        }
+
+        .header-logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .header-tagline {
+            font-size: 13px;
+            color: rgba(255,255,255,0.75);
+            margin-top: 4px;
+        }
+
+        .body {
+            padding: 40px;
+        }
+
+        .greeting {
+            font-size: 22px;
+            font-weight: 600;
+            color: #3b2d6b;
+            margin-bottom: 12px;
+        }
+
+        .intro {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #5a4e6b;
+            margin-bottom: 28px;
+        }
+
+        .deleted-box {
+            background-color: #fef2f2;
+            border: 1px solid #f5a8a8;
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .deleted-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background-color: #fdd8d8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .deleted-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .deleted-text .deleted-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #991f1f;
+            margin-bottom: 4px;
+        }
+
+        .deleted-text .deleted-desc {
+            font-size: 13px;
+            color: #b94040;
+            line-height: 1.6;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #e8e2f2;
+            margin: 28px 0;
+        }
+
+        .info-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #9b8bc0;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .info-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background-color: #ede8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .info-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .info-text .info-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3b2d6b;
+            margin-bottom: 2px;
+        }
+
+        .info-text .info-desc {
+            font-size: 13px;
+            color: #7a6e8a;
+            line-height: 1.5;
+        }
+
+        .farewell-box {
+            background-color: #f0ebfc;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-top: 28px;
+            text-align: center;
+        }
+
+        .farewell-box p {
+            font-size: 14px;
+            color: #5a4e8a;
+            line-height: 1.7;
+        }
+
+        .farewell-box strong {
+            color: #3b2d6b;
+        }
+
+        .footer {
+            padding: 24px 40px;
+            background-color: #f5f2fc;
+            border-top: 1px solid #e8e2f2;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #9b8bc0;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: #7c5cbf;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="card">
+
+            <div class="header">
+                <div class="header-logo">Haroldo Finanzas</div>
+                <div class="header-tagline">Asesoría financiera inteligente</div>
+            </div>
+
+            <div class="body">
+                <p class="greeting">Hasta pronto, {{name}}</p>
+                <p class="intro">
+                    Te confirmamos que tu cuenta en <strong>Haroldo Finanzas</strong> ha sido 
+                    eliminada exitosamente el día <strong>{{date}}</strong>. 
+                    Lamentamos verte partir y esperamos haberte sido de utilidad.
+                </p>
+
+                <div class="deleted-box">
+                    <div class="deleted-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#991f1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                            <path d="M10 11v6M14 11v6"/>
+                            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                        </svg>
+                    </div>
+                    <div class="deleted-text">
+                        <p class="deleted-title">Cuenta eliminada permanentemente</p>
+                        <p class="deleted-desc">Todos tus datos personales han sido eliminados de nuestros sistemas conforme a nuestra política de privacidad.</p>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <p class="info-title">¿Qué pasó con tus datos?</p>
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#7c5cbf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0110 0v4"/>
+                        </svg>
+                    </div>
+                    <div class="info-text">
+                        <p class="info-name">Información personal eliminada</p>
+                        <p class="info-desc">Tu nombre, correo electrónico y demás datos de perfil han sido removidos de nuestra base de datos.</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#7c5cbf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <div class="info-text">
+                        <p class="info-name">Historial de análisis eliminado</p>
+                        <p class="info-desc">Todos los cuestionarios y análisis asociados a tu cuenta han sido eliminados permanentemente.</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#7c5cbf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <div class="info-text">
+                        <p class="info-name">Acceso revocado</p>
+                        <p class="info-desc">Ya no podrás iniciar sesión con este correo electrónico. Si deseas volver, deberás crear una nueva cuenta.</p>
+                    </div>
+                </div>
+
+                <div class="farewell-box">
+                    <p>
+                        Si eliminaste tu cuenta por error o cambias de opinión, puedes 
+                        <strong>registrarte nuevamente</strong> en cualquier momento. 
+                        Siempre serás bienvenido.
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>Este correo fue enviado a <a href="mailto:{{email}}">{{email}}</a> como confirmación de la eliminación de tu cuenta.</p>
+                <p style="margin-top: 6px;">Si no solicitaste esta acción, contáctanos de inmediato.</p>
+                <p style="margin-top: 12px; color: #b8aed0;">&copy; Haroldo Finanzas. Todos los derechos reservados.</p>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

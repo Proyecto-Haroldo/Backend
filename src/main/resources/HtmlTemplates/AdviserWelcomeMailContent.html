@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Bienvenido al equipo de asesores!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f3f0f8;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #5a4e6b;
+            padding: 40px 16px;
+        }
+
+        .wrapper {
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: #fdfcff;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e8e2f2;
+        }
+
+        .header {
+            background-color: #7c5cbf;
+            padding: 40px 40px 32px;
+            text-align: center;
+        }
+
+        .header-logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .header-tagline {
+            font-size: 13px;
+            color: rgba(255,255,255,0.75);
+            margin-top: 4px;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background-color: rgba(255,255,255,0.15);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 50px;
+            margin-top: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .body {
+            padding: 40px;
+        }
+
+        .greeting {
+            font-size: 22px;
+            font-weight: 600;
+            color: #3b2d6b;
+            margin-bottom: 12px;
+        }
+
+        .intro {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #5a4e6b;
+            margin-bottom: 28px;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #e8e2f2;
+            margin: 28px 0;
+        }
+
+        .pending-box {
+            background-color: #fdf8ec;
+            border: 1px solid #f0d98a;
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .pending-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background-color: #faecc4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .pending-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .pending-text .pending-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #7a5c00;
+            margin-bottom: 4px;
+        }
+
+        .pending-text .pending-desc {
+            font-size: 13px;
+            color: #9a7a20;
+            line-height: 1.6;
+        }
+
+        .steps-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #9b8bc0;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 16px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #ede8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #7c5cbf;
+        }
+
+        .step-text .step-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3b2d6b;
+            margin-bottom: 2px;
+            padding-top: 3px;
+        }
+
+        .step-text .step-desc {
+            font-size: 13px;
+            color: #7a6e8a;
+            line-height: 1.5;
+        }
+
+        .info-box {
+            background-color: #f0ebfc;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-top: 28px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: #5a4e8a;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: #3b2d6b;
+        }
+
+        .footer {
+            padding: 24px 40px;
+            background-color: #f5f2fc;
+            border-top: 1px solid #e8e2f2;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #9b8bc0;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: #7c5cbf;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="card">
+
+            <div class="header">
+                <div class="header-logo">Haroldo Finanzas</div>
+                <div class="header-tagline">Asesoría financiera inteligente</div>
+                <div class="header-badge">Portal de Asesores</div>
+            </div>
+
+            <div class="body">
+                <p class="greeting">¡Bienvenido al equipo, {{name}}!</p>
+                <p class="intro">
+                    Tu solicitud para unirte como asesor en <strong>Haroldo Finanzas</strong> ha sido recibida exitosamente. 
+                    Estamos muy contentos de que quieras hacer parte de nuestro equipo de profesionales financieros.
+                </p>
+
+                <div class="pending-box">
+                    <div class="pending-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <div class="pending-text">
+                        <p class="pending-title">Cuenta pendiente de autorización</p>
+                        <p class="pending-desc">Tu cuenta está en proceso de revisión. Un administrador verificará tu información y habilitará tu acceso como asesor.</p>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <p class="steps-title">¿Qué sigue?</p>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">
+                        <p class="step-name">Revisión de tu perfil</p>
+                        <p class="step-desc">Nuestro equipo administrativo revisará tu información de registro y credenciales.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">
+                        <p class="step-name">Autorización de tu cuenta</p>
+                        <p class="step-desc">Una vez aprobado, tu cuenta será habilitada y recibirás acceso completo al portal de asesores.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">
+                        <p class="step-name">Notificación de activación</p>
+                        <p class="step-desc">Te notificaremos por correo electrónico en cuanto tu cuenta esté lista para usar.</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <p>
+                        Si tienes alguna pregunta sobre el proceso de autorización, no dudes en contactarnos.
+                        Estaremos encantados de ayudarte.
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>Este correo fue enviado a <a href="mailto:{{email}}">{{email}}</a> porque creaste una cuenta de asesor en Haroldo Finanzas.</p>
+                <p style="margin-top: 6px;">Si no realizaste este registro, puedes ignorar este mensaje.</p>
+                <p style="margin-top: 12px; color: #b8aed0;">&copy; Haroldo Finanzas. Todos los derechos reservados.</p>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
