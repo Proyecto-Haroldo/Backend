@@ -30,9 +30,17 @@ public class UsersController {
 
     @SuppressWarnings("null")
     @GetMapping("/status")
-    public ResponseEntity<Map<String, String>> getUserStatus() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserDTO userDTO = userService.getUserByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+    public ResponseEntity<Map<String, String>> getUserStatusByEmailFromSecurityContext() {
+        UserDTO userDTO = userService.getUserByEmail(
+            SecurityContextHolder.getContext().getAuthentication().getName()
+        ).orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(Map.of("status", userDTO.getStatus().name()));
+    }
+
+    @SuppressWarnings("null")
+    @GetMapping("{userId}/status")
+    public ResponseEntity<Map<String, String>> getUserStatusByUserId(@PathVariable Long userId) {
+        UserDTO userDTO = userService.getUserById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(Map.of("status", userDTO.getStatus().name()));
     }
 
