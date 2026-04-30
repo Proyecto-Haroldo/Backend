@@ -64,7 +64,11 @@ public class AuthService {
 
         User registeredUser = userRepository.save(createUserFromRegisterRequest(registerRequest));
 
-        gmailEmailService.sendWelcomeEmail(registerRequest.getEmail(), registerRequest.getLegalName());
+        if(registerRequest.getRole().getId() == ADVISER_ROLE_ID){
+            gmailEmailService.sendAdviserWelcomeEmail(registerRequest.getEmail(), registerRequest.getLegalName());
+        } else {
+            gmailEmailService.sendWelcomeEmail(registerRequest.getEmail(), registerRequest.getLegalName());
+        }
 
         return toAuthResponse(registeredUser, "Usuario registrado existosamente");
 

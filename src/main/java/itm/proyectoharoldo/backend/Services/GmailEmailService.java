@@ -2,6 +2,8 @@ package itm.proyectoharoldo.backend.Services;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,31 @@ public class GmailEmailService {
         String html = loadHtmlTemplate("WelcomeMailContent.html")
                 .replace("{{name}}", toName)
                 .replace("{{email}}", toEmail);
+        sendEmail(toEmail, subject, html);
+    }
+
+    public void sendAdviserWelcomeEmail(String toEmail, String toName) {
+        String subject = "¡Bienvenido a Haroldo Finanzas!";
+        String html = loadHtmlTemplate("AdviserWelcomeMailContent.html")
+                .replace("{{name}}", toName)
+                .replace("{{email}}", toEmail);
+        sendEmail(toEmail, subject, html);
+    }
+
+    public void sendAdviserAccountAuthorizedEmail(String toEmail, String toName) {
+        String subject = "Su cuenta ha sido autorizada - Haroldo Finanzas";
+        String html = loadHtmlTemplate("AdviserAccountAuthorizedMailContent.html")
+                .replace("{{name}}", toName)
+                .replace("{{email}}", toEmail);
+        sendEmail(toEmail, subject, html);
+    }
+
+    public void sendAccountDeletedEmail(String toEmail, String toName) {
+        String subject = "Su cuenta fue eliminada - Haroldo Finanzas";
+        String html = loadHtmlTemplate("AccountDeletedMailContent.html")
+                .replace("{{name}}", toName)
+                .replace("{{email}}", toEmail)
+                .replace("{{date}}", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         sendEmail(toEmail, subject, html);
     }
 

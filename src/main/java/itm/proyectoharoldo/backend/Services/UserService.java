@@ -14,6 +14,7 @@ import itm.proyectoharoldo.backend.Models.Category;
 import itm.proyectoharoldo.backend.Models.User;
 import itm.proyectoharoldo.backend.Models.DTO.CategoryDTO;
 import itm.proyectoharoldo.backend.Models.DTO.Auth.UserDTO;
+import itm.proyectoharoldo.backend.Models.Enums.UserStatus;
 import itm.proyectoharoldo.backend.Repositories.CategoryRepository;
 import itm.proyectoharoldo.backend.Repositories.RoleRepository;
 import itm.proyectoharoldo.backend.Repositories.UserRepository;
@@ -26,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final RoleRepository roleRepository;
+    private final GmailEmailService gmailEmailService;
 
     @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
@@ -65,8 +67,6 @@ public class UserService {
             existing.setLocation(dto.getLocation());
         if (dto.getPhone() != null)
             existing.setPhone(dto.getPhone());
-        if (dto.getStatus() != null)
-            existing.setStatus(dto.getStatus());
 
         if (dto.getRoleName() != null) {
             existing.setRole(roleRepository.findByName(dto.getRoleName()).orElseThrow());
@@ -80,14 +80,22 @@ public class UserService {
                     .collect(Collectors.toSet()));
         }
 
+        if (dto.getStatus() != null) {
+            existing.setStatus(dto.getStatus());
+            if(dto.getStatus() == UserStatus.AUTHORIZED){
+                gmailEmailService.sendAdviserAccountAuthorizedEmail(dto.getEmail(), dto.getLegalName());
+            }
+        }
+            
         return toUserDTO(userRepository.save(existing));
     }
 
-    @SuppressWarnings("null")
     @Transactional
     public void deleteUserById(long userId){
         User existing = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado con id: " + userId));
+        
+        gmailEmailService.sendAccountDeletedEmail(existing.getEmail(), existing.getLegalName());
         userRepository.delete(existing);
     }
 
