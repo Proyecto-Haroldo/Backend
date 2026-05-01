@@ -1,5 +1,6 @@
 package itm.proyectoharoldo.backend.Services;
 
+import itm.proyectoharoldo.backend.Interfaces.IAIService;
 import itm.proyectoharoldo.backend.Models.DTO.AIRecommendationRequest;
 import itm.proyectoharoldo.backend.Models.DTO.Analysis.AIRawResponse;
 
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 @Service
-public class AIService {
+public class AIService implements IAIService {
 
     private static final Logger logger = LoggerFactory.getLogger(AIService.class);
 
