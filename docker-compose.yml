@@ -31,6 +31,9 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
     networks:
       - haroldo-network
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 
   frontend:
     build: ../Frontend
