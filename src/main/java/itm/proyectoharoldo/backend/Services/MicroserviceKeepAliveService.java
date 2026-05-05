@@ -22,12 +22,12 @@ public class MicroserviceKeepAliveService {
     private final RestTemplate restTemplate;
 
     @SuppressWarnings("null")
-    @Scheduled(fixedRate = 10000) // every 14 minutes
+    @Scheduled(fixedRate = 835000) // every 14 minutes
     public void pingMicroservice() {
         String healthUrl = iaUrl.replace("/ia/recomendacion", "/ia/health");
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(healthUrl, String.class);
-            logger.info("Microservice keepalive ping: {}", response.getStatusCode());
+            logger.debug("Microservice keepalive ping: {}", response.getStatusCode());
         } catch (Exception e) {
             logger.warn("Microservice keepalive ping failed: {}", e.getMessage());
         }
