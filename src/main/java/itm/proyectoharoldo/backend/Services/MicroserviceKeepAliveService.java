@@ -22,7 +22,7 @@ public class MicroserviceKeepAliveService {
     private final RestTemplate restTemplate;
 
     @SuppressWarnings("null")
-    @Scheduled(fixedRate = 835000) // every 14 minutes
+    @Scheduled(initialDelay = 30000, fixedRate = 835000) // every 14 minutes
     public void pingMicroservice() {
         String healthUrl = iaUrl.replace("/ia/recomendacion", "/ia/health");
         try {
