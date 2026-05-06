@@ -2,10 +2,13 @@ package itm.proyectoharoldo.backend.Services;
 
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Repositories.*;
-import itm.proyectoharoldo.backend.Models.User;
 import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionnaireDTO;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,6 +21,7 @@ public class QuestionnaireService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public List<QuestionnaireDTO> getAllQuestionnaires() {
         return questionnaireRepository.findAll()
                 .stream()
@@ -25,12 +29,14 @@ public class QuestionnaireService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<QuestionnaireDTO> getQuestionnaireById(Long id) {
+    @Transactional(readOnly = true)
+    public Optional<QuestionnaireDTO> getQuestionnaireById(@NonNull Long id) {
         return questionnaireRepository.findById(id)
                 .map(this::toQuestionnaireDTO);
     }
 
-    public List<QuestionnaireDTO> getByCategory(Long categoryId) {
+    @Transactional(readOnly = true)
+    public List<QuestionnaireDTO> getByCategory(@NonNull Long categoryId) {
         Optional<Category> category = categoryRepository.findById(categoryId);
         return category.map(cat -> questionnaireRepository.findByCategory(cat)
                 .stream()
@@ -39,7 +45,8 @@ public class QuestionnaireService {
                 .orElse(List.of());
     }
 
-    public List<QuestionnaireDTO> getByCreator(Long creatorId) {
+    @Transactional(readOnly = true)
+    public List<QuestionnaireDTO> getByCreator(@NonNull Long creatorId) {
         Optional<User> user = userRepository.findById(creatorId);
         return user.map(creator -> questionnaireRepository.findByCreator(creator)
                 .stream()
@@ -48,46 +55,82 @@ public class QuestionnaireService {
                 .orElse(List.of());
     }
 
-    public Questionnaire createQuestionnaire(Questionnaire questionnaire) {
-        return questionnaireRepository.save(questionnaire);
+    @Transactional
+    @SuppressWarnings("null")
+    public QuestionnaireDTO createQuestionnaire(QuestionnaireDTO dto) {
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(
+                        () -> new NoSuchElementException("Categoría no encontrada con id: " + dto.getCategoryId()));
+        User creator = userRepository.findById(dto.getCreatorId())
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado con id: " + dto.getCreatorId()));
+
+        Questionnaire newQuestionnaire = new Questionnaire();
+        newQuestionnaire.setTitle(dto.getTitle());
+        newQuestionnaire.setCategory(category);
+        newQuestionnaire.setCreator(creator);
+
+        return toQuestionnaireDTO(questionnaireRepository.save(newQuestionnaire));
     }
 
-    public Questionnaire updateQuestionnaire(Long id, Questionnaire questionnaire) {
-        questionnaire.setId(id);
-        return questionnaireRepository.save(questionnaire);
+    @Transactional
+    @SuppressWarnings("null")
+    public QuestionnaireDTO updateQuestionnaire(Long id, QuestionnaireDTO dto) {
+        Questionnaire existing = questionnaireRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Cuestionario no encontrado con id: " + id));
+
+        if (dto.getTitle() != null)
+            existing.setTitle(dto.getTitle());
+
+        if (dto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(
+                            () -> new NoSuchElementException("Categoría no encontrada con id: " + dto.getCategoryId()));
+            existing.setCategory(category);
+        }
+
+        if (dto.getCreatorId() != null) {
+            User creator = userRepository.findById(dto.getCreatorId())
+                    .orElseThrow(
+                            () -> new NoSuchElementException("Usuario no encontrado con id: " + dto.getCreatorId()));
+            existing.setCreator(creator);
+        }
+
+        return toQuestionnaireDTO(questionnaireRepository.save(existing));
     }
 
-    public void deleteQuestionnaire(Long id) {
+    @Transactional
+    public void deleteQuestionnaire(@NonNull Long id) {
+        if (!questionnaireRepository.existsById(id)) {
+            throw new NoSuchElementException("Cuestionario no encontrado con id: " + id);
+        }
         questionnaireRepository.deleteById(id);
     }
 
-    // Conversión a DTO
+    public QuestionnaireDTO getQuestionnaireDTOById(@NonNull Long id) {
+        return questionnaireRepository.findById(id)
+                .map(this::toQuestionnaireDTO)
+                .orElseThrow(() -> new NoSuchElementException("Cuestionario no encontrado con id: " + id));
+    }
+
     public QuestionnaireDTO toQuestionnaireDTO(Questionnaire questionnaire) {
-        Long categoryId = questionnaire.getCategory() != null ? questionnaire.getCategory().getCategoryid() : null;
-        Long creatorId = questionnaire.getCreator() != null ? questionnaire.getCreator().getUserId() : null;
+        QuestionnaireDTO dto = new QuestionnaireDTO();
 
-        String categoryName = null;
-        String creatorName = null;
+        Category category = questionnaire.getCategory();
+        User creator = questionnaire.getCreator();
 
-        // Obtener nombre de la categoría si existe
-        if (categoryId != null) {
-            categoryName = categoryRepository.findById(categoryId)
-                    .map(Category::getCategory)
-                    .orElse(null);
+        dto.setId(questionnaire.getId());
+        dto.setTitle(questionnaire.getTitle());
+
+        if (category != null) {
+            dto.setCategoryId(category.getCategoryid());
+            dto.setCategoryName(category.getTitle());
         }
 
-        // Obtener nombre del creador si existe
-        if (creatorId != null) {
-            creatorName = userRepository.findById(creatorId)
-                    .map(User::getLegalName)
-                    .orElse(null);
+        if (creator != null) {
+            dto.setCreatorId(creator.getUserId());
+            dto.setCreatorName(creator.getLegalName());
         }
 
-        return new QuestionnaireDTO(
-                questionnaire.getId(),
-                categoryId,
-                creatorId,
-                creatorName,
-                categoryName);
+        return dto;
     }
 }

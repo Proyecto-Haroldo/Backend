@@ -1,6 +1,9 @@
 package itm.proyectoharoldo.backend.Models.DTO.Auth;
 
-import itm.proyectoharoldo.backend.Models.ClientType;
+import itm.proyectoharoldo.backend.Models.Enums.*;
+import itm.proyectoharoldo.backend.Models.DTO.CategoryDTO;
+
+import java.util.Set;
 
 import lombok.*;
 
@@ -17,5 +20,10 @@ public class UserDTO {
     private String email;
     private String sector;
     private String roleName;
+    private String network;
+    private String phone;
+    private String location;
+    private UserStatus status;
+    private Set<CategoryDTO> specialities;
 
 }

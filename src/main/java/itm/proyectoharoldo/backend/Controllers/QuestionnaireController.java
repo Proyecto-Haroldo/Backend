@@ -1,17 +1,18 @@
 package itm.proyectoharoldo.backend.Controllers;
 
-import itm.proyectoharoldo.backend.Models.Questionnaire;
 import itm.proyectoharoldo.backend.Models.DTO.Questionnaire.QuestionnaireDTO;
 import itm.proyectoharoldo.backend.Services.QuestionnaireService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/questionnaires")
-@CrossOrigin(origins = "*") 
 @RequiredArgsConstructor
 public class QuestionnaireController {
 
@@ -23,50 +24,33 @@ public class QuestionnaireController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuestionnaireDTO> getQuestionnaireById(@PathVariable Long id) {
-        return questionnaireService.getQuestionnaireById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<QuestionnaireDTO> getQuestionnaireById(@PathVariable @NonNull Long id) {
+        return ResponseEntity.ok(questionnaireService.getQuestionnaireDTOById(id));
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<QuestionnaireDTO>> getByCategory(@PathVariable Long categoryId) {
-        List<QuestionnaireDTO> questionnaires = questionnaireService.getByCategory(categoryId);
-        if (questionnaires.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(questionnaires);
+    public ResponseEntity<List<QuestionnaireDTO>> getByCategory(@PathVariable @NonNull Long categoryId) {
+        return ResponseEntity.ok(questionnaireService.getByCategory(categoryId));
     }
 
     @GetMapping("/creator/{creatorId}")
-    public ResponseEntity<List<QuestionnaireDTO>> getByCreator(@PathVariable Long creatorId) {
-        List<QuestionnaireDTO> questionnaires = questionnaireService.getByCreator(creatorId);
-        if (questionnaires.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(questionnaires);
+    public ResponseEntity<List<QuestionnaireDTO>> getByCreator(@PathVariable @NonNull Long creatorId) {
+        return ResponseEntity.ok(questionnaireService.getByCreator(creatorId));
     }
 
     @PostMapping
-    public ResponseEntity<Questionnaire> create(@RequestBody Questionnaire questionnaire) {
-        return ResponseEntity.ok(questionnaireService.createQuestionnaire(questionnaire));
+    public ResponseEntity<QuestionnaireDTO> create(@RequestBody QuestionnaireDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(questionnaireService.createQuestionnaire(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Questionnaire> update(@PathVariable Long id, @RequestBody Questionnaire questionnaire) {
-        if (questionnaireService.getQuestionnaireById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(questionnaireService.updateQuestionnaire(id, questionnaire));
+    public ResponseEntity<QuestionnaireDTO> update(@PathVariable Long id, @RequestBody QuestionnaireDTO dto) {
+        return ResponseEntity.ok(questionnaireService.updateQuestionnaire(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (questionnaireService.getQuestionnaireById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id) {
         questionnaireService.deleteQuestionnaire(id);
         return ResponseEntity.noContent().build();
     }
-    
 }

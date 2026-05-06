@@ -2,121 +2,57 @@ package itm.proyectoharoldo.backend.Controllers;
 
 import itm.proyectoharoldo.backend.Models.*;
 import itm.proyectoharoldo.backend.Models.Web.QuestionWebModel;
-import itm.proyectoharoldo.backend.Repositories.QuestionRepository;
 import itm.proyectoharoldo.backend.Services.*;
-import lombok.AllArgsConstructor;
 
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/preguntas")
-@CrossOrigin(origins = "*")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WebQuestionController {
 
     private final WebQuestionService webQuestionService;
-    private final QuestionRepository questionRepository;
-    private final MultipleOptionAnswersService multipleOptionAnswersService;
-    private final KeywordsService keywordsService;
 
     @GetMapping
-    public List<QuestionWebModel> getEmAll() {
-        // Use optimized query with JOIN FETCH
-        List<Question> questions = questionRepository.findAllWithOptions();
-        List<QuestionWebModel> questionWebModels = new ArrayList<>();
-
-        // Convert to web models
-        for (Question question : questions) {
-            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
-                    question,
-                    question.getQuestionType(),
-                    multipleOptionAnswersService.getAnswersAsWebModel(question),
-                    List.of());
-            questionWebModels.add(model);
-        }
-
-        // Batch process keywords for all questions
-        keywordsService.enrichQuestionsWithKeywords(questionWebModels);
-
-        return questionWebModels;
+    public ResponseEntity<List<QuestionWebModel>> getAll() {
+        return ResponseEntity.ok(webQuestionService.getAllQuestions());
     }
 
     @GetMapping("/category/{categoryName}")
-    public List<QuestionWebModel> getQuestionsByCategory(@PathVariable String categoryName) {
-        // Use optimized query with JOIN FETCH
-        List<Question> questions = questionRepository.findByCategoryNameWithOptions(categoryName);
-        List<QuestionWebModel> questionWebModels = new ArrayList<>();
-
-        // Convert to web models
-        for (Question question : questions) {
-            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
-                    question,
-                    question.getQuestionType(),
-                    multipleOptionAnswersService.getAnswersAsWebModel(question),
-                    List.of());
-            questionWebModels.add(model);
-        }
-
-        // Batch process keywords for all questions
-        keywordsService.enrichQuestionsWithKeywords(questionWebModels);
-
-        return questionWebModels;
+    public ResponseEntity<List<QuestionWebModel>> getByCategory(@PathVariable String categoryName) {
+        return ResponseEntity.ok(webQuestionService.getQuestionsByCategory(categoryName));
     }
 
     @GetMapping("/questionnaire/{questionnaireId}")
-    public List<QuestionWebModel> getQuestionsByQuestionnaire(@PathVariable Long questionnaireId) {
-        // Use optimized query with JOIN FETCH
-        List<Question> questions = questionRepository.findByQuestionnaireWithOptions(questionnaireId);
-        List<QuestionWebModel> questionWebModels = new ArrayList<>();
-
-        // Convert to web models
-        for (Question question : questions) {
-            QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
-                    question,
-                    question.getQuestionType(),
-                    multipleOptionAnswersService.getAnswersAsWebModel(question),
-                    List.of());
-            questionWebModels.add(model);
-        }
-
-        // Batch process keywords for all questions
-        keywordsService.enrichQuestionsWithKeywords(questionWebModels);
-
-        return questionWebModels;
+    public ResponseEntity<List<QuestionWebModel>> getByQuestionnaire(@PathVariable Long questionnaireId) {
+        return ResponseEntity.ok(webQuestionService.getQuestionsByQuestionnaire(questionnaireId));
     }
 
     @GetMapping("/{id}")
-    public QuestionWebModel getquestionbyid(@PathVariable Long id) {
-        Question question = questionRepository.findById(id).get();
-        QuestionWebModel model = webQuestionService.CreateQuestionWebModel(
-                question,
-                question.getQuestionType(),
-                multipleOptionAnswersService.getAnswersAsWebModel(question),
-                List.of());
-
-        keywordsService.enrichQuestionWithKeywords(model);
-
-        return model;
+    public ResponseEntity<QuestionWebModel> getById(@PathVariable @NonNull Long id) {
+        return ResponseEntity.ok(webQuestionService.getQuestionById(id));
     }
 
     @PostMapping
-    public Question createQuestion(@RequestBody QuestionWebModel webModel) {
-        Question savedQuestion = webQuestionService.createQuestionOnDatabase(webModel);
-        return savedQuestion;
+    public ResponseEntity<Question> create(@RequestBody QuestionWebModel webModel) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(webQuestionService.createQuestion(webModel));
     }
 
     @PutMapping("/{id}")
-    public Question updateQuestion(@PathVariable Long id, @RequestBody QuestionWebModel webModel) {
-        Question updatedQuestion = webQuestionService.updateQuestionOnDatabase(id, webModel);
-        return updatedQuestion;
+    public ResponseEntity<Question> update(@PathVariable Long id, @RequestBody QuestionWebModel webModel) {
+        return ResponseEntity.ok(webQuestionService.updateQuestion(id, webModel));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteQuestion(@PathVariable Long id) {
-        webQuestionService.deleteQuestionOnDatabase(id);
+    public ResponseEntity<Void> delete(@PathVariable @NonNull Long id) {
+        webQuestionService.deleteQuestion(id);
+        return ResponseEntity.noContent().build();
     }
-
 }
