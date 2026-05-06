@@ -2,10 +2,14 @@ package itm.proyectoharoldo.backend.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import itm.proyectoharoldo.backend.Models.Enums.ClientType;
+import itm.proyectoharoldo.backend.Models.Enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Entity
@@ -21,7 +25,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name = "cedulaornit", nullable = false, unique = true)
+    @Column(name = "cedulaornit", nullable = false)
     private String cedulaOrNIT;
 
     @Column(name = "legalname", nullable = false)
@@ -40,12 +44,33 @@ public class User {
     @Column(name = "sector", nullable = false)
     private String sector;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "network")
+    private String network;
+
+    @Column(name = "location")
+    private String location;
+
     @ManyToOne
     @JoinColumn(name = "role")
     private Role role;
 
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "creator")
+    @JsonManagedReference("user-questionnaires")
     private List<Questionnaire> questionnaires;
+
+    @ManyToMany
+    @JoinTable(
+            name = "userspecialities",
+            joinColumns = @JoinColumn(name = "userid", referencedColumnName = "userid"),
+            inverseJoinColumns = @JoinColumn(name = "category", referencedColumnName = "categoryid")
+    )
+    private Set<Category> specialities;
 
 }

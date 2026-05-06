@@ -2,7 +2,6 @@ package itm.proyectoharoldo.backend.Controllers;
 
 import itm.proyectoharoldo.backend.Models.DTO.WebAnswersDTO;
 import itm.proyectoharoldo.backend.Models.DTO.Analysis.AIAnalysisResultDTO;
-import itm.proyectoharoldo.backend.Repositories.UserRepository;
 import itm.proyectoharoldo.backend.Services.ClientAnswerService;
 import lombok.AllArgsConstructor;
 
@@ -18,10 +17,10 @@ import java.util.Map;
 public class WebAnswersController {
 
     private final ClientAnswerService clientAnswerService;
-    private final UserRepository userRepository;
 
+    @SuppressWarnings("null")
     @PostMapping
-    public ResponseEntity<Map> saveAnswers(@RequestBody WebAnswersDTO request) {
+    public ResponseEntity<Map<String, String>> saveAnswers(@RequestBody WebAnswersDTO request) {
 
         if (request.getUserId() == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

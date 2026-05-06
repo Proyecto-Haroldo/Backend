@@ -1,5 +1,6 @@
 package itm.proyectoharoldo.backend.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -7,6 +8,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
@@ -22,14 +24,24 @@ public class Category {
     @Column(name = "categoryid")
     private Long categoryid;
 
-    @Column(name = "category", nullable = false)
-    private String category;
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @Column(name = "decimalvalue")
     private BigDecimal decimalvalue;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = false)
-    @JsonManagedReference
+    @Column(name = "icon")
+    private Long icon;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("category-questionnaires")
     private List<Questionnaire> questionnaires;
+
+    @ManyToMany(mappedBy = "specialities")
+    @JsonIgnore
+    private Set<User> usersWithSpeciality;
 
 }

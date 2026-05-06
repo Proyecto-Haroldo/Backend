@@ -2,6 +2,9 @@ package itm.proyectoharoldo.backend.Models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import itm.proyectoharoldo.backend.Models.Enums.ClientType;
+import itm.proyectoharoldo.backend.Models.Enums.QuestionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +39,7 @@ public class Question {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    @JoinColumn(name = "questionnaire", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "questionnaire", referencedColumnName = "id")
     private Questionnaire questionnaire;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)

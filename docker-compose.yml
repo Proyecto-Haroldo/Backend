@@ -5,12 +5,15 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://aws-0-us-east-2.pooler.supabase.com:6543/postgres?preferQueryMode=simple
-      SPRING_DATASOURCE_USERNAME: postgres.umtlidnqgmsutxwmljyx
-      SPRING_DATASOURCE_PASSWORD: ${DBPASSWORD}
-      MICROSERVICE_IA_URL: http://microservicio-ia:8080/ia/recomendacion
-      REDIS_BASE_URL: https://helped-cockatoo-53634.upstash.io
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      MICROSERVICE_IA_URL: ${MICROSERVICE_IA_URL}
+      REDIS_BASE_URL: ${REDIS_BASE_URL}
       REDIS_BEARER_TOKEN: ${REDIS_BEARER_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
+      GMAIL_USERNAME: ${GMAIL_USERNAME}
+      GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD}
     depends_on:
       - microservicio-ia
     networks:
@@ -28,6 +31,9 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
     networks:
       - haroldo-network
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 
   frontend:
     build: ../Frontend

@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import itm.proyectoharoldo.backend.Models.Enums.AnalysisStatus;
+
 @Entity
 @Table(name = "analyses")
 @AllArgsConstructor
@@ -36,11 +38,14 @@ public class Analysis {
     @Column(name = "colorsemaforo", columnDefinition = "TEXT")
     private String colorSemaforo;
 
-    @Column(name = "recomendacioninicial", columnDefinition = "TEXT")
-    private String recomendacionInicial;
+    @Column(name = "analisisia", columnDefinition = "TEXT")
+    private String analisisIA;
 
-    @Column(name = "contenidorevision", columnDefinition = "TEXT")
-    private String contenidoRevision;
+    @Column(name = "resumenia", columnDefinition = "TEXT")
+    private String resumenIA;
+
+    @Column(name = "comentarioasesor", columnDefinition = "TEXT")
+    private String comentarioAsesor;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
