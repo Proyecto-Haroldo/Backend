@@ -75,7 +75,7 @@ public class GmailEmailService implements IEmailService {
 
             mailSender.send(message);
             logger.info("Email sent successfully to {}", toEmail);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             logger.error("Failed to send email to {}: {}", toEmail, e.getMessage());
         }
     }
