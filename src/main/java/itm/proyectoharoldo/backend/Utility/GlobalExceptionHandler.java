@@ -69,6 +69,14 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ExceptionResponse> handleIllegalStateException(IllegalStateException ex) {
+        logger.warn("Illegal state (e.g. external integration): {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(
+            new ExceptionResponse("El servicio no está disponible temporalmente", ex.getMessage())
+        );
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         logger.warn("Validation error: {}", ex.getMessage(), ex);
@@ -89,7 +97,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleAccessDeniedException(AccessDeniedException ex) {
         logger.warn("Access denied: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            new ExceptionResponse("No posee los permisos para acceder a este recurso", "Detalles del error no disponibles")
+            new ExceptionResponse("No posee los permisos para acceder a este recurso", ex.getMessage() != null ? ex.getMessage() : "Detalles del error no disponibles")
         );
     }
 
