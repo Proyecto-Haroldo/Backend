@@ -10,7 +10,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Service
@@ -104,6 +107,33 @@ public class WebQuestionService {
         return questionRepository.save(existing);
     }
 
+    @Transactional(readOnly = true)
+    public List<QuestionWebModel> getQuestionnaireTree(Long questionnaireId) {
+        List<Question> all = questionRepository.findByQuestionnaireWithTree(questionnaireId);
+
+        Map<Long, QuestionWebModel> modelMap = new LinkedHashMap<>();
+        List<QuestionWebModel> roots = new ArrayList<>();
+
+        for (Question q : all) {
+            QuestionWebModel model = toWebModel(q);
+            model.setChildren(new ArrayList<>());
+            modelMap.put(q.getQuestionid(), model);
+        }
+
+        for (Question q : all) {
+            if (q.getParentQuestion() == null) {
+                roots.add(modelMap.get(q.getQuestionid()));
+            } else {
+                QuestionWebModel parent = modelMap.get(q.getParentQuestion().getQuestionid());
+                if (parent != null) {
+                    parent.getChildren().add(modelMap.get(q.getQuestionid()));
+                }
+            }
+        }
+
+        return roots;
+    }
+
     @Transactional
     public void deleteQuestion(@NonNull Long id) {
         if (!questionRepository.existsById(id)) {
@@ -119,6 +149,14 @@ public class WebQuestionService {
         model.setQuestionType(question.getQuestionType());
         model.setOptions(multipleOptionAnswersService.getAnswersAsWebModel(question));
         model.setKeywords(List.of());
+
+        model.setParentQuestionId(question.getParentQuestion() != null
+                ? question.getParentQuestion().getQuestionid()
+                : null);
+        model.setParentAnswerTrigger(question.getParentAnswerTrigger());
+        model.setDisplayOrder(question.getDisplayOrder());
+        model.setSection(question.getSection());
+        model.setChildren(new ArrayList<>());
 
         if (question.getQuestionnaire() != null) {
             model.setQuestionnaireId(question.getQuestionnaire().getId());

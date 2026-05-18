@@ -46,6 +46,19 @@ public class Question {
     @JsonManagedReference
     private List<MultipleOptionQuestionAnswer> options;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_question_id")
+    private Question parentQuestion;
+
+    @Column(name = "parent_answer_trigger")
+    private String parentAnswerTrigger;
+
+    @Column(name = "display_order")
+    private Integer displayOrder;
+
+    @Column(name = "section")
+    private String section;
+
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<AnswersOfQuestionnaire> answersInQuestionnaires;
 

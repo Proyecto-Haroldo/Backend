@@ -24,4 +24,9 @@ public class QuestionWebModel {
     private Long questionnaireId;
     private List<AnswersOptionWebModel> options;
     private List<GlossaryWord> keywords;
+    private Long parentQuestionId;
+    private String parentAnswerTrigger;
+    private Integer displayOrder;
+    private String section;
+    private List<QuestionWebModel> children;
 }
