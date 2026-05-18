@@ -14,7 +14,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import itm.proyectoharoldo.backend.Interfaces.IEmailService;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 
@@ -62,7 +61,6 @@ public class GmailEmailService implements IEmailService {
         sendEmail(toEmail, subject, html);
     }
 
-    @SuppressWarnings("null")
     private void sendEmail(String toEmail, String subject, String htmlContent) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
