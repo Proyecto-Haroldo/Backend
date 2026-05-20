@@ -35,3 +35,4 @@ build/
 ### Otros ###
 docker-compose.yml
 .env
+src/main/resources/google-service-account.json

@@ -19,6 +19,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                      LEFT JOIN FETCH q.questionnaire qu
                      LEFT JOIN FETCH qu.category
                      LEFT JOIN FETCH qu.creator
+                     ORDER BY q.id ASC
                      """)
        List<Question> findAllWithOptions();
 
@@ -29,6 +30,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                      LEFT JOIN FETCH q.questionnaire qu
                      LEFT JOIN FETCH qu.category c
                      WHERE c.title = :title
+                     ORDER BY q.id ASC
                      """)
        List<Question> findByCategoryNameWithOptions(@Param("title") String title);
 
@@ -39,7 +41,17 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                      LEFT JOIN FETCH q.questionnaire qu
                      LEFT JOIN FETCH qu.category
                      WHERE qu.id = :questionnaireId
+                     ORDER BY q.id ASC
                      """)
        List<Question> findByQuestionnaireWithOptions(@Param("questionnaireId") Long questionnaireId);
 
+       @Query("""
+                     SELECT DISTINCT q
+                     FROM Question q
+                     LEFT JOIN FETCH q.options
+                     LEFT JOIN FETCH q.parentQuestion
+                     WHERE q.questionnaire.id = :questionnaireId
+                     ORDER BY q.displayOrder
+                     """)
+       List<Question> findByQuestionnaireWithTree(@Param("questionnaireId") Long questionnaireId);
 }
