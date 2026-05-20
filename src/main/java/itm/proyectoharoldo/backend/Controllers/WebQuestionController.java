@@ -35,6 +35,11 @@ public class WebQuestionController {
         return ResponseEntity.ok(webQuestionService.getQuestionsByQuestionnaire(questionnaireId));
     }
 
+    @GetMapping("/questionnaire/{questionnaireId}/tree")
+    public ResponseEntity<List<QuestionWebModel>> getQuestionnaireTree(@PathVariable Long questionnaireId) {
+        return ResponseEntity.ok(webQuestionService.getQuestionnaireTree(questionnaireId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<QuestionWebModel> getById(@PathVariable @NonNull Long id) {
         return ResponseEntity.ok(webQuestionService.getQuestionById(id));

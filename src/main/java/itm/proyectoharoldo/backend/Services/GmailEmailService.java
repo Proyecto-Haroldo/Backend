@@ -14,7 +14,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import itm.proyectoharoldo.backend.Interfaces.IEmailService;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 
@@ -75,7 +74,7 @@ public class GmailEmailService implements IEmailService {
 
             mailSender.send(message);
             logger.info("Email sent successfully to {}", toEmail);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             logger.error("Failed to send email to {}: {}", toEmail, e.getMessage());
         }
     }
